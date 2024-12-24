@@ -24,8 +24,11 @@
               <ul class="dz-top-meta mb-2 d-flex align-items-center justify-content-between">
                   <span class="brand-tag me-3"><h4 class="title uppercase mb-0">{{global.clinicSelected.full_name}}</h4></span>
                   <li class="dz-review">
+                    <span class="r-rating">{{global.clinicSelected.rating}} 
                     <i class="feather icon-star-on" style="color: gold; margin-right: 5px;" *ngFor="let star of getStarsArray(global.clinicSelected.rating)"></i>
-                    <span class="r-rating">{{global.clinicSelected.rating}}</span> <span class="r-status">({{global.clinicSelected.ratingQuantity}} opiniones)</span></li>
+                   
+
+                    </span> <span class="r-status"> ({{global.clinicSelected.ratingQuantity}} opiniones)</span></li>
               </ul>
             </div>
               <div class="dz-meta-items" [hidden]="isMobile">

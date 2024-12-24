@@ -386,6 +386,19 @@
               (input)="onInputChange('account_holder', fields.account_holder)" placeholder="Nombre del titular" />
           </div>
         </div>
+        <div class="mb-3">
+          <label class="form-label">Dirección</label>
+          <input type="text" class="form-control" [(ngModel)]="fields.address" name="address">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Ubicación en el Mapa</label>
+          <div class="d-flex align-items-center">
+            <input type="text" class="form-control me-2" [value]="fields.lat + ', ' + fields.lng" readonly>
+            <button type="button" class="btn btn-primary" (click)="openMap()">
+              <i class="fas fa-map-marker-alt"></i> Seleccionar Ubicación
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   </div>

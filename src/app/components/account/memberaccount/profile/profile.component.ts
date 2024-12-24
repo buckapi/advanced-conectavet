@@ -1,12 +1,14 @@
+import { Component, OnInit, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
-import { GlobalService } from '@app/services/global.service';
 import { ImageService } from '@app/services/image.service';
+import { GlobalService } from '@app/services/global.service';
+import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import Swal from 'sweetalert2';
 import PocketBase from 'pocketbase';
 import { CalendarModule } from 'primeng/calendar';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MapModalComponent } from '@app/components/shared/map-modal/map-modal.component';
 
 interface ImageRecord {
   collectionId: string;
@@ -22,6 +24,8 @@ interface MemberRecord {
   address: string;
   region: string;
   comuna: string;
+  lat: number;
+  lng: number;
   phone: string;
   days: string;
   hours: string;
@@ -37,31 +41,18 @@ interface MemberRecord {
   // Agregado para permitir índices dinámicos
 }
 
-// interface MemberRecord {
-//   id: string;
-//   full_name: string;
-//   bio: string;
-//   email: string;
-//   rut: string;
-//   address: string;
-//   region: string;
-//   comuna: string;
-//   phone: string;
-//   days: string;
-//   hours: string;
-//   manager_name: string;
-//   manager_phone: string;
-//   manager_email: string;
-//   manager_position: string;
-//   images: string[];
-// }
-
 @Component({
   selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, FormsModule,CalendarModule],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css'],
+  styleUrls: ['./profile.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    CalendarModule,
+    NgbModule,
+    MapModalComponent
+  ]
 })
 export class ProfileComponent implements OnInit {
 
@@ -167,6 +158,8 @@ export class ProfileComponent implements OnInit {
     address: '',
     region: '',
     comuna: '',
+    lat: 0,
+    lng: 0,
     phone: '',
     days: '',
     hours: '',
@@ -225,7 +218,8 @@ currentUser = {
     private imageService: ImageService,
     public global: GlobalService,
     public auth: AuthPocketbaseService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private modalService: NgbModal
   ) {
     this.pb = new PocketBase('https://db.conectavet.cl:8080');
   }
@@ -461,5 +455,33 @@ currentUser = {
 
   displaySelectedDays() {
     return this.fields.days || '';
+  }
+
+  async openMap() {
+    try {
+      const modalRef = this.modalService.open(MapModalComponent, {
+        size: 'lg',
+        centered: true
+      });
+
+      // Pasar la ubicación actual si existe
+      if (this.fields.lat && this.fields.lng) {
+        modalRef.componentInstance.initialLocation = {
+          lat: this.fields.lat,
+          lng: this.fields.lng
+        };
+      }
+
+      const result = await modalRef.result;
+      if (result) {
+        this.fields.lat = result.lat;
+        this.fields.lng = result.lng;
+        console.log('Location updated:', result);
+      }
+    } catch (error) {
+      if (error !== 'dismiss') {
+        console.error('Error opening map:', error);
+      }
+    }
   }
 }
