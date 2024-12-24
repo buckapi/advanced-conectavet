@@ -30,7 +30,7 @@
                     'col-lg-1': auth.isAdmin()
                 }" *ngFor="let specialist of global.specialists | filterSpecialists:auth.isAdmin()">
                     <div class="dz-card style-2 specialist-card" style="cursor: pointer ;     border-style: solid ; border-width: 1px ; border-color: #3ba5a8;">
-                        <div class="dz-media" (click)="global.viewClinic(specialist)">
+                        <div class="dz-media" (click)="onClinicClick(specialist)">
                             <a class="image-container">
                                 <div class="dz-media">
                                     <img [src]="specialist.images?.[0] ?? 'https://static.vecteezy.com/system/resources/previews/013/149/674/non_2x/unavailable-image-icon-in-trendy-flat-style-isolated-on-white-background-photo-gallery-symbol-for-web-and-mobile-apps-free-vector.jpg'"

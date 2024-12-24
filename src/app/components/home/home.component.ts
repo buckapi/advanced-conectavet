@@ -63,4 +63,8 @@ export class HomeComponent implements OnInit {
   getStarsArray(rating: number): number[] {
     return Array(Math.round(rating)).fill(0);
   }
+
+  async onClinicClick(clinic: any) {
+    await this.global.viewClinic(clinic);
+  }
 }

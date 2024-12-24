@@ -42,6 +42,21 @@
             </div>
             
           </div>
+          <div  class="item-wrapper" style="padding-top: 20px !important;">
+            <div class="dz-meta-items" [hidden]="isMobile">
+              <div class="dz-price m-r60 m-b10">
+                  <h6 class="title font-w600">Comentarios:</h6>
+                  <div class="comments-section">
+                      <div *ngIf="global.clinicSelected.comments.length === 0" class="no-comments text-light">
+                          No hay comentarios aún.
+                      </div>
+                      <div *ngFor="let comment of global.clinicSelected.comments" class="comment-item">
+                          <span class="text-light d-block mb-2">{{comment}}</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          </div>
          
           
       </div>

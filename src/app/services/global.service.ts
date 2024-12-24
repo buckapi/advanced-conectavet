@@ -5,11 +5,12 @@ import { RealtimeSpecialistsService } from './realtime-specialists.service';
 import { RealtimeProfessionalsService } from './realtime-professional.service';
 import { Pet } from './realtime-pet.service';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
 export interface Clinic {
   id: string;
   ratingQuantity: number;
-
+  comments: string[];
   hours: string;
   name: string;
   days: string;
@@ -23,26 +24,25 @@ export interface Clinic {
   services: Service[]; // O el tipo adecuado para los servicios
   // Otros campos que sean necesarios
 }
+
 interface Service {
   id: string;
   name: string;
   price: number;
-} 
-
+}
 
 @Injectable({
   providedIn: 'root',
 })
-
 
 export class GlobalService {
   newUser: boolean = false;
   hasItemsInCart: boolean = false;
   cartStatus$ = new BehaviorSubject<boolean>(false);
   cartQuantity: number = 10;
-  cartQuantity$ = new BehaviorSubject<number>(0); 
+  cartQuantity$ = new BehaviorSubject<number>(0);
   hasPendingOrder: boolean = false;
-  showHistory=false;
+  showHistory = false;
   professionalsCount: number = 0;
   idS: string = "";
   categoryFiltersAplcated = false;
@@ -73,10 +73,11 @@ export class GlobalService {
     idTutor: '',
     status: '',
   };
-  clinicSelected: Clinic = {  
+  clinicSelected: Clinic = {
     ratingQuantity: 0,
     rating: 0,
     days: '',
+    comments: [],
     hours: '',
     id: '',
     userId: '',
@@ -90,11 +91,17 @@ export class GlobalService {
   };
   activeRoute = 'home';
   modalType = 'filter';
+  private commentsSubscription: (() => void) | null = null;
+  private pb: PocketBase;
+  clinicComments$ = new BehaviorSubject<string[]>([]);
+
   constructor(
     public realtimeSpecialists: RealtimeSpecialistsService,
-    public realtimeProfessionals: RealtimeProfessionalsService
+    public realtimeProfessionals: RealtimeProfessionalsService,
+    private router: Router
 
   ) {
+    this.pb = new PocketBase('https://db.conectavet.cl:8080');
     this.showMemberMenu = !this.isMobile();
     this.loadCartFromLocalStorage();
 
@@ -107,7 +114,7 @@ export class GlobalService {
     const totalItems = this.cart.length; // Cantidad de ítems únicos en el carrito
     this.cartQuantity$.next(totalItems);
   }
-  
+
   private loadCartFromLocalStorage() {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -118,13 +125,11 @@ export class GlobalService {
   async acept(clinica: any) {
     if (clinica && clinica.id) {
       try {
-        const pb = new PocketBase('https://db.conectavet.cl:8080');
-
         const data = {
           status: 'approved'
         };
 
-        const record = await pb.collection('members').update(clinica.id, data);
+        const record = await this.pb.collection('members').update(clinica.id, data);
 
         console.log('Estado de la clínica actualizado a: approved', record);
         return record;
@@ -163,7 +168,7 @@ export class GlobalService {
   setTutorOptionToPets() {
     this.tutorOption = 'pets';
     // this.showTutorMenu = true;
-    this.petSelected={
+    this.petSelected = {
       id: '',
       name: '',
       species: '',
@@ -173,7 +178,7 @@ export class GlobalService {
       idTutor: '',
       status: '',
     }
-    this.showHistory=false;
+    this.showHistory = false;
 
   }
   id() {
@@ -190,8 +195,7 @@ export class GlobalService {
 
     // Fetch member records using userId
     try {
-      const pb = new PocketBase('https://db.conectavet.cl:8080');
-      const memberRecords = await pb.collection('members').getFullList(200, { filter: `userId = "${userId}"` });
+      const memberRecords = await this.pb.collection('members').getFullList(200, { filter: `userId = "${userId}"` });
 
       if (memberRecords.length > 0) {
         const memberRecord = memberRecords[0]; // Assuming userId is unique
@@ -226,9 +230,7 @@ export class GlobalService {
     try {
       // Fetch the member record using this.idS
       console.log("bsucando")
-      const pb = new PocketBase('https://db.conectavet.cl:8080');
-
-      let memberRecord = await pb.collection('members').getOne(id);
+      let memberRecord = await this.pb.collection('members').getOne(id);
 
       // Log or use the member record as needed
       console.log('Member la info:', memberRecord);
@@ -265,8 +267,67 @@ export class GlobalService {
   setModalType(modalType: string) {
     this.modalType = modalType;
   }
-  viewClinic(clinic: any) {
+  async viewClinic(clinic: any) {
+    console.log('ViewClinic called with clinic:', clinic);
+    
+    // Limpiar suscripción anterior si existe
+    if (this.commentsSubscription) {
+      console.log('Unsubscribing from previous comments subscription');
+      this.commentsSubscription();
+      this.commentsSubscription = null;
+    }
+
     this.clinicSelected = clinic;
+    if (!this.clinicSelected.comments) {
+      this.clinicSelected.comments = [];
+    }
+    
+    console.log('Selected clinic:', this.clinicSelected);
+    
+    try {
+      // Función para cargar comentarios existentes
+      const loadExistingComments = async () => {
+        try {
+          const records = await this.pb.collection('ratings').getList(1, 50, {
+            filter: `idMember = "${this.clinicSelected.id}"`,
+            sort: '-created'
+          });
+          console.log('Existing comments loaded:', records);
+          if (records && records.items) {
+            const comments = records.items
+              .filter(record => record['comment'])
+              .map(record => record['comment'] as string);
+            this.clinicSelected.comments = comments;
+            console.log('Updated comments:', comments);
+          }
+        } catch (error) {
+          console.error('Error fetching existing comments:', error);
+        }
+      };
+
+      // Cargar comentarios iniciales
+      await loadExistingComments();
+
+      // Suscribirse a cambios en ratings
+      console.log('Setting up realtime subscription for clinic ID:', this.clinicSelected.id);
+      
+      // Suscribirse solo a los cambios que afectan a esta clínica
+      this.commentsSubscription = await this.pb.collection('ratings').subscribe('*', async (e: any) => {
+        console.log('Received realtime event:', e);
+        if (e.record && e.record.idMember === this.clinicSelected.id) {
+          console.log('Rating changed for current clinic, reloading comments...');
+          await loadExistingComments();
+        } else {
+          console.log('Ignoring event for different clinic:', e.record?.idMember);
+        }
+      });
+
+      console.log('Realtime subscription set up successfully');
+
+    } catch (error) {
+      console.error('Error in viewClinic:', error);
+    }
+
     this.activeRoute = 'clinicdetail';
     this.conteo();
   }
@@ -276,14 +337,12 @@ export class GlobalService {
   async toggleSpecialistStatus(specialist: any) {
     if (specialist && specialist.id) {
       try {
-        const pb = new PocketBase('https://db.conectavet.cl:8080');
-
         const newStatus = specialist.status === 'approved' ? 'pending' : 'approved';
         const data = {
           status: newStatus
         };
 
-        const record = await pb.collection('members').update(specialist.id, data);
+        const record = await this.pb.collection('members').update(specialist.id, data);
 
         console.log(`Estado del especialista actualizado a: ${newStatus}`, record);
 

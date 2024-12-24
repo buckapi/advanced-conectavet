@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { GlobalService } from '@app/services/global.service';
 import { DeviceService } from '@app/services/device.service';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
@@ -15,6 +15,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { Injectable } from '@angular/core';
 import { NativeDateAdapter, DateAdapter } from '@angular/material/core';
+import { Clinic } from '@app/interfaces/clinic.interface';
 
 @Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
@@ -50,9 +51,6 @@ export class ClinicdetailComponent implements OnInit {
   minDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() - 3, 1); // 3 meses antes
   maxDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 3, 0); // 3 meses después
 
-
-
-
   cartQuantity: number = 0;
 
   isMobile: boolean = false;
@@ -69,81 +67,21 @@ export class ClinicdetailComponent implements OnInit {
 
   customHeader = CustomHeader;
 
+  comments: string[] = [];
+
   constructor(
     public device: DeviceService,
     public global: GlobalService,
     public auth: AuthPocketbaseService,
+    private router: Router,
     public realtimeProfessionals: RealtimeProfessionalsService,
-    private router: Router
+    private cdr: ChangeDetectorRef
   ){}
   
   getStarsArray(rating: number): number[] {
     return Array(Math.round(rating)).fill(0);
   }
 
-  // Verificar si el día es seleccionable según los días laborables
-  getCartFromLocalStorage(): boolean {
-    const savedCart = localStorage.getItem('cart');
-    if (!savedCart) return false;
-    const parsedCart = JSON.parse(savedCart);
-    return Array.isArray(parsedCart) && parsedCart.length > 0;
-  }
-  private formatDate(date: Date): string {
-    const meses = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-  
-    const dia = date.getDate();
-    const mes = meses[date.getMonth()];
-    const anio = date.getFullYear();
-  
-    return `${mes} ${dia} de ${anio}`;
-  }
-  isDaySelectable = (date: Date | null): boolean => {
-    if (!date || !this.global.clinicSelected?.days) return false;
-
-    const daysMapping: Record<'L' | 'M' | 'X' | 'J' | 'V' | 'S' | 'D', number> = {
-      L: 1, // Lunes
-      M: 2, // Martes
-      X: 3, // Miércoles
-      J: 4, // Jueves
-      V: 5, // Viernes
-      S: 6, // Sábado
-      D: 0, // Domingo
-    };
-
-    const clinicDays = this.global.clinicSelected.days
-    .split(',')
-    .map((day) => {
-      const key = day.trim().toUpperCase() as keyof typeof daysMapping;
-      return daysMapping[key];
-    })
-    .filter((day) => day !== undefined);
-
-    const dayOfWeek = date.getDay();
-    return clinicDays.includes(dayOfWeek);
-  };
-
-  // onDateSelected(selectedDate: Date | null): void {
-  //   if (selectedDate) {
-  //     console.log('Fecha seleccionada:', selectedDate);
-  //     this.selectedDates = selectedDate;
-  //   } else {
-  //     console.log('No se seleccionó ninguna fecha.');
-  //   }
-  // }
-  onDateSelected(selectedDate: Date | null): void {
-    if (selectedDate) {
-      const formattedDate = this.formatDate(selectedDate);
-      console.log('Fecha seleccionada:', formattedDate);
-      this.selectedDateText = formattedDate; // Guardar el texto formateado
-      this.selectedDates = selectedDate;
-    } else {
-      console.log('No se seleccionó ninguna fecha.');
-    }
-  }
-  
   getQuantityInCart(serviceId:string) {
     const serviceInCart = this.global.cart.find(item => item.id === serviceId);
     return serviceInCart ? serviceInCart.quantity : 0;
@@ -191,23 +129,20 @@ export class ClinicdetailComponent implements OnInit {
     this.global.cartStatus$.next(this.global.cart.length > 0);
   }  
   
-  selectService(service: any) {
-    // Verifica si el carrito tiene servicios de otra clínica
+  async selectService(service: any) {
     const clinicInCart = this.global.cart.length > 0 ? this.global.cart[0].clinicId : null;
     const currentClinicId = this.global.clinicSelected.id;
   
     if (clinicInCart && clinicInCart !== currentClinicId) {
-      // Mostrar alerta de advertencia con SweetAlert2
       Swal.fire({
         title: 'Orden pendiente',
         html: 'Para crear una nueva orden, usted debe <a href="javascript:void(0)" style="text-decoration: underline;" id="goToOrderLink">completar la orden</a> que tiene pendiente.',
         icon: 'warning',
         showConfirmButton: false
       });
-      return; // Evita que seleccione el servicio
+      return;
     } 
   
-    // Selecciona el servicio si pertenece a la misma clínica o el carrito está vacío
     this.selectedService = service;
   }
   
@@ -218,11 +153,18 @@ export class ClinicdetailComponent implements OnInit {
   ngOnInit() {
     this.global.cartQuantity$.subscribe(quantity => {
       this.global.cartQuantity = quantity;
-    this.global.updateCartQuantity(); 
-
+      this.global.updateCartQuantity(); 
     });
+
     this.device.isMobile().subscribe(isMobile => {
       this.isMobile = isMobile;
+    });
+
+    // Suscribirse a los cambios en comentarios
+    this.global.clinicComments$.subscribe(comments => {
+      console.log('Received new comments:', comments);
+      this.comments = comments;
+      this.cdr.detectChanges();
     });
   
     // Cargar el carrito desde localStorage si existe
@@ -230,13 +172,62 @@ export class ClinicdetailComponent implements OnInit {
     if (savedCart) {
       this.global.cart = JSON.parse(savedCart);
     }
-    
   }
+
+  ngOnDestroy() {
+  }
+
+  private formatDate(date: Date): string {
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+  
+    const dia = date.getDate();
+    const mes = meses[date.getMonth()];
+    const anio = date.getFullYear();
+  
+    return `${mes} ${dia} de ${anio}`;
+  }
+  isDaySelectable = (date: Date | null): boolean => {
+    if (!date || !this.global.clinicSelected?.days) return false;
+
+    const daysMapping: Record<'L' | 'M' | 'X' | 'J' | 'V' | 'S' | 'D', number> = {
+      L: 1, // Lunes
+      M: 2, // Martes
+      X: 3, // Miércoles
+      J: 4, // Jueves
+      V: 5, // Viernes
+      S: 6, // Sábado
+      D: 0, // Domingo
+    };
+
+    const clinicDays = this.global.clinicSelected.days
+    .split(',')
+    .map((day) => {
+      const key = day.trim().toUpperCase() as keyof typeof daysMapping;
+      return daysMapping[key];
+    })
+    .filter((day) => day !== undefined);
+
+    const dayOfWeek = date.getDay();
+    return clinicDays.includes(dayOfWeek);
+  };
+
+  onDateSelected(selectedDate: Date | null): void {
+    if (selectedDate) {
+      const formattedDate = this.formatDate(selectedDate);
+      console.log('Fecha seleccionada:', formattedDate);
+      this.selectedDateText = formattedDate; // Guardar el texto formateado
+      this.selectedDates = selectedDate;
+    } else {
+      console.log('No se seleccionó ninguna fecha.');
+    }
+  }
+  
   shouldShowStepper(service: any): boolean {
     const serviceInCart = this.global.cart.find(item => item.id === service.id);
     const quantityInCart = serviceInCart ? serviceInCart.quantity : 0;
-    
-    // Mostrar si el servicio está seleccionado o si su cantidad en el carrito es mayor a 0
     return this.isServiceSelected(service) || quantityInCart > 0;
   }
   isSameClinic(service: any): boolean {
@@ -288,7 +279,11 @@ export class ClinicdetailComponent implements OnInit {
 
     this.global.activeRoute = 'shopping';
   }
+
+  getCartFromLocalStorage(): boolean {
+    return this.global.cart && this.global.cart.length > 0;
   }
+}
 
 @Component({
   selector: 'custom-header',
