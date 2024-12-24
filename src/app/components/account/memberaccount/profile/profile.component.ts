@@ -464,24 +464,21 @@ currentUser = {
         centered: true
       });
 
-      // Pasar la ubicación actual si existe
-      if (this.fields.lat && this.fields.lng) {
-        modalRef.componentInstance.initialLocation = {
-          lat: this.fields.lat,
-          lng: this.fields.lng
-        };
-      }
+      // Pasar la ubicación inicial y el ID del miembro
+      modalRef.componentInstance.initialLocation = {
+        lat: this.fields.lat || -33.4369,
+        lng: this.fields.lng || -70.6344
+      };
+      modalRef.componentInstance.memberId = this.fields.id;
 
+      // Esperar el resultado del modal
       const result = await modalRef.result;
       if (result) {
         this.fields.lat = result.lat;
         this.fields.lng = result.lng;
-        console.log('Location updated:', result);
       }
     } catch (error) {
-      if (error !== 'dismiss') {
-        console.error('Error opening map:', error);
-      }
+      console.error('Error al abrir el mapa:', error);
     }
   }
 }

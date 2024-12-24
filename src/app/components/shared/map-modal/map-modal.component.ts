@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MapboxService } from '@app/services/mapbox.service';
 
@@ -20,31 +21,40 @@ import { MapboxService } from '@app/services/mapbox.service';
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" (click)="saveLocation()">Guardar Ubicación</button>
-      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Cancelar</button>
+      <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="saveLocation()">
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        {{ isSaving ? 'Guardando...' : 'Guardar Ubicación' }}
+      </button>
+      <button type="button" class="btn btn-secondary" [disabled]="isSaving" (click)="activeModal.dismiss()">Cancelar</button>
     </div>
   `,
   styles: [
     `.map-container {
       border-radius: 4px;
       border: 1px solid #ddd;
+      width: 100%;
+      height: 400px;
+      position: relative;
     }`
   ]
 })
 export class MapModalComponent implements OnInit, AfterViewInit {
   @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
   @Input() initialLocation?: {lat: number, lng: number};
+  @Input() memberId!: string;
   @Output() locationSelected = new EventEmitter<{lat: number, lng: number}>();
 
   private map!: mapboxgl.Map;
   private marker!: mapboxgl.Marker;
   private currentLocation: {lat: number, lng: number} = {lat: 0, lng: 0};
+  isSaving: boolean = false;
 
   constructor(
     public activeModal: NgbActiveModal,
     private mapboxService: MapboxService
   ) {
-    (mapboxgl as any).accessToken = this.mapboxService.getToken();
+    // Usar el mismo token que funciona en map.component.ts
+    (mapboxgl as any).accessToken = 'pk.eyJ1IjoiY29uZWN0YXZldC1jb20iLCJhIjoiY20ybDZpc2dmMDhpMDJpb21iZGI1Y2ZoaCJ9.WquhO_FA_2FM0vhYBaZ_jg';
   }
 
   ngOnInit() {
@@ -60,7 +70,6 @@ export class MapModalComponent implements OnInit, AfterViewInit {
   private async initializeMap() {
     try {
       if (!this.initialLocation) {
-        // Intentar obtener la ubicación actual solo si no hay ubicación inicial
         try {
           const position = await this.getCurrentPosition();
           this.currentLocation = {
@@ -77,14 +86,26 @@ export class MapModalComponent implements OnInit, AfterViewInit {
         }
       }
 
-      this.map = new mapboxgl.Map({
+      const mapOptions: mapboxgl.MapOptions = {
         container: this.mapContainer.nativeElement,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [this.currentLocation.lng, this.currentLocation.lat],
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [this.currentLocation.lng, this.currentLocation.lat] as [number, number],
         zoom: 13
+      };
+
+      console.log('Initializing map with options:', mapOptions);
+      this.map = new mapboxgl.Map(mapOptions);
+
+      this.map.on('error', (e) => {
+        console.error('Mapbox error:', e);
       });
 
-      // Agregar controles
+      this.map.on('load', () => {
+        console.log('Map loaded successfully');
+        this.map.resize();
+      });
+
+      // Agregar controles después de que el mapa se haya inicializado
       this.map.addControl(new mapboxgl.NavigationControl());
       this.map.addControl(new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -96,7 +117,7 @@ export class MapModalComponent implements OnInit, AfterViewInit {
       // Agregar marcador
       this.marker = new mapboxgl.Marker({
         draggable: true,
-        color: '#3ba5a8' // Color que coincide con el tema de la aplicación
+        color: '#3ba5a8'
       })
       .setLngLat([this.currentLocation.lng, this.currentLocation.lat])
       .addTo(this.map);
@@ -115,11 +136,6 @@ export class MapModalComponent implements OnInit, AfterViewInit {
         const { lng, lat } = e.lngLat;
         this.marker.setLngLat([lng, lat]);
         this.currentLocation = { lat, lng };
-      });
-
-      // Esperar a que el mapa se cargue
-      this.map.on('load', () => {
-        this.map.resize();
       });
 
     } catch (error) {
@@ -141,7 +157,50 @@ export class MapModalComponent implements OnInit, AfterViewInit {
     });
   }
 
-  saveLocation() {
-    this.activeModal.close(this.currentLocation);
+  async saveLocation() {
+    if (this.isSaving) return;
+    
+    try {
+      this.isSaving = true;
+      console.log('Intentando guardar ubicación:', {
+        location: this.currentLocation,
+        memberId: this.memberId
+      });
+      
+      // Verificar que tengamos coordenadas válidas
+      if (this.currentLocation.lat === 0 && this.currentLocation.lng === 0) {
+        throw new Error('Por favor, selecciona una ubicación en el mapa');
+      }
+
+      if (!this.memberId) {
+        throw new Error('No se encontró el ID del miembro');
+      }
+      
+      // Guardar la ubicación en el backend
+      const result = await this.mapboxService.saveLocation(this.currentLocation, this.memberId);
+      console.log('Resultado del guardado:', result);
+      
+      // Cerrar el modal y devolver la ubicación seleccionada
+      this.activeModal.close(this.currentLocation);
+    } catch (error: any) {
+      console.error('Error detallado guardando la ubicación:', error);
+      
+      // Mostrar mensaje de error específico al usuario
+      let errorMessage = 'Error al guardar la ubicación. ';
+      
+      if (error.data?.message) {
+        errorMessage += error.data.message;
+      } else if (error.response?.message) {
+        errorMessage += error.response.message;
+      } else if (error.message) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += 'Ocurrió un error inesperado. Por favor, intenta nuevamente.';
+      }
+      
+      alert(errorMessage);
+    } finally {
+      this.isSaving = false;
+    }
   }
 }
