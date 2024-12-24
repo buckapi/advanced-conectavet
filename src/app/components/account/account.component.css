@@ -1,0 +1,7 @@
+.capitalize-first {
+    text-transform: lowercase !important; /* Convierte todo el texto a minúsculas primero */
+}
+
+.capitalize-first:first-letter {
+    text-transform: capitalize !important; /* Aplica mayúscula solo a la primera letra */
+}

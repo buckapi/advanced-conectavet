@@ -1,0 +1,89 @@
+<div class="offcanvas-body">
+    <div class="filter-inner-content card-body">
+        <div class="custom-file-upload">
+            <div *ngIf="selectedImage" class="image-preview">
+                <img [src]="selectedImagePrev" alt="Selected Image" class="img-thumbnail"
+                    style=" border-radius: 50%;
+                cursor: pointer;
+                border: 5px solid #3ba5a8;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow effect */
+                transition: box-shadow 0.3s ease, transform 0.3s ease; max-width: 150px; max-height: 150px; /* Smooth transition */" />
+            </div>
+            <input #imageUpload2 id="imageUpload2" type="file" (change)="onImageChange($event)" class="form-control"
+            accept="image/*" style="display: none;" />
+                <label for="imageUpload2" class="btn mb-2 me-2 btn-success"><i class="fa-solid fa-search me-2"></i>Foto de la mascota</label>
+            <div *ngIf="!selectedImage"  class="text-danger" >* Por favor, suba una imagen de la mascota.</div>
+        </div>
+        <div class="range-slider style-1 mb-4">
+            <div class="mb-3 title font-w600 font-16">
+                <span class="example-val title slider-margin-value-min"></span>
+                <span class="example-val title slider-margin-value-max"></span>
+            </div>
+            <div id="slider-tooltips"></div>
+        </div>
+        <label for="categoryName" class="form-label">Nombre de la mascota</label>
+        <div  *ngIf="!petName" class="text-danger">* Por favor, ingrese el nombre de la mascota.</div>
+        <input id="categoryName" type="text" [(ngModel)]="petName" placeholder="Ingrese el nombre de la mascota" class="form-control"
+            />
+
+        <div class="mb-3">
+            <label for="petWeight" class="form-label">Peso de la mascota (kg)</label>
+            <div *ngIf="!petWeight" class="text-danger">* Por favor, ingrese el peso de la mascota.</div>
+            <input id="petWeight" type="number" [(ngModel)]="petWeight" placeholder="Ingrese el peso en kg" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label for="petAge" class="form-label">Edad de la mascota (años)</label>
+            <div *ngIf="!petAge" class="text-danger">* Por favor, ingrese la edad de la mascota.</div>
+            <input id="petAge" type="number" [(ngModel)]="petAge" placeholder="Ingrese la edad en años" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label for="petColor" class="form-label">Color de la mascota</label>
+            <div *ngIf="!petColor" class="text-danger">* Por favor, ingrese el color de la mascota.</div>
+            <input id="petColor" type="text" [(ngModel)]="petColor" placeholder="Ingrese el color" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label for="petBreed" class="form-label">Raza de la mascota</label>
+            <div *ngIf="!petBreed" class="text-danger">* Por favor, ingrese la raza de la mascota.</div>
+            <input id="petBreed" type="text" [(ngModel)]="petBreed" placeholder="Ingrese la raza" class="form-control" />
+        </div>
+
+        <div class="title-bar mb-3">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Tipo de mascota</label>
+            <div *ngIf="!petType" class="text-danger">* Por favor, seleccione el tipo de mascota.</div>
+            <div class="">
+                <input class="radio circle-radio" type="radio" id="genderMale" name="petType" 
+                    value="perro" [(ngModel)]="petType" />
+                <label for="genderMale" class="radio-label">Perro</label>
+                <br><br />
+                <input class="radio circle-radio" type="radio" id="genderFemale" name="petType" 
+                    value="gato" [(ngModel)]="petType" />
+                <label for="genderFemale" class="radio-label">Gato</label>
+                <br><br />
+                <input class="radio circle-radio" type="radio" id="otherPet" name="petType" 
+                    value="otro" [(ngModel)]="petType" />
+                <label for="otherPet" class="radio-label">Otro</label>
+            </div>
+            
+            <!-- Campo adicional que aparece cuando se selecciona "otro" -->
+            <div *ngIf="petType === 'otro'" class="mt-3">
+                <input type="text" 
+                       class="form-control" 
+                       [(ngModel)]="otherPetType" 
+                       placeholder="Especifique el tipo de mascota"
+                       name="otherPetType" />
+                <div *ngIf="petType === 'otro' && !otherPetType" class="text-danger">
+                    * Por favor, especifique el tipo de mascota.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-2 mt-4">
+        <a class="btn btn-light font-w400 w-100">Cancelar</a>
+        <a class="btn btn-primary font-w400 w-100" (click)="addPet()">Agregar</a>
+    </div>
+</div>

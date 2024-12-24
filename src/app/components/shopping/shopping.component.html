@@ -1,0 +1,105 @@
+<main class="page-content space-top p-b80" [ngStyle]="{'margin-top': !isMobile ? '150px' : '60px'}">
+  <div class="container p-0 row">
+    <div class="dz-product-preview col-12 col-lg-4"
+      [ngClass]="{'col-12': isMobile, 'col-4': !isMobile, 'padding-top-20': !isMobile}">
+
+      <main class="page-content s ">
+        <h2>Detalle de Orden</h2> 
+        <div class="container pt-0">
+            <div class="dz-total-area" *ngIf="global.cartQuantity > 0">
+                <div class="dz-text"><i class="feather icon-check"></i> {{global.cartQuantity}} servicios seleccionados</div>
+            </div>
+            <div class="dz-cart-list" *ngFor="let item of global.cart">
+              
+                <div class="dz-content">
+                    <h6 class="title"><a href="product-detail.html">{{item.name}} </a></h6>
+                    <ul class="dz-meta">
+                        <li class="dz-price">CLP {{item.price | number:'1.2-2'}} <del></del></li>
+                        <!-- <li class="dz-review"><i class="feather icon-star-on"></i><span>(2k Review)</span></li> -->
+                    </ul>
+                    <!-- <span class="dz-status d-inline-block">FREE Delivery</span> -->
+                    <div class=" d-flex align-items-center">
+                     
+                        <div class="dz-stepper d-flex align-items-center gap-2">
+                            <button class="stepper-btn" (click)="decreaseQuantity(item)">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <input readonly type="text" [value]="item.quantity" name="demo3" class="stepper-input">
+                            <button class="stepper-btn" (click)="increaseQuantity(item)">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <a href="javascript:void(0);" class="dz-remove ms-auto remove" (click)="removeItem(item)"><i class="feather icon-trash-2"></i>Remover</a>
+                    </div>
+                </div>
+            </div>
+       
+        </div>
+    </main>
+    </div>
+      <div class="col-12 col-md-4">
+        <main class="page-content  p-b80">
+            <h2>Información de pago</h2>
+            <div class="dz-total-area" *ngIf="shippingAddress">
+                <div class="dz-text"><i class="feather icon-check"></i>Método selecionado webPay </div>
+            </div>
+            <div class="container">
+                <div class="dz-list m-b20">
+                    <ol class="dz-list-group">
+                        <li class="list-group-items">
+                            <a class="item-link">
+                                <div class="dz-icon dz-icon style-2 icon-fill"><i class="fi fi-rr-credit-card font-20"></i></div>
+                                <div class="list-content">
+                                    <h5 class="title">Método de pago</h5>
+                                    <span class="badge badge-primary">webPay TransBank</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="notes">Nota adicional:</label>
+                    <textarea class="form-control bg-white" name="notes" id="notes" rows="4" placeholder="¿Tienes alguna indicación especial para tu veterinario? Escríbela aquí..."></textarea>
+                </div>
+                <div class="view-cart mb-2">
+                    <ul>
+                        <li *ngFor="let item of global.cart">
+                            <span class="name">{{item.name}}</span>
+                            <span class="about"> x {{item.quantity}} CLP{{item.price | number:'1.2-2'}}</span>
+                        </li>
+                        <li>
+                            <span class="name">Comisión Conectavet</span>
+                            <span class="about">CLP {{calculateTotal() * 0.07 | number:'1.2-2'}}</span>
+                        </li>
+                        <li>
+                            <span class="name">Shipping</span>
+                            <span class="status font-w500">FREE Delivery</span>
+                        </li>
+                        <li class="dz-total">
+                            <span class="name font-18 font-w600">Mi orden</span>
+                            <h5 class="price">CLP {{calculateTotal() | number:'1.2-2'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+      </div>
+      <div class="col-12 col-md-4"  *ngIf="!auth.isLogin() && !global.newUser">
+        <div class="login-form"></div>
+         <app-not-logged-in></app-not-logged-in>
+         <div class="text-center" *ngIf="!auth.isLogin() && !global.newUser">
+           <p class="mb-2">o</p>
+           <a href="javascript:void(0);" class="d-block" (click)="register()">crea una cuenta</a>
+         </div>
+       
+        </div>
+        <div  class="col-12 col-md-4" *ngIf="!auth.isLogin() && global.newUser">
+            <app-new-user ></app-new-user>
+            <div class="text-center" *ngIf="!auth.isLogin() && global.newUser">
+                <a href="javascript:void(0);" class="d-block" (click)="backToLogin()">ya tengo cuenta</a>
+              </div>
+            
+        </div>
+        </div>
+      
+</main>

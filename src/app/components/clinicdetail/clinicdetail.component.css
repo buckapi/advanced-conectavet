@@ -1,0 +1,166 @@
+.avatar-profesional {
+  border-radius: 50%; /* Para que la imagen sea circular */
+  border: 2px solid #3ba5a8;
+  margin: 10px;
+  object-fit: cover; /* Asegura que la imagen ocupe todo el contenedor sin distorsión */
+}
+
+.dz-select-btn2 {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las imágenes pasen a la siguiente línea si no hay espacio */
+  gap: 10px; /* Espacio entre las imágenes */
+  justify-content: center; /* Centra las imágenes horizontalmente */
+  align-items: center; /* Centra las imágenes verticalmente */
+}
+
+.media {
+  display: flex;
+  flex-direction: column; /* Coloca la imagen y el nombre en columna */
+  justify-content: center;
+  align-items: center;
+}
+
+.media img {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: auto; /* Mantiene la relación de aspecto en cualquier contenedor */
+  border-radius: 50%; /* Hace que la imagen sea circular */
+  object-fit: cover; /* Asegura que la imagen ocupe todo el contenedor sin distorsionarse */
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.r-rating {
+  font-size: 25px;
+}
+/* Estilo original */
+.service-card {
+  display: flex;
+  flex-direction: row; /* Organización en una fila en pantallas grandes */
+  justify-content: space-between;
+  align-items: center;
+  /* min-width: 200px; Ajusta según necesites */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Cambios en el diseño en pantallas pequeñas */
+@media (max-width: 768px) {
+  .service-card {
+    flex-direction: column; /* Coloca el nombre y el precio en columna en móviles */
+    align-items: flex-start; /* Alinea el texto al inicio en móviles */
+  }
+}
+.service-card-hover {
+  color: white !important;
+  background-color: #3ba5a8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+}
+
+.service-card-hover .service-price {
+  color: white !important;
+  background-color: #3ba5a8 !important;
+  transform: translateY(-2px);
+}
+
+
+.service-card:hover {
+  color: white !important;
+  background-color: #3ba5a8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Cambia el color del precio a blanco cuando se hace hover en la tarjeta */
+.service-card:hover .service-price {
+  color: white;
+}
+
+.service-name {
+  font-weight: 500;
+}
+.calendar {
+  width: 100px;
+}
+.service-price {
+  color: #3ba5a8;
+  font-weight: 900;
+  padding-left: 10px;
+  font-size: 16px;
+  transition: color 0.3s ease; /* Transición suave en el cambio de color */
+}
+
+.day {
+  padding: 8px;
+  margin: 2px;
+  
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+.day.active {
+  opacity: 1;
+  background-color: #3ba5a8 !important;
+  color: white;
+}
+.btn.btn-active{
+  background-color: #3ba5a8 !important;
+  opacity: 1;
+  border: 1px solid #3ba5a8 !important;
+  color: white; 
+}
+
+/* Oculta el texto completo del día */
+.mat-calendar-table-header span {
+  font-size: 0;
+}
+
+/* Muestra solo la primera letra */
+.mat-calendar-table-header span::first-letter {
+  font-size: 14px;
+}
+
+/* Estilo para días laborables en el calendario */
+.mat-calendar-body-cell.workday {
+  background-color: #e8f5e9;
+}
+
+/* Asegurarse que el día seleccionado mantenga su estilo */
+.mat-calendar-body-selected {
+  background-color: #3ba5a8 !important;
+  border-radius: 50%;
+  color: white !important;
+}
+::ng-deep .mat-calendar-body-cell.highlight-enabled-day {
+  border: 1px solid rgba(59, 165, 168, 0.2) !important;
+  /* background-color: rgba(59, 165, 168, 0.2) !important; Version clara de #3ba5a8 */
+  background-color: rgba(59, 165, 168, 0.2) !important; /* Version clara de #3ba5a8 */
+  color: #000 !important; /* Texto negro */
+  border-radius: 50%; /* Opcional: hace que el fondo sea circular */
+}
+/* Cambiar el estilo del día seleccionado */
+::ng-deep .mat-calendar-body-selected {
+  background-color: #3b82f6 !important; /* Azul */
+  border-radius: 50%; /* Redondear el día seleccionado */
+  color: white !important; /* Texto blanco */
+  font-weight: bold;
+}
+
+/* Asegurarse de que al hacer hover en el día seleccionado, el color se mantenga */
+::ng-deep .mat-calendar-body-selected:hover {
+  background-color: #2563eb !important; /* Azul más oscuro */
+}
+
+/* Añadir una transición suave al cambio de selección */
+::ng-deep .mat-calendar-body-cell {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+::ng-deep .mat-calendar-period-button {
+  display: none !important; /* Oculta solo el selector del mes */
+}

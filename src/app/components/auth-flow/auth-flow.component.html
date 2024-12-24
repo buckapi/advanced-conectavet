@@ -1,0 +1,32 @@
+<div class="auth-container">
+  <!-- Paso 1: Formulario de Email -->
+  <div *ngIf="!isEmailSubmitted">
+    <h3>Ingresa tu correo electrónico</h3>
+    <div class="form-group">
+      <input type="email" [(ngModel)]="email" class="form-control" placeholder="Email">
+      <button (click)="checkEmail()" class="btn btn-primary">Continuar</button>
+    </div>
+  </div>
+
+  <!-- Paso 2: Login o Registro según existencia -->
+  <div *ngIf="isEmailSubmitted">
+    <div *ngIf="userExists">
+      <!-- Formulario de Login -->
+      <h3>Ingresa tu contraseña</h3>
+      <div class="form-group">
+        <input type="password" [(ngModel)]="password" class="form-control" placeholder="Contraseña">
+        <button (click)="login()" class="btn btn-primary">Iniciar sesión</button>
+      </div>
+    </div>
+
+    <div *ngIf="!userExists">
+      <!-- Formulario de Registro -->
+      <h3>Crear cuenta nueva</h3>
+      <div class="form-group">
+        <input type="password" [(ngModel)]="password" class="form-control" placeholder="Crear contraseña">
+        <!-- Otros campos necesarios para el registro -->
+        <button (click)="register()" class="btn btn-primary">Registrarse</button>
+      </div>
+    </div>
+  </div>
+</div> 

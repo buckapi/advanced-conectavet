@@ -1,0 +1,64 @@
+<div class="dz-category style-2 border-bottom">
+    <div class="title-bar mb-2 mt-2">
+        <h4 class="title"  [hidden]="global.categoryFiltersAplcated">Destacado </h4>
+        <h4 class="title" [hidden]="!global.categoryFiltersAplcated">Mostrando servicios de la categoría "{{config.getSelectedCategoryLabel()}}"</h4>
+        <!-- <a href="category.html">Ver todos</a> -->
+    </div>
+    <div class="swiper dz-category-swiper3 mb-3">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" *ngFor="let item of config.getServicesByCategory(config.categorySelected)">
+                <a class="category-tag tag-lg" style="cursor: pointer;" (click)="showServiceAlert(item.name)"
+                    [ngClass]="{'active': item.name === selectedService}">
+                    {{ item.name }}
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="dz-about-area">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <div class="icon">
+                    <svg width="20" height="20" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <path d="M10.5388 14.5891L1.62924 1.74756L1.37747 3.13977C0.970057 5.39761 1.46551 7.67911 2.77304 9.56326L7.49975 16.376C7.13705 17.2641 7.21182 18.3107 7.79806 19.1557C8.71771 20.4809 10.5453 20.8152 11.8751 19.8927C13.202 18.972 13.5328 17.1428 12.6121 15.8151C12.1132 15.0967 11.3466 14.6824 10.5388 14.5891ZM11.2067 18.9303C10.4119 19.4819 9.3128 19.2845 8.76059 18.4874C8.20837 17.6915 8.40689 16.5939 9.20233 16.0412C9.99945 15.489 11.0969 15.6875 11.6497 16.483C12.2017 17.2801 12.0032 18.3775 11.2067 18.9303Z" fill="black"/>
+                            <path d="M10.3604 9.61014C11.6684 7.72583 12.164 5.44449 11.756 3.18649L11.5042 1.79443L7.29614 7.8598L9.43558 10.943L10.3604 9.61014Z" fill="black"/>
+                            <path d="M3.73033 12.999L2.59553 14.6345C1.68184 14.7397 0.987104 15.1923 0.521863 15.862C-0.39931 17.1891 -0.0686517 19.0183 1.25886 19.9396C2.58226 20.8587 4.41377 20.5314 5.33586 19.2026C5.92225 18.3571 5.99656 17.3102 5.63371 16.4222L5.86946 16.0824L3.73033 12.999ZM4.37349 18.5343C3.81959 19.3308 2.72096 19.5276 1.92674 18.9771C1.13008 18.4244 0.932172 17.3264 1.48439 16.5304C2.03737 15.734 3.13081 15.5329 3.93052 16.0882C4.72703 16.6408 4.92555 17.7384 4.37349 18.5343Z" fill="black"/>
+                            <path d="M18.2422 0.5H12.9688V1.67188H16.4844V2.84375H12.9688V4.01562H16.4844V5.1875H12.9688V6.35938H16.4844V7.53125H12.9688V8.70312H16.4844V9.875H12.9688V11.0469H16.4844V12.2188H12.9688V13.3906H16.4844V18.7422C16.4844 19.7114 17.2729 20.5 18.2422 20.5C19.2116 20.5 20 19.7114 20 18.7422V2.25781C20 1.28857 19.2116 0.5 18.2422 0.5Z" fill="black"/>
+                        </g>
+                    </svg>					
+                </div>
+                <h5 class="mb-0">Pet Grooming</h5>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <h6 class="font-w500 font-14 mb-0"><a href="javascript:void(0);" class="text-underline">Adopt A Pet</a></h6>
+                <div class="icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.025 8.37748C9.47804 7.85949 8.75336 7.5708 8.00002 7.5708C7.24669 7.5708 6.52201 7.85949 5.97502 8.37748L3.53252 10.6875C2.13252 11.96 3.14252 14.3925 5.03252 14.2975C6.05752 14.27 6.89002 13.745 7.99752 13.765C9.14502 13.745 9.99753 14.2075 11.0275 14.2975C12.885 14.34 13.845 11.935 12.465 10.6875L10.025 8.37748Z" fill="black"/>
+                        <path d="M14.23 4.98266C13.275 4.79516 12.545 5.85766 12.355 6.77266C11.785 9.60516 14.53 10.1452 15.1725 7.39766C15.435 6.22016 15.02 5.15766 14.23 4.98266Z" fill="black"/>
+                        <path d="M10.1826 6.51259C11.1326 6.51259 11.9051 5.43259 11.9051 4.10759C11.8101 0.917588 8.55515 0.917588 8.46265 4.10759C8.46265 5.43259 9.23515 6.51259 10.1826 6.51259Z" fill="black"/>
+                        <path d="M3.64504 6.77266C3.45754 5.85766 2.72504 4.79516 1.77004 4.98266C4.00543e-05 5.43016 0.75004 9.20266 2.48004 9.21266C3.46004 9.18016 3.91254 8.04266 3.64504 6.77266Z" fill="black"/>
+                        <path d="M5.81747 6.51259C6.76497 6.51259 7.53747 5.43259 7.53747 4.10759C7.44497 0.917588 4.18997 0.917588 4.09497 4.10759C4.09497 5.43259 4.86747 6.51259 5.81747 6.51259Z" fill="black"/>
+                    </svg>					
+                </div>
+            </div>
+        </div>
+        <p class="about-text font-16 m-b30">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries</p>
+        <div class="row g-3 offer-banner style-1">
+            <div class="col-6">
+                <div class="dz-media rounded-lg offer-active">
+                    <img src="assets/images/category/category1/5.png" alt="">
+                    <div class="dz-sale" style="background-image: url('assets/images/svg/star.svg');">50% <br> Sale</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="dz-media rounded-lg">
+                    <img src="assets/images/category/category1/6.png" alt="">
+                    <div class="play-btn">
+                        <a href="javascript:void(0);" class="dz-icon icon-sm bg-white"><i class="fa-solid fa-play"></i></a>
+                        <span>Play Video</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</div>

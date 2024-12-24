@@ -1,0 +1,37 @@
+<div class="menubar-area footer-fixed" 
+     [ngClass]="{'bg-transparent': !auth.isLogin()}" 
+     style="margin: 10px 10px 10px 10px !important; width: 95%; border-radius: 50px;">
+   <div class="toolbar-inner menubar-nav" style="justify-content: space-around;" [hidden]="global.activeRoute=='shopping'">
+      <a [hidden]="!auth.isLogin()" (click)="global.setRoute('home')" [class.active]="global.activeRoute === 'home'" class="nav-link">
+        <i class="fi fi-rr-home"></i>
+      </a>
+      <a class="nav-link marker-icon" (click)="preventClick($event)" style="position: relative;">         
+        <img src="https://app.conectavet.cl/assets/images/banner_title_img02.png" alt="Marker Image" style="height: 45px; box-shadow: 0px 10px 20px 0px rgba(255, 36, 23, 0.5);border-radius: 50%;">   
+        <span class="arrow-badge" [ngClass]="{'slide-up': isOffcanvasActive}" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%);"></span>
+      </a>
+      <a [hidden]="!auth.isLogin()" class="nav-link" (click)="global.setRoute('favorites')"  [class.active]="global.activeRoute === 'favorites'">
+        <i class="fi fi-rr-star"></i>
+      </a>
+    </div>
+    <div class="toolbar-inner menubar-nav" style="justify-content: space-around;">
+
+      <app-not-logged-in [hidden]="auth.isLogin() || !isMobile() "></app-not-logged-in> 
+    </div>
+  </div>
+  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom18" aria-labelledby="offcanvasBottomLabel" style="height: -webkit-fill-available;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasBottomLabel">Urgencias veterinarias más cercanas</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="closeOffcanvas()">
+        <i class="icon feather icon-x"></i>
+      </button>
+    </div>
+    <div class="offcanvas-body"><app-map></app-map>
+      <!-- <img src="https://camo.githubusercontent.com/31a9053416d6bac645cc137a2e71b9d9dc53f7d016f8ceb6ab10fc113b9aaf75/687474703a2f2f692e67697068792e636f6d2f336f3655426f50534c6c494b5132647637712e676966" alt="Imagen Offcanvas" class="offcanvas-image"> -->
+    </div>
+  </div>
+
+  
+
+  
+  
+  

@@ -1,0 +1,392 @@
+<div class="title-bar" style="justify-content: flex-start !important;">
+  <button *ngIf="global.memberOption != '' && isMobile()" (click)="global.resetMemberOption()" class="btn btn-light"
+    style="margin-right: 10px;">
+    <i class="icon feather icon-chevron-left"></i>
+  </button>
+  <h3 class="name mb-0" style="padding-left: 20px;">
+    Hola, {{ fields['full_name'] || 'Usuario' }}.
+  </h3>
+</div>
+
+<div class="content-box">
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-info alert-dismissible fade show"
+        *ngIf="!fields['full_name'] || !fields['rut'] || !fields['bio'] || !fields['address'] || !fields['region'] || !fields['comuna'] || !fields['phone'] || !fields['days'] || !fields['hours'] || !fields['manager_name'] || !fields['manager_phone'] || !fields['manager_email'] || !fields['manager_position'] || !fields['bank_name'] || !fields['account_number'] || !fields['account_holder']">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"
+          stroke-linecap="round" stroke-linejoin="round" class="me-2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span class="personalizedAlerts">Completa los siguientes campos para activar tu cuenta:
+          <br>
+        
+          <strong style="color: black;  text-align: left;">Campos pendientes:</strong>
+          <ol style="color: red; text-align: left; margin-left: 0px;">
+            <li *ngIf="!fields['full_name']">* Nombre o Razón Social</li>
+            <li *ngIf="!fields['rut']">* RUT</li>
+            <li *ngIf="!fields['bio']">* Biografía</li>
+            <li *ngIf="!fields['address']">* Dirección</li>
+            <li *ngIf="!fields['region']">* Región</li>
+            <li *ngIf="!fields['comuna']">* Comuna</li>
+            <li *ngIf="!fields['phone']">* Teléfono</li>
+            <li *ngIf="!fields['days']">* Días de atención</li>
+            <li *ngIf="!fields['hours']">* Horario de atención</li>
+            <li *ngIf="!fields['manager_name']">* Nombre del encargado</li>
+            <li *ngIf="!fields['manager_phone']">* Teléfono del encargado</li>
+            <li *ngIf="!fields['manager_email']">* Email del encargado</li>
+            <li *ngIf="!fields['manager_position']">* Cargo del encargado</li>
+            <li *ngIf="!fields['bank_name']">* Entidad bancaria</li>
+            <li *ngIf="!fields['account_number']">* Número de cuenta</li>
+            <li *ngIf="!fields['account_holder']">* Titular de la cuenta</li>
+          </ol>
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert">
+          <span><i class="icon feather icon-x"></i></span>
+        </button>
+      </div>
+
+      <!-- Previsualización de la imagen -->
+      <div class="profile-wrapper">
+        <div class="profile-image">
+          <div class="profile-container">
+            <img id="imagePreview"
+              [style.background-image]="'url(' + (auth.getCurrentUser().images[0] || 'hassets/images/default.jpeg') + ')'"
+              style="background-size: cover; 
+                    background-position: center; 
+                    border-radius: 50%; 
+                    width: 150px; 
+                    height: 150px; 
+                    border: 5px solid #3ba5a8; 
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);">
+            <div class="edit">
+              <input #imageUpload3 id="imageUpload3" type="file" (change)="onImageChange($event)" class="form-control"
+                accept="image/*" style="display: none;">
+              <label for="imageUpload3" class="edit-icon">
+                <i class="fi fi-rr-pencil"></i>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form>
+        <div class="description" >
+          <h6 class="title font-w600">Datos de la clínica:</h6>
+      </div>
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('full_name')">
+            <span class="text-muted">
+              Nombre o Razón Social:
+            </span>
+            {{fields.full_name || ''}}
+          </button>
+          <div *ngIf="visibleFields['full_name']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-user"></i>
+              </div>
+            </span>
+            <input class="form-control" id="full_name" type="text" [(ngModel)]="fields.full_name"
+              (input)="onInputChange('full_name', fields.full_name)" placeholder="Nombre o Razón Social" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('bio')">
+            <span class="text-muted">
+              Biografía:
+            </span>
+            {{fields.bio || ''}}
+          </button>
+          <div *ngIf="visibleFields['bio']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-file-text"></i>
+              </div>
+            </span>
+            <textarea class="form-control" id="bio" [(ngModel)]="fields.bio" (input)="onInputChange('bio', fields.bio)"
+              placeholder="Escriba una breve descripción"></textarea>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" [disabled]="canEditRut === false" (click)="toggleField('rut')">
+            <span class="text-muted">
+              RUT:
+            </span>
+            {{fields.rut || ''}}
+          </button>
+          <div *ngIf="visibleFields['rut'] && canEditRut" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="fi fi-rr-credit-card font-20"></i>
+              </div>
+            </span>
+            <input class="form-control" id="rut" type="text" [(ngModel)]="fields['rut']" placeholder="RUT" />
+            <button class="btn btn-primary" (click)="confirmSaveRut()">Guardar RUT</button>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('address')">
+            <span class="text-muted">
+              Dirección:
+
+            </span>
+            {{fields.address || ''}}
+          </button>
+          <div *ngIf="visibleFields['address']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-map-pin"></i>
+              </div>
+            </span>
+            <input class="form-control" id="address" type="text" [(ngModel)]="fields.address"
+              (input)="onInputChange('address', fields.address)" placeholder="Dirección" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('phone')">
+            <span class="text-muted">
+              Teléfono:
+            </span>
+            {{fields.phone || ''}}
+          </button>
+          <div *ngIf="visibleFields['phone']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-map-pin"></i>
+              </div>
+            </span>
+            <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
+              (input)="onInputChange('phone', fields.phone)" placeholder="Teléfono" />
+          </div>
+
+        </div>
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('region')">
+            <span class="text-muted">
+              Region:
+            </span>
+            {{fields.region || ''}}
+          </button>
+          <label *ngIf="visibleFields['region']" for="region" class="form-label">Región:</label>
+          <select *ngIf="visibleFields['region']" class="form-select" id="region" [(ngModel)]="selectedRegion"
+            (change)="onRegionChange()">
+            <option value="" disabled selected>Seleccione una región</option>
+            <option *ngFor="let region of regions" [value]="region.name">{{ region.name }}</option>
+          </select>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('comune')">
+            <span class="text-muted">
+              Comuna:
+            </span>
+            {{fields.comuna || ''}}
+          </button>
+          <label *ngIf="visibleFields['comune']" for="comune" class="form-label">Comuna:</label>
+          <select *ngIf="visibleFields['comune']" class="form-select" id="comune" [(ngModel)]="selectedComune"
+            (change)="onComuneChange()">
+            <option value="" disabled selected>Seleccione una comuna</option>
+            <option *ngFor="let comune of filteredComunes" [value]="comune">{{ comune }}</option>
+          </select>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('days')">
+            <span class="text-muted">
+              Días:
+            </span>
+            {{displaySelectedDays()}}
+          </button>
+          <div *ngIf="visibleFields['days']" class="input-group input-group-icon">
+            <div class="dz-select-btn">
+              <input type="checkbox" class="btn-check" id="day-L" [(ngModel)]="selectedDays['L']" (change)="updateDays()">
+              <label class="btn" for="day-L">L</label>
+              
+              <input type="checkbox" class="btn-check" id="day-M" [(ngModel)]="selectedDays['M']" (change)="updateDays()">
+              <label class="btn" for="day-M">M</label>
+              
+              <input type="checkbox" class="btn-check" id="day-X" [(ngModel)]="selectedDays['X']" (change)="updateDays()">
+              <label class="btn" for="day-X">M</label>
+              
+              <input type="checkbox" class="btn-check" id="day-J" [(ngModel)]="selectedDays['J']" (change)="updateDays()">
+              <label class="btn" for="day-J">J</label>
+              
+              <input type="checkbox" class="btn-check" id="day-V" [(ngModel)]="selectedDays['V']" (change)="updateDays()">
+              <label class="btn" for="day-V">V</label>
+              
+              <input type="checkbox" class="btn-check" id="day-S" [(ngModel)]="selectedDays['S']" (change)="updateDays()">
+              <label class="btn" for="day-S">S</label>
+              
+              <input type="checkbox" class="btn-check" id="day-D" [(ngModel)]="selectedDays['D']" (change)="updateDays()">
+              <label class="btn" for="day-D">D</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('hours')">
+            <span class="text-muted">
+              Horario de atención:
+            </span>
+            {{fields.hours || ''}}
+          </button>
+          <div *ngIf="visibleFields['hours']" class="input-group input-group-icon">
+            <div class="d-flex align-items-center gap-2">
+              <p-calendar [(ngModel)]="startTime" 
+                         [timeOnly]="true" 
+                         hourFormat="12" 
+                         placeholder="Hora de apertura"
+                         (onSelect)="updateHours()">
+              </p-calendar>
+              <span>a</span>
+              <p-calendar [(ngModel)]="endTime" 
+                         [timeOnly]="true" 
+                         hourFormat="12" 
+                         placeholder="Hora de cierre"
+                         (onSelect)="updateHours()">
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+        <div class="description" >
+          <h6 class="title font-w600">Datos del administrador:</h6>
+      </div>
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('manager_name')">
+            <span class="text-muted">
+              Nombre del administrador:
+            </span>
+            {{fields.manager_name || ''}}
+          </button>
+          <div *ngIf="visibleFields['manager_name']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-user"></i>
+              </div>
+            </span>
+            <input class="form-control" id="manager_name" type="text" [(ngModel)]="fields.manager_name"
+              (input)="onInputChange('manager_name', fields.manager_name)" placeholder="Nombre del administrador" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('manager_phone')">
+            <span class="text-muted">
+              Teléfono del administrador:
+            </span>
+            {{fields.manager_phone || ''}}
+          </button>
+          <div *ngIf="visibleFields['manager_phone']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-phone"></i>
+              </div>
+            </span>
+            <input class="form-control" id="manager_phone" type="text" [(ngModel)]="fields.manager_phone"
+              (input)="onInputChange('manager_phone', fields.manager_phone)" placeholder="Teléfono del administrador" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('manager_email')">
+            <span class="text-muted">
+              Email del administrador:
+            </span>
+            {{fields.manager_email || ''}}
+          </button>
+          <div *ngIf="visibleFields['manager_email']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-mail"></i>
+              </div>
+            </span>
+            <input class="form-control" id="manager_email" type="text" [(ngModel)]="fields.manager_email"
+              (input)="onInputChange('manager_email', fields.manager_email)" placeholder="Email del administrador" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('manager_position')">
+            <span class="text-muted">
+              Cargo del administrador:
+            </span>
+            {{fields.manager_position || ''}}
+          </button>
+          <div *ngIf="visibleFields['manager_position']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-briefcase"></i>
+              </div>
+            </span>
+            <input class="form-control" id="manager_position" type="text" [(ngModel)]="fields.manager_position"
+              (input)="onInputChange('manager_position', fields.manager_position)"
+              placeholder="Cargo del administrador" />
+          </div>
+        </div>
+
+        <div class="description">
+          <h6 class="title font-w600">Datos bancarios:</h6>
+        </div>
+        
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('bank_name')">
+            <span class="text-muted">
+              Entidad bancaria:
+            </span>
+            {{fields.bank_name || ''}}
+          </button>
+          <div *ngIf="visibleFields['bank_name']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-briefcase"></i>
+              </div>
+            </span>
+            <input class="form-control" id="bank_name" type="text" [(ngModel)]="fields.bank_name"
+              (input)="onInputChange('bank_name', fields.bank_name)" placeholder="Nombre del banco" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('account_number')">
+            <span class="text-muted">
+              Número de cuenta:
+            </span>
+            {{fields.account_number || ''}}
+          </button>
+          <div *ngIf="visibleFields['account_number']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-hash"></i>
+              </div>
+            </span>
+            <input class="form-control" id="account_number" type="text" [(ngModel)]="fields.account_number"
+              (input)="onInputChange('account_number', fields.account_number)" placeholder="Número de cuenta" />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <button class="btn btn-link" (click)="toggleField('account_holder')">
+            <span class="text-muted">
+              Titular:
+            </span>
+            {{fields.account_holder || ''}}
+          </button>
+          <div *ngIf="visibleFields['account_holder']" class="input-group input-group-icon">
+            <span class="input-group-text">
+              <div class="input-icon">
+                <i class="icon feather icon-user"></i>
+              </div>
+            </span>
+            <input class="form-control" id="account_holder" type="text" [(ngModel)]="fields.account_holder"
+              (input)="onInputChange('account_holder', fields.account_holder)" placeholder="Nombre del titular" />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

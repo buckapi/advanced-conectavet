@@ -1,0 +1,25 @@
+.categories-list {
+    height: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    gap: 15px;
+  }
+  .responsive-image {
+    width: 100%;          /* Ajusta el ancho al 100% del contenedor */
+    height: 200px;        /* Altura fija o adaptable según tu diseño */
+    object-fit: cover;    /* La imagen se recorta para llenar el espacio sin deformarse */
+    object-position: center; /* Centra la imagen dentro del contenedor */
+}
+@media (min-width: 768px) {
+    app-menubar {
+      display: none !important; /* Oculta el menubar en pantallas grandes */
+    }
+  }
+  

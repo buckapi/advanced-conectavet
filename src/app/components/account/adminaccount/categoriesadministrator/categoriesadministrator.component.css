@@ -1,0 +1,25 @@
+/* Agrega este CSS en tu archivo de estilos */
+.delete-button {
+    border-radius: 50%;
+    display: none; /* Ocultar por defecto */
+}
+
+.col-6.col-lg-4:hover .delete-button {
+    border-radius: 50px;
+    display: inline-block; /* Mostrar al pasar el mouse */
+}
+/* Añadir este CSS en el archivo de estilos correspondiente */
+.card.delete-hover {
+    display: none; /* Ocultar por defecto */
+}
+.card {
+    transition: box-shadow 0.3s ease; /* Transición suave para el efecto de elevación */
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Efecto de elevación */
+}
+
+.form-check:hover .delete-hover {
+    display: inline; /* Mostrar al pasar el mouse sobre el contenedor */
+}

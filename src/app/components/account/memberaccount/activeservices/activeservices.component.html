@@ -1,0 +1,42 @@
+<div class="title-bar" style="justify-content: flex-start !important;">
+    <button *ngIf="global.memberOption!='' && isMobile()" (click)="global.resetMemberOption()" class="btn btn-light"
+    style="margin-right: 10px;">
+    <i class="icon feather icon-chevron-left"></i> <!-- Botón de retroceso -->
+</button>
+    <h4 class="title mb-0 font-w500 capitalize-first" [hidden]="global.myServices.length<=1">Servicios activos</h4>
+    <h4 class="title mb-0 font-w500 capitalize-first" [hidden]="global.myServices.length>1">Sin servicios activos</h4>
+</div>
+<div class="content-box">
+    <div class="alert alert-info alert-dismissible fade show"[hidden]="global.myServices.length>1"> 
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <span class="personalizedAlerts">
+
+          <strong></strong> Presione sobre uno de los servicios disponibles, proporcione el precio que su clinica cobra y activelo en su perfil.
+      </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close"><span><i class="icon feather icon-x"></i></span>
+        </button>
+    </div>
+    <ul class="row g-2">
+        <ng-container *ngFor="let service of services">
+            <li class="col-6" style="cursor: pointer; padding: 10px;"
+                (click)="isServiceRegistered(service.id) ? updatePrice(service) : showPriceAlert(service)">
+                <a 
+                [ngClass]="{'selected': isServiceRegistered(service.id), 'specialist-card': !isServiceRegistered(service.id)}"
+                [ngStyle]="{ 'color': isServiceRegistered(service.id) ? '#3ba5a8' : 'inherit' }"
+                >
+                    <div class="card-content">
+                        <!-- <span *ngIf="isServiceRegistered(service.id)" class="form-check form-switch">
+                            <input class="form-check-input form-check-success" type="checkbox" checked>
+                        </span> -->
+                        <span class="service-name" 
+                        [ngClass]="{'text-success': isServiceRegistered(service.id), 'text-dark': !isServiceRegistered(service.id)}"
+                        >{{ service.name }}</span>
+                        <span *ngIf="isServiceRegistered(service.id)" class="service-price">
+                            CLP.: {{ getServicePrice(service.id) }}
+                        </span>
+                    </div>
+                </a>
+            </li>
+        </ng-container>
+    </ul>
+</div>

@@ -1,0 +1,130 @@
+<div class="profile-area row" style="padding-top: 10%;">
+    <div class="col-md-4">
+        <div class="main-profile" [hidden]="global.adminOptionn!='' && isMobile()">
+            <div class="media">
+                <div class="">
+                    <img src="{{ currentUser.images[0] ? currentUser.images[0] : 'https://www.svgrepo.com/show/217141/admin.svg' }}"
+                        alt="profile-image"
+                        style="min-width: 100px !important; min-height: 100px !important; max-width: 100px !important; max-height: 100px !important; border-radius: 50%;">
+                </div>
+                <h3 class="name mb-0" style="padding-left: 20px;" *ngIf="auth.getCurrentUser().full_name"><span
+                        class="greetings">Area de</span> Administrador.</h3>
+            </div>
+        </div>
+        <div [hidden]="global.adminOptionn!='' && isMobile()">
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500 capitalize-first">Ajustes de aplicación</h4>
+            </div>
+            <div class="dz-list style-1 m-b20">
+                <ul>
+                    <li>
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('categories')"
+                            class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-add"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title">Categorías</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('services')"
+                            class="item-content item-link" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLang"
+                            aria-controls="offcanvasLang">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-box-open text-dark"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title select-lang">Servicios</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('notifications')"
+                            class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-bell"></i>
+                            </div>
+                            <div class="dz-inner me-2">
+                                <span class="title">Notificaciones</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500">Otras opciones</h4>
+            </div>
+            <div class="dz-list style-1 m-b20">
+                <ul>
+                    <li>
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('requests')"
+                            class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="icon feather icon-file-text"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title">Solicitudes WEB</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500 capitalize-first">Ajustes de cuenta</h4>
+            </div>
+            <div class="dz-list style-1">
+                <ul>
+                    <li>
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('security')"
+                            class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-lock"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title">Seguridad</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500"></h4>
+            </div>
+            <div class="dz-list style-1">
+                <ul>
+                    <li>
+                        <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="cursor: pointer;"
+                            (click)="global.setAdminOption('security')" class="item-content item-link">
+                            <span class="dz-icon">
+                                <i class="feather icon-log-out"></i>
+                            </span>
+                            <div class="dz-inner">
+                                <span class="title">Salir</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <app-requests [hidden]="global.adminOptionn!='requests'"></app-requests>
+        <app-servicesadministrator [hidden]="global.adminOptionn!='services'"></app-servicesadministrator>
+        <app-categoriesadministrator [hidden]="global.adminOptionn!='categories'"></app-categoriesadministrator>
+    </div>
+</div>
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom9" aria-labelledby="offcanvasBottomLabel9">
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="offcanvasBottomLabel3">Agregar
+            <span *ngIf="global.formOption=='category'"> Categoría</span>
+            <span *ngIf="global.formOption=='service'"> Servicio</span>
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="icon feather icon-x"></i>
+        </button>
+    </div>
+    <app-addservice *ngIf="global.formOption=='service'"></app-addservice>
+    <app-addcategory *ngIf="global.formOption=='category'"></app-addcategory>
+</div>

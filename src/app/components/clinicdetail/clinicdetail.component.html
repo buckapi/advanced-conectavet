@@ -1,0 +1,250 @@
+<main class="page-content space-top p-b80">
+  <div class="container p-0 row">
+      <div class="dz-product-preview col-12 col-lg-4"
+      [ngClass]="{'col-12': isMobile, 'col-4': !isMobile, 'padding-top-20': !isMobile}">
+
+          <div class="swiper product-detail-swiper" style="border-radius: 30px;">
+              <div class="swiper-wrapper" *ngIf="global.clinicSelected">
+                  <div class="swiper-slide" *ngFor="let image of global.clinicSelected?.images">
+                      <div class="dz-media">
+                          <img [src]="image" alt="Imagen de la clínica">
+                          <a class="item-bookmark style-2">
+                              <i class="feather icon-heart-on"></i>
+                          </a>
+                      </div>
+                  </div>
+              </div>
+              <div class="swiper-btn">
+                  <div class="swiper-pagination style-3"></div>
+              </div>
+          </div>
+          <div class="item-wrapper" style="padding-top: 20px !important;">
+            
+            <div class="detail-content" [hidden]="isMobile">
+              <ul class="dz-top-meta mb-2 d-flex align-items-center justify-content-between">
+                  <span class="brand-tag me-3"><h4 class="title uppercase mb-0">{{global.clinicSelected.full_name}}</h4></span>
+                  <li class="dz-review">
+                    <i class="feather icon-star-on" style="color: gold; margin-right: 5px;" *ngFor="let star of getStarsArray(global.clinicSelected.rating)"></i>
+                    <span class="r-rating">{{global.clinicSelected.rating}}</span> <span class="r-status">({{global.clinicSelected.ratingQuantity}} opiniones)</span></li>
+              </ul>
+            </div>
+              <div class="dz-meta-items" [hidden]="isMobile">
+                  <div class="dz-price m-r60 m-b10">
+                      <h6 class="title font-w600">Biografía:</h6>
+                      <span class="text-light">{{global.clinicSelected.bio}}</span>
+                  </div>
+              </div>
+              <div class="dz-meta-items" [hidden]="isMobile">
+                <div class="dz-price m-r60 m-b10">
+                    <h6 class="title font-w600">Dirección:</h6>
+                    <span class="text-light">{{global.clinicSelected.address}}</span>
+                </div>
+            </div>
+            
+          </div>
+         
+          
+      </div>
+      <div class=" dz-product-detail col-12 col-lg-8 m-b35"
+      [ngClass]="{'col-12': isMobile, 'row col-8': !isMobile}">
+      <div class="col-12 col-md-8" >
+          <div class="detail-content" [hidden]="!isMobile">
+              <ul class="dz-top-meta mb-2">
+                  <span class="brand-tag">
+                      <h4 class="title uppercase">{{global.clinicSelected.full_name}}</h4>
+                  </span>
+                  <li class="dz-review">
+                    <i class="feather icon-star-on" *ngFor="let star of getStarsArray(global.clinicSelected.rating)"></i>
+                    <span class="r-rating " >{{global.clinicSelected.rating}}</span> <span
+                          class="r-status">({{global.clinicSelected.ratingQuantity}})</span></li>
+              </ul>
+          </div>
+          <div class="item-wrapper">
+            <div class="dz-meta-items" [hidden]="!isMobile">
+              <div class="dz-price m-r60 m-b10">
+                  <h6 class="title font-w600">Dirección:</h6>
+                  <span class="text-light">{{global.clinicSelected.address}}</span>
+              </div>
+          </div>
+              <div class="description" [hidden]="!isMobile">
+                  <h6 class="title font-w600">Biografía:</h6>
+                  <p class="text-light">{{global.clinicSelected.bio}}</p>
+              </div>
+           
+              <div *ngIf="isMobile">
+                 
+                
+                  <div id="profesionalesSection" class="product-size m-b10" style="padding-top: 20px;">
+                    <h6 class="title font-w600">Profesionales</h6>
+                    <span *ngIf="global.professionalsCount<1" class="text-light ">Sin profesionales registra2.</span>
+
+                    <div class="dz-select-btn2 row">
+                      <div class="row">
+                        <!-- <div *ngFor="let profesional of realtimeProfessionals.professionals$ | async" class="col-6 col-md-3">
+                          <div class="media" *ngIf="profesional.images && profesional.IdMember === global.clinicSelected.userId">
+                            <img class="avatar-profesional" [src]="profesional.images[0]" alt="">
+                          </div>
+                        </div> -->
+                        <ng-container *ngFor="let profesional of realtimeProfessionals.professionals$ | async">
+                          <div class="media col-6 col-md-4" *ngIf="profesional.images && profesional.IdMember === global.clinicSelected.userId">
+                            <img class="avatar-profesional" [src]="profesional.images[0]" alt="">
+                              <h6 class="text-light">{{profesional.name}}</h6>
+                          </div>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h6 class="title font-w600">Servicios:</h6>
+                    <p *ngIf="selectedDateText &&!getCartFromLocalStorage()" class="text-danger">* Por favor, elija al menos un servicio para continuar.</p>
+
+                    <span *ngIf="!global.clinicSelected?.services?.length" class="text-light">Sin servicios registrados.</span>
+                    <div class="dz-select-btn2 row">
+                      <div class="row">
+                        <ng-container *ngFor="let service of global.clinicSelected?.services">
+                          <div class="col-6 col-md-6 col-xs-6" [hidden]="service.name==''" style="cursor: pointer; padding: 10px;" (click)="selectService(service)">
+                            <span class="service-card"  [ngClass]="{'service-card-hover': getQuantityInCart(service.id) > 0}">
+                              <span class="service-name">{{service?.name}}</span>
+                              <span class="service-price">CLP {{service?.price}}</span>
+                        
+                              <!-- Mostrar dz-stepper si el servicio está seleccionado o su cantidad en el carrito es mayor a 0 -->
+                              <div class="dz-stepper secondary" *ngIf="shouldShowStepper(service)">
+                                <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                  <span class="input-group-btn input-group-prepend">
+                                    <button class="btn btn-primary btn-xs bootstrap-touchspin-down" 
+                                            type="button" 
+                                            (click)="removeFromCart(service)">-</button>
+                                  </span>
+                                  
+                                  <input class="stepper form-control service-price" 
+                                         type="text" 
+                                         [value]="getQuantityInCart(service.id)" 
+                                         name="demo3" readonly>
+                                  <span class="input-group-btn input-group-append">
+                                    <button class="btn btn-primary bootstrap-touchspin-up" type="button" (click)="addToCart(service)">+</button>
+                                  </span>
+                                </div>
+                              </div>                              
+                            </span>
+                          </div>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div *ngIf="!isMobile">
+                  <div id="profesionalesSection" class="product-size m-b10" >
+                    <h6 class="title font-w600">Profesionales</h6>
+                    <span *ngIf="global.professionalsCount<1" class="text-light">Sin profesionales registrados.</span>
+
+                    <div class="dz-select-btn2 row " >
+                      <div class="row">
+                          <ng-container *ngFor="let profesional of realtimeProfessionals.professionals$ | async">
+                              <div class="media col-6 col-md-4" *ngIf="profesional.images && profesional.IdMember === global.clinicSelected.userId">
+                                <img class="avatar-profesional" [src]="profesional.images[0]" alt="">
+                                  <h6 class="text-light">{{profesional.name}}</h6>
+                              </div>
+                            </ng-container>
+                            
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h6 class="title font-w600">Services:</h6>
+          <p *ngIf="selectedDateText &&!getCartFromLocalStorage()" class="text-danger">* Por favor, elija al menos un servicio para continuar.</p>
+
+                    <span *ngIf="!global.clinicSelected?.services?.length" class="text-light">Sin servicios registrados.</span>
+                    <div class="dz-select-btn2 row">
+                      <div class="row">
+                        <ng-container *ngFor="let service of global.clinicSelected?.services">
+                          <div class="col-6 col-md-6 col-xs-6" [hidden]="service.name==''" style="cursor: pointer; padding: 10px;" (click)="selectService(service)">
+                            <span class="service-card" 
+                                  [ngClass]="{'service-card-hover': getQuantityInCart(service.id) > 0 && isSameClinic(service)}">
+                              
+                              <span class="service-name">{{service?.name}}</span>
+                              <span class="service-price">CLP {{service?.price}}</span>
+                        
+                              <!-- Mostrar dz-stepper si el servicio está seleccionado o su cantidad en el carrito es mayor a 0 y pertenece a la misma clínica -->
+                              <div class="dz-stepper secondary" *ngIf="shouldShowStepper(service) && isSameClinic(service)">
+                                <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                  <span class="input-group-btn input-group-prepend">
+                                    <button class="btn btn-primary btn-xs bootstrap-touchspin-down" 
+                                            type="button" 
+                                            (click)="removeFromCart(service)">-</button>
+                                  </span>
+                                  
+                                  <input class="stepper form-control service-price" 
+                                         type="text" 
+                                         [value]="getQuantityInCart(service.id)" 
+                                         name="demo3" readonly>
+                                  <span class="input-group-btn input-group-append">
+                                    <button class="btn btn-primary bootstrap-touchspin-up" type="button" (click)="addToCart(service)">+</button>
+                                  </span>
+                                </div>
+                              </div>                              
+                            </span>
+                          </div>
+                        </ng-container>
+                        
+                        
+                        
+                      </div>
+                    </div>
+                  </div>
+                
+                </div>
+               
+              
+              
+              <div class="color-filter">
+              </div>
+          </div>
+      </div>
+      <div class="col-12 col-md-4" >
+          <div id="diasSection" class="product-size">
+              <h6 class="title font-w600">Días que labora:</h6>
+              <div class="dz-select-btn">
+                  <ng-container *ngFor="let day of workDays; let i = index">
+                      <input type="radio" 
+                             class="btn-check" 
+                             [name]="'workday'" 
+                             [id]="'btnradio' + i"
+                             [disabled]="!isDayInClinicDays(day)"
+                             [checked]="isDayInClinicDays(day)">
+                      <label class="btn" 
+                             [for]="'btnradio' + i"
+                             [ngClass]="{'btn-active': isDayInClinicDays(day)}">
+                          {{day}}
+                      </label>
+                  </ng-container>
+              </div>
+          </div>
+          <div class="dz-meta-items" style="padding-top: 20px !important;">
+              <div class="dz-price m-r60 m-b10">
+                  <h6 class="title font-w600">Horario de atención:</h6>
+                  <span class="text-light">{{global.clinicSelected.hours}}</span>
+              </div>
+              <mat-calendar 
+              #calendar
+              [dateFilter]="isDaySelectable" 
+              [dateClass]="dateClass"
+              
+              (selectedChange)="onDateSelected($event)"
+              >
+              </mat-calendar>
+              <h6 *ngIf="selectedDateText" class="title font-w600 p-t20">Fecha seleccionada para asistir: </h6>
+              <!-- <p>Selected date: {{selectedDates | date: 'dd/MM/yyyy'}}</p> -->
+              <p *ngIf="selectedDateText" class="text-light"> {{selectedDateText}}</p>
+          </div>
+          
+          <button *ngIf="selectedDateText" class="btn btn-primary" style="cursor: pointer;" [disabled]="!getCartFromLocalStorage()" (click)="goToCalendar()">Procesar solicitud</button>
+          <p *ngIf="isMobile && selectedDateText &&!getCartFromLocalStorage()" class="text-danger">* Por favor, elija al menos un servicio para continuar.</p>
+
+        </div>
+       
+      </div>
+
+
+  </div>
+</main>

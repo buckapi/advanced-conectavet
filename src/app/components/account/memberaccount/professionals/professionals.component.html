@@ -1,0 +1,82 @@
+<div class="title-bar">
+    <button *ngIf="global.memberOption!='' && isMobile" (click)="global.resetMemberOption()" class="btn btn-light"
+        style="margin-right: 10px;">
+        <i class="icon feather icon-chevron-left"></i> <!-- Botón de retroceso -->
+    </button>
+    <h4 [hidden]="hasProfessionals" class="title mb-0 font-w500 capitalize-first"
+        [ngClass]="{'padding-right-mobile': isMobile}">
+        Sin Profesionales Registrados
+    </h4>
+    <h4 [hidden]="!hasProfessionals" class="title mb-0 font-w500 capitalize-first"
+        [ngClass]="{'padding-right-mobile': isMobile}">
+        Profesionales registrados
+    </h4>
+
+    <!-- <h4 class="title mb-0 font-w500 capitalize-first" style="padding-right: 32px;">Profesionales </h4> -->
+    <i (click)="global.setFormOption('category')" class="fi fi-rr-add"
+        style="font-size: 40px !important; border-radius: 50%; cursor: pointer; color: #3ba5a8;  transition: all 0.3s;"
+        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom9" aria-controls="offcanvasBottom9"
+        onmouseover="this.style.color='black'; this.style.transform='scale(1.2)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'; "
+        onmouseout="this.style.color='#3ba5a8'; this.style.transform='scale(1)'; this.style.boxShadow='none';"></i>
+</div>
+<div class="content-box">
+    <div class="alert alert-info alert-dismissible fade show" [hidden]="hasProfessionals">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round" class="me-2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span class="personalizedAlerts">
+
+            <strong></strong> A continuación ingrese nombre, sexo y servicio o especialidad del personal que labora en su
+            clínica veterinaria.
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+            <span><i class="icon feather icon-x"></i></span>
+        </button>
+    </div>
+    <span class="row g-2">
+        <ng-container *ngFor="let professional of (realtimeProfessionals.professionals$ | async)">
+            <span *ngIf="professional.IdMember === auth.getUserId()" class="col-6 col-lg-3">
+                <div class="text-center professional-card">
+                    <div class="main-profile" *ngIf="professional.images && professional.images.length > 0">
+                        <div class="media">
+                            <div class="position-relative">
+                                <div data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                                    aria-controls="offcanvasRight">
+                                    <img *ngIf="professional.images && professional.images.length > 0"
+                                        [src]="professional.images[0]" class="avt">
+                                </div>
+                                <button class="btn btn-danger trash-btn" (click)="deleteProfessional(professional.id)"
+                                    *ngIf="professional.IdMember === auth.getUserId()">
+                                    <i class="icon feather icon-trash-2 text-danger"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <span *ngIf="professional.gender=='femenino'">
+                            <h4>
+                                Dra.
+                            </h4>
+                        </span>
+                        <span *ngIf="professional.gender=='masculino'">
+                            <h4>
+                                Dr.
+                            </h4>
+                        </span>
+                        {{ professional.name }}
+                    </div>
+                    <div id="detalles" class="details">
+                        <dl class="list-icons"*ngIf="professional.services && professional.services.length > 0">
+                            <dt *ngFor="let service of professional.services">
+                                <a>{{ service.name }}</a>
+                            </dt>
+                        </dl>
+                    </div>
+                </div>
+            </span>
+        </ng-container>
+    </span>
+</div>

@@ -1,0 +1,116 @@
+
+
+<div class="col-12">
+    <div class="">
+        <!-- <div class="card-header d-block" >
+            <h5 class="card-title">
+                <div class="swiper dz-category-swiper3 mb-3">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" *ngFor="let item of services" >
+                            <a class="category-tag tag-lg" style="cursor: pointer;" (click)="showServiceAlert(item.name)"
+                                [ngClass]="{'active': item.name === selectedService}">
+                                {{ item.name }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </h5>
+        </div> -->
+        <div class="col-12">
+            <div class="card">
+                <!-- <div class="card-header">
+                    <h5 class="card-title">Custom Tab 1</h5>
+                </div> -->
+                <div class="card-body">
+                    <!-- Nav tabs -->
+                    <div class="custom-tab-1">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active navTitle" data-bs-toggle="tab" href="ui-tab.html#home1"
+                                    aria-selected="false" role="tab">
+                                    <svg style="margin-right: 5px !important;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.025 8.37748C9.47804 7.85949 8.75336 7.5708 8.00002 7.5708C7.24669 7.5708 6.52201 7.85949 5.97502 8.37748L3.53252 10.6875C2.13252 11.96 3.14252 14.3925 5.03252 14.2975C6.05752 14.27 6.89002 13.745 7.99752 13.765C9.14502 13.745 9.99753 14.2075 11.0275 14.2975C12.885 14.34 13.845 11.935 12.465 10.6875L10.025 8.37748Z" fill="black"></path>
+                                        <path d="M14.23 4.98266C13.275 4.79516 12.545 5.85766 12.355 6.77266C11.785 9.60516 14.53 10.1452 15.1725 7.39766C15.435 6.22016 15.02 5.15766 14.23 4.98266Z" fill="black"></path>
+                                        <path d="M10.1826 6.51259C11.1326 6.51259 11.9051 5.43259 11.9051 4.10759C11.8101 0.917588 8.55515 0.917588 8.46265 4.10759C8.46265 5.43259 9.23515 6.51259 10.1826 6.51259Z" fill="black"></path>
+                                        <path d="M3.64504 6.77266C3.45754 5.85766 2.72504 4.79516 1.77004 4.98266C4.00543e-05 5.43016 0.75004 9.20266 2.48004 9.21266C3.46004 9.18016 3.91254 8.04266 3.64504 6.77266Z" fill="black"></path>
+                                        <path d="M5.81747 6.51259C6.76497 6.51259 7.53747 5.43259 7.53747 4.10759C7.44497 0.917588 4.18997 0.917588 4.09497 4.10759C4.09497 5.43259 4.86747 6.51259 5.81747 6.51259Z" fill="black"></path>
+                                    </svg>
+                                    Datos </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="ui-tab.html#profile1"
+                                    aria-selected="true" role="tab" tabindex="-1"><i
+                                        class="icon feather icon-heart me-2" > </i> Ficha médica</a>
+                            </li>
+
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="home1" role="tabpanel">
+                                <div  style="display: flex; align-items: center; margin-top: 20px;">
+                                    <img 
+                                    
+                                    *ngIf="global.petSelected.images && global.petSelected.images.length > 0"
+                                    src="{{global.petSelected.images[0]}}" alt="Imagen de perfil" style="width: 150px; height: 150px; margin-right: 20px;  border-radius: 25px !important;">
+                                    <div class="pt-4">
+                                        <h6>{{global.petSelected.name}}</h6>
+                                        <h6>Fecha de Nacimiento: {{ global.petSelected.birthDate | date: 'dd \'de\' MMM \'de\' yyyy' }} </h6>
+                                        <h6>Edad ({{ age }})</h6>
+                                        <h6>Raza: {{global.petSelected.breed}}</h6>
+                                        <h6>Especie: {{global.petSelected.species}}</h6>
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade  " id="profile1" role="tabpanel">
+                                <div class="pt-4">
+                                    <h6>Histórico de tratamientos </h6>
+                                    <!-- <div class="list-group"> -->
+                                        <div>
+                                        <a *ngFor="let item of maxHistorico.historico"
+                                        class="list-group-item list-group-item-action hover-effect"
+                                        aria-current="true">
+                                         <div class="d-flex w-100 justify-content-between">
+                                             <h6 class="mb-1">
+                                                 <span class="badge badge-primary text-dark" [ngStyle]="{'background-color': item.color}">{{item.category.name}}</span>
+                                                 {{item.motivo}}
+                                             </h6>
+                                             <small>{{item.fecha}}</small>
+                                         </div>
+                                         <p class="mb-1">{{item.observaciones}}.</p>
+                                     </a>
+                                     
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="contact1" role="tabpanel">
+                                <div class="pt-4">
+                                    <h4>This is contact title</h4>
+                                    <p>Far far away, behind the word mountains, far from the countries Vokalia and
+                                        Consonantia, there live the blind texts. Separated they live in Bookmarksgrove.
+                                    </p>
+                                    <p>Far far away, behind the word mountains, far from the countries Vokalia and
+                                        Consonantia, there live the blind texts. Separated they live in Bookmarksgrove.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="message1" role="tabpanel">
+                                <div class="pt-4">
+                                    <h4>This is message title</h4>
+                                    <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu
+                                        stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.
+                                    </p>
+                                    <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu
+                                        stumptown aliqua, retro synth master cleanse. Mustache cliche tempor.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</div>

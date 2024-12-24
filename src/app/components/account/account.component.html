@@ -1,0 +1,9 @@
+	<main class="page-content space-top p-b40 dz-gradient-shape card-body">
+		<div class="container" style="max-width: 1024px;">
+				<app-adminaccount *ngIf="auth.isAdmin()"></app-adminaccount>
+				<app-memberaccount *ngIf="auth.isMember()"></app-memberaccount>
+				<app-tutoraccount *ngIf="auth.isTutor()"></app-tutoraccount>
+
+			
+		</div>
+	</main>

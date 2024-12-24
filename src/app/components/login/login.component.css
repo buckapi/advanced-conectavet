@@ -1,0 +1,75 @@
+.dz-authentication-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Asegura que el contenedor tome la altura completa de la pantalla */
+}
+
+.dz-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Centra horizontalmente las columnas */
+    align-items: center; /* Centra verticalmente las columnas */
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Ajuste para dispositivos móviles */
+@media (max-width: 768px) {
+    .dz-content-wrapper {
+        flex-direction: column;
+        align-items: center; /* Centra el contenido en pantallas pequeñas */
+        justify-content: center; /* Centra horizontalmente en móviles */
+        padding: 10px;
+    }
+
+    .dz-left,
+    .dz-right {
+        width: 100%;
+        padding: 0;
+    }
+
+    .dz-left {
+        margin-bottom: 20px;
+    }
+}
+
+.form-control {
+    width: 100%; /* Hace que los campos de entrada ocupen todo el ancho disponible */
+}
+
+.title {
+    font-size: 65px;
+    color: #3ba5a8;
+    font-weight: bolder !important;
+}
+
+.sub {
+    font-size: 45px;
+    font-weight: bolder !important;
+    color: #3ba5a8;
+}
+
+/* Mostrar solo en pantallas de escritorio */
+@media (max-width: 992px) {
+    .desktop-only {
+        display: none;
+    }
+}
+/* Centrar el texto dentro del input */
+.form-control {
+    text-align: center; /* Esto centra el texto y el placeholder */
+    background-color: #3ba5a8;
+}
+
+/* Estilos para el placeholder */
+.form-control::placeholder {
+    text-align: center; /* Esto centra el texto del placeholder */
+    color: #fff; /* Cambia el color del placeholder si lo deseas */
+}
+.btn-login{
+    background-color: #cfe9e9;
+    color: #3ba5a8;
+    font-size: 20px !important;
+}

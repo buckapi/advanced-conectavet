@@ -1,0 +1,65 @@
+<div class="page-wrapper">
+
+	<!-- Preloader -->
+	<div id="preloader">
+		<div class="loader">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+	</div>
+	<!-- Preloader end-->
+
+	<!-- Header -->
+	<app-header [hidden]=" global.activeRoute=='login'||  
+	global.activeRoute=='chat'|| global.activeRoute=='messages' ||global.activeRoute=='register' || global.activeRoute=='addpet' || global.activeRoute=='clinicdetail' || global.activeRoute=='shopping'"></app-header>
+	<app-backheader 
+	[hidden]="global.activeRoute=='chat' 
+	|| global.activeRoute!='messages' 
+	&& global.activeRoute!='login' 
+	&& global.activeRoute!='register' 
+	&& global.activeRoute!='addpet' 
+	&& global.activeRoute!='clinicdetail' 
+	&& global.activeRoute!='shopping'">
+  </app-backheader>
+  
+	<!-- Header -->
+
+	<!-- Sidebar -->
+	<div class="dark-overlay" id="overlay"></div>
+	<app-sidebar ></app-sidebar>
+	<!-- Sidebar End -->
+
+	<app-home [hidden]="global.activeRoute!='home'"></app-home>
+	<app-shopping [hidden]="global.activeRoute!='shopping'"></app-shopping>
+	<app-register [hidden]="global.activeRoute!='register'"></app-register>
+	<app-clinicdetail [hidden]="global.activeRoute!='clinicdetail'"></app-clinicdetail>
+	<!-- <app-addpet [hidden]="global.activeRoute!='addpet'"></app-addpet> -->
+	<app-login [hidden]="global.activeRoute!='login'"></app-login>
+	<app-messages [hidden]="global.activeRoute!='messages'"></app-messages>
+	<app-chat [hidden]="global.activeRoute!='chat'"></app-chat>
+	<app-account [hidden]="global.activeRoute!='account'"></app-account>
+
+	<!-- Menubar -->
+	<app-menubar [hidden]="global.activeRoute=='register' || global.activeRoute=='account'|| global.activeRoute=='addpet' || global.activeRoute=='clinicdetail'" ></app-menubar  >
+		
+	<!-- Menubar -->
+	<!-- PWA Offcanvas -->
+	<!-- <div class="offcanvas offcanvas-bottom pwa-offcanvas">
+		<div class="container">
+			<div class="offcanvas-body">
+				<img class="logo dark" src="assets/images/app-logo/logo.png" alt="">
+				<img class="logo light" src="assets/images/app-logo/logo-white.png" alt="">
+  
+  
+				<h5 class="title" style="color: #fc8f00;  "> Clínicas veterinarias a un click</h5>
+				<p class="pwa-text">Instala Conectavet en tu dispositivo</p>
+				<button type="button" class="btn btn-sm btn-primary  pwa-btn me-2">Instalar</button>
+				<button type="button" class="btn btn-sm pwa-close btn-secondary">Después</button>
+			</div>
+		</div>
+	</div>
+	<div class="offcanvas-backdrop pwa-backdrop"></div> -->
+	<!-- PWA Offcanvas End -->
+
+</div>

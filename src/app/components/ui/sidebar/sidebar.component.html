@@ -1,0 +1,109 @@
+<div class="sidebar" id="sidebar">
+    <a class="author-box">
+        <div class="dz-media" [hidden]="!auth.isLogin()">
+            <img *ngIf="auth.getCurrentUser()" src="{{ auth.getCurrentUser().images[0] ? auth.getCurrentUser().images[0] : 'assets/images/default.jpeg' }}" alt="">
+            <!-- <img src="assets/images/avatar/chat/2.png" alt="author-image"> -->
+        </div>
+        <div class="dz-info">
+            <h5 class="name" *ngIf="auth.isLogin() && auth.getCurrentUser().full_name">{{auth.getCurrentUser().full_name}}</h5>
+            <img src="assets/images/app-logo/logo.png" alt="author-image" style="padding-bottom: 20px; "
+                [hidden]="auth.isLogin()">
+
+            <app-authbox></app-authbox>
+
+            <span class="mail text-primary" *ngIf="auth.isLogin() && auth.getCurrentUser().email">{{auth.getCurrentUser().email}}</span>
+        </div>
+    </a>
+    <ul class="nav navbar-nav" [hidden]="!auth.isLogin() ">
+        <li (click)="goRoute('home')" [hidden]=" auth.isMember()">
+            <a class="nav-link" style="cursor: pointer;" (click)="global.setRoute('home')">
+                <span class="dz-icon">
+                    <i class="fi fi-rr-home"></i>
+                </span>
+                <span>Clinicas</span>
+            </a>
+        </li>
+
+        <li *ngIf="!auth.isAdmin()" [hidden]=" auth.isMember()">
+            <a class="nav-link" style="cursor: pointer;" (click)="goRoute('favorites')">
+                <span class="dz-icon">
+                    <i class="fi fi-rr-heart"></i>
+                </span>
+                <span>Lista de favoritos</span>
+            </a>
+        </li>
+
+        <li  *ngIf="auth.isLogin() && !auth.isAdmin() && auth.profileStatus() ">
+            <a class="nav-link" style="cursor: pointer;" (click)="goRoute('messages')">
+                <span class="dz-icon">
+                    <i class="feather icon-message-circle"></i>
+                </span>
+                <span>Mensajes</span>
+            </a>
+        </li>
+<!-- 
+        <li (click)="goRoute('account') " [hidden]="auth.isAdmin()">
+            <a class="nav-link" style="cursor: pointer;" (click)="global.setRoute('account')">
+                <span class="dz-icon">
+                    <i class="fi fi-rr-user"></i>
+                </span>
+                <span>Cuenta</span>
+            </a>
+        </li> -->
+
+        <li (click)="goRoute('account')" *ngIf="auth.isLogin()">
+            <a class="nav-link" style="cursor: pointer;" >
+                <span class="dz-icon">
+                    <i [class]="auth.isAdmin() ? 'feather icon-settings' : 'fi fi-rr-user'"></i>
+                </span>
+                <span>{{ auth.isAdmin() ? 'Ajustes de aplicación' : 'Cuenta' }}</span>
+            </a>
+        </li>
+        <!-- <li>
+            <a class="nav-link" >
+                <span class="dz-icon">
+                    <i class="feather icon-log-out"></i>
+                </span>
+                <span>Cierra la sesión</span>
+            </a>
+        </li> -->
+    </ul>
+    <div class="sidebar-bottom" [hidden]="!auth.isLogin()">
+
+        <div class="app-info">
+            <!-- <span>Cierra la sesión</span> -->
+
+
+            <ul class="nav navbar-nav" [hidden]="!auth.isLogin()">
+                <!-- (click)="global.setRoute('login')"   -->
+                <li style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                    (click)="applyClasses()">
+                    <a class="nav-link">
+                        <span class="dz-icon">
+                            <i class="feather icon-log-out"></i>
+                        </span>
+                        <span>Cierra la sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div> -->
+            <div class="modal-body">Confirma que deseas cerrar sesion?.</div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal" (click)="logout()">Si,
+                    cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+</div>

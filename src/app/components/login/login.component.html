@@ -1,0 +1,66 @@
+<main class="page-content">
+    <div class="container px-0 pt-0">
+        <div class="row dz-authentication-area" style="margin: 10px !important;">
+            <div class="col-lg-4 dz-left desktop-only">
+                <div class="dz-media">
+                    <img src="assets/images/authentication/pic1.png" alt="">
+                </div>
+            </div>
+            <div class="col-lg-2 desktop-only">
+            </div>
+            <div class="col-lg-5 dz-right">
+                <div class="section-head">
+                    <h3 class="title" style="text-align: center;">Hola</h3>
+                    <p class="sub" style="text-align: center;">Inicia sesión</p>
+                </div>  
+                <div class="account-section">
+                    <!-- Añadimos el manejador ngSubmit y enlazamos el formulario -->
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <!-- <input type="email" id="email" class="form-control" placeholder="Email" 
+                                   formControlName="email" 
+                                   [ngClass]="{'is-invalid': emailControl.invalid && emailControl.touched}">
+                            <div *ngIf="emailControl.invalid && emailControl.touched" class="invalid-feedback">
+                                <small *ngIf="emailControl.errors?.['required']">El email es requerido.</small>
+                                <small *ngIf="emailControl.errors?.['email']">Formato de email inválido.</small>
+                            </div> -->
+                            <input type="email" id="email" class="form-control" placeholder="Nombre de usuario o email" 
+                            formControlName="email" 
+                            [ngClass]="{'is-invalid': emailControl.invalid && emailControl.touched}">
+                     <div *ngIf="emailControl.invalid && emailControl.touched" class="invalid-feedback">
+                         <small *ngIf="emailControl.errors?.['required']">El email o nombre de usuario es requerido.</small>
+                         <!-- <small *ngIf="emailControl.errors?.['email']">Formato de email inválido.</small> -->
+                     </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group input-group-icon mb-2">
+                                <input type="password" id="password" class="form-control dz-password" placeholder="Contraseña" 
+                                       formControlName="password" 
+                                       [ngClass]="{'is-invalid': passwordControl.invalid && passwordControl.touched}">
+                                <span class="input-group-text show-pass">
+                                    <i class="icon feather icon-eye-off eye-close"></i>
+                                    <i class="icon feather icon-eye eye-open"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="passwordControl.invalid && passwordControl.touched" class="invalid-feedback">
+                                <small *ngIf="passwordControl.errors?.['required']">La contraseña es requerida.</small>
+                                <small *ngIf="passwordControl.errors?.['minlength']">Debe tener al menos 6 caracteres.</small>
+                            </div>
+                            <a class="btn-link text-end">¿Olvidaste tu contraseña?</a>
+                        </div>
+                        <button type="submit" class="btn btn-lg w-100 btn-login" 
+                                [disabled]="loginForm.invalid">Ingresar</button>
+
+                        <div class="btn-link link-fixed">¿No tienes una cuenta? 
+                            <a (click)="global.setRoute('register')" style="cursor: pointer;" class="text-underline font-w600">Crea una cuenta</a>
+                        </div>
+                    </form>
+                    <!-- Mensaje de error general -->
+                    <div *ngIf="errorMessage" class="alert alert-danger mt-2">
+                        {{ errorMessage }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

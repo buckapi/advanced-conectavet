@@ -1,0 +1,19 @@
+.hover-effect:hover {
+    color: #3ba5a8 !important;
+    background-color: #f0f0f0; /* Cambia este color según tus necesidades */
+}
+.list-icon i:hover {
+    color: #3ba5a8 !important;
+}
+.dz-inner .title:hover {
+    color: #3ba5a8 !important;
+}
+.item-link:hover{
+    color: #3ba5a8 !important;
+
+}
+.scrollable-area {
+    max-height: 600px; /* Ajusta este valor según sea necesario */
+    overflow-y: auto;
+    display: block; /* Asegúrate de que el contenedor sea un bloque */
+}   

@@ -1,0 +1,69 @@
+<div class="title-bar" style="justify-content: start;">
+    <button 
+        *ngIf="global.tutorOption!='' && !global.showHistory && isMobile()" 
+        (click)="global.resetTutorOption()" 
+        class="btn btn-light"
+        style="margin-right: 10px;">
+        <i class="icon feather icon-chevron-left"></i> 
+    </button>
+    <button 
+        *ngIf="global.tutorOption!='' && global.showHistory " 
+        (click)="global.setTutorOptionToPets()" 
+        class="btn btn-light"
+        style="margin-right: 10px;">
+        <i class="icon feather icon-chevron-left"></i> 
+    </button>
+    <h4 *ngIf="global.showHistory" class="title mb-0 font-w500">ver todas</h4>
+    <h4 *ngIf="!global.showHistory" class="title mb-0 font-w500">Mis mascotas</h4>
+    
+    <!-- Contenedor adicional para el icono de más -->
+    <div style="margin-left: auto;"> 
+        <i 
+            (click)="validatePetsLimit()"
+            *ngIf="!global.showHistory"
+            class="fi fi-rr-add"
+            style="font-size: 40px !important; border-radius: 50%; cursor: pointer; color: #3ba5a8; transition: all 0.3s;"
+            [attr.data-bs-toggle]="canAddMorePets ? 'offcanvas' : null" 
+            [attr.data-bs-target]="canAddMorePets ? '#offcanvasBottom9' : null" 
+            [attr.aria-controls]="canAddMorePets ? 'offcanvasBottom9' : null"
+            onmouseover="this.style.color='black'; this.style.transform='scale(1.2)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'; "
+            onmouseout="this.style.color='#3ba5a8'; this.style.transform='scale(1)'; this.style.boxShadow='none';">
+        </i>
+    </div>
+</div>
+
+<div class="content-box">
+    <ul class="row g-2" >
+        <!-- <li class="col-6 col-lg-4" *ngFor="let pet of (realtimePets.pets$ | async)"  (click)="showHistoryF(pet)" style="cursor: pointer;">							
+            <a class="pet">
+                <div class="profile-image" style="text-align: center;">
+                    <img *ngIf="pet.images && pet.images.length > 0"
+                         [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;">
+                </div>
+            </a>
+            <div class="profile-info" style="text-align: center; margin-top: 8px;">{{pet.name}}</div>
+        </li> -->
+        <span [class.col-6]="auth.getUserId() === pet.idTutor" [class.col-lg-3]="auth.getUserId() === pet.idTutor" (click)="showHistoryF(pet)" *ngFor="let pet of (realtimePets.pets$ | async)" style="cursor: pointer;">
+      
+            
+            <div class="pet" *ngIf="!global.showHistory && auth.getUserId()=== pet.idTutor ">
+                <div class="image-container" style="position: relative; text-align: center;">
+                    <img *ngIf="pet.images && pet.images.length > 0"
+                         [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;">
+                    <button class="btn btn-danger trash-btn" (click)="deletePet(pet.id, $event)">
+                        <i class="icon feather icon-trash-2"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="profile-info" style="text-align: center; margin-top: 8px;" *ngIf="!global.showHistory && auth.getUserId()=== pet.idTutor ">
+                {{ pet.name }}
+            </div>
+
+        
+        </span>
+        
+        
+    </ul>
+    
+    <app-history *ngIf="global.showHistory"></app-history>
+</div>

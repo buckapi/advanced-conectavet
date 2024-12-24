@@ -1,0 +1,134 @@
+<div class="title-bar " style="justify-content: flex-start !important;">
+  <button *ngIf="global.memberOption!='' && isMobile()" (click)="global.resetTutorOption()" class="btn btn-light"
+    style="margin-right: 10px;">
+    <i class="icon feather icon-chevron-left"></i>
+  </button>
+  <h3 class="name mb-0" style="padding-left: 20px;" *ngIf="auth.getCurrentUser().full_name"><span
+      class="greetings">Hola,</span> {{fields.full_name | titlecase}}.</h3>
+</div>
+<div class="content-box">
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-info alert-dismissible fade show"
+        *ngIf="!fields.full_name || !fields.rut || !fields.address || !fields.phone">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"
+          stroke-linecap="round" stroke-linejoin="round" class="me-2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span class="personalizedAlerts">
+          Su registro ha sido <strong>exitoso</strong>, ingrese la siguiente información para completar la activación
+          de su cuenta
+          <br>
+          <strong style="color: black;  text-align: left;">Campos pendientes:</strong>
+          <ol style="color: red; text-align: left; margin-left: 0px;">
+            <li *ngIf="!fields.full_name">* Nombre completo</li>
+            <li *ngIf="!fields.rut">* RUT</li>
+            <li *ngIf="!fields.address">* Dirección</li>
+            <li *ngIf="!fields.phone">* Teléfono</li>
+          </ol>
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+          <span><i class="icon feather icon-x"></i></span>
+        </button>
+      </div>
+      <main class="page-content  p-b80 row">
+        <div class="container">
+          <div class="edit-profile">
+            <div class="profile-wrapper">
+              <div class="profile-image">
+                <div class="profile-container">
+                  <img id="imagePreview"
+                    [style.background-image]="'url(' + (auth.getCurrentUser().images[0] || 'https://static.vecteezy.com/system/resources/previews/026/966/960/non_2x/default-avatar-profile-icon-of-social-media-user-vector.jpg') + ')'"
+                    style="background-size: cover; 
+                            background-position: center; 
+                            border-radius: 50%; 
+                            width: 150px; 
+                            height: 150px; 
+                            border: 5px solid #3ba5a8; 
+                            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);">
+                  <div class="edit">
+                    <input #imageUpload3 id="imageUpload3" type="file" (change)="onImageChange($event)"
+                      class="form-control" accept="image/*" style="display: none;">
+                    <label for="imageUpload3" class="edit-icon">
+                      <i class="fi fi-rr-pencil"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <form>
+              <div class="mb-2">
+                <button class="btn btn-link" (click)="toggleField('full_name')">
+                  <span class="text-muted">
+                    Nombre completo:
+                  </span> {{fields.full_name || ''}}
+                </button>
+                <div *ngIf="visibleFields.full_name" class="input-group input-group-icon">
+                  <span class="input-group-text">
+                    <div class="input-icon">
+                      <i class="icon feather icon-user"></i>
+                    </div>
+                  </span>
+                  <input class="form-control" id="full_name" type="text" [(ngModel)]="fields.full_name"
+                    (input)="onInputChange('full_name', fields.full_name)" placeholder="Nombre completo" />
+                </div>
+              </div>
+              <div class="mb-2">
+                <button class="btn btn-link" [disabled]="canEditRut === false" (click)="toggleField('rut')">
+                  <span class="text-muted">
+                    RUT:
+                  </span>
+                  {{fields.rut || ''}}
+                </button>
+                <div *ngIf="visibleFields.rut && canEditRut" class="input-group input-group-icon">
+                  <span class="input-group-text">
+                    <div class="input-icon">
+                      <i class="fi fi-rr-credit-card font-20"></i>
+                    </div>
+                  </span>
+                  <input class="form-control" id="rut" type="text" [(ngModel)]="fields.rut" placeholder="RUT" />
+                  <button class="btn btn-primary" (click)="confirmSaveRut()">Guardar RUT</button>
+                </div>
+              </div>
+              <div class="mb-2">
+                <button class="btn btn-link" (click)="toggleField('address')">
+                  <span class="text-muted">
+                    Dirección:
+                  </span>
+                  {{fields.address || ''}}
+                </button>
+                <div *ngIf="visibleFields.address" class="input-group input-group-icon">
+                  <span class="input-group-text">
+                    <div class="input-icon">
+                      <i class="icon feather icon-map-pin"></i>
+                    </div>
+                  </span>
+                  <input class="form-control" id="address" type="text" [(ngModel)]="fields.address"
+                    (input)="onInputChange('address', fields.address)" placeholder="Dirección" />
+                </div>
+              </div>
+              <div class="mb-2">
+                <button class="btn btn-link" (click)="toggleField('phone')">
+                  <span class="text-muted">
+                    Teléfono:
+                  </span>{{fields.phone || ''}}
+                </button>
+                <div *ngIf="visibleFields.phone" class="input-group input-group-icon">
+                  <span class="input-group-text">
+                    <div class="input-icon">
+                      <i class="icon feather icon-phone"></i>
+                    </div>
+                  </span>
+                  <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
+                    (input)="onInputChange('phone', fields.phone)" placeholder="Teléfono" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="title-bar">
+
+    <button *ngIf="global.adminOptionn!='' && isMobile()" (click)="global.resetAdminOption()" class="btn btn-secondary"
+        style="margin-right: 10px;">
+        <i class="fi fi-rr-arrow-left"></i>
+    </button>
+    <h4 class="title mb-0 font-w500 capitalize-first">Servicios activos</h4>
+    <i (click)="global.setFormOption('service')" class="fi fi-rr-add"
+        style="font-size: 40px; border-radius: 50%; cursor: pointer; color: #3ba5a8;  transition: all 0.3s;"
+        data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom9" aria-controls="offcanvasBottom9"
+        onmouseover="this.style.color='black'; this.style.transform='scale(1.2)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2)'; "
+        onmouseout="this.style.color='#3ba5a8'; this.style.transform='scale(1)'; this.style.boxShadow='none';"></i>
+</div>
+<div class="content-box card-body">
+    <div class="row ">
+        <div class="row" *ngFor="let category of realtimeCategories.categories$ | async">
+            <span style="font-size: 15px ; color: gray;">{{category.name}}</span>
+
+                <div class="card col-12 col-lg-4 position-relative" style="padding: 10px;"
+                *ngFor="let service of realtimeServices.services$ | async"    
+                [hidden]="category.id!=service.idCategory">
+                    <div [hidden]="!updating || updatingServiceId !== service.id">
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-8"></span>
+                        </p>
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-3"></span>
+                        </p>
+                    </div>
+                    <div [hidden]="updating && updatingServiceId === service.id">
+                        <h5>{{ service.name }}</h5>
+                    </div>
+                    <p></p>
+                    <span class="text-danger" (click)="deleteService(service.id)"
+                        style="cursor: pointer; position: absolute; bottom: 10px; right: 10px; ">Borrar</span>
+                </div>
+            
+        </div>
+    </div>
+</div>

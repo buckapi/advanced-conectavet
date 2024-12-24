@@ -1,0 +1,38 @@
+.pet {
+    padding: 0px !important;
+    border-radius: 25px !important;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-container:hover {
+    transform: translateY(-10px); /* Eleva la card */
+    border-radius: 25px !important;
+    box-shadow: 0 12px 24px rgb(0 0 0 / 16%); /* Sombra más fuerte y oscura */
+}
+
+.avt {
+    border-radius: 25px !important;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.trash-btn {
+    position: absolute;
+    top: 2px;
+    padding-right: 15px;
+    right: 1px;
+    display: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: red;
+}
+
+.image-container:hover .trash-btn {
+    display: block;
+}

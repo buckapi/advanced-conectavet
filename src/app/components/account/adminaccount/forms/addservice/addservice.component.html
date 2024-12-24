@@ -1,0 +1,35 @@
+<div class="offcanvas-body">
+      
+    <div class="filter-inner-content">
+        
+<div class="add-service-form">
+  <h2 class="card-title">Agregar Servicio</h2>
+  <form (ngSubmit)="addService()">
+    <div class="mb-2">
+      <label for="idCategory" class="form-label">Categoría: 
+        <!-- <span *ngFor="let category of global.categories">{{category.name}}</span> -->
+      </label>
+      <select id="idCategory" class="form-control" [(ngModel)]="idCategory" name="idCategory" required>
+        <option *ngFor="let category of global.categories" [value]="category.id">{{ category.name }}</option>
+      </select>
+    </div>
+    <div class="mb-2">
+      <label for="serviceName" class="form-label">Nombre del Servicio:</label>
+      <input type="text" id="serviceName" class="form-control" [(ngModel)]="serviceName" name="serviceName" required>
+    </div>
+    
+    <div class="mb-2">
+      <label for="serviceDescription" class="form-label">Descripción del Servicio:</label>
+      <textarea id="serviceDescription" class="form-control" [(ngModel)]="serviceDescription" name="serviceDescription" required></textarea>
+    </div>
+  
+    <div class="mb-2">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" [(ngModel)]="carouselActive"> Activar Carrusel
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar Servicio</button>
+  </form>
+</div>
+</div>
+</div>

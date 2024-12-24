@@ -1,0 +1,110 @@
+.specialist-card {
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+}
+
+.specialist-card:hover {
+    transform: translateY(-2px); 
+    /* box-shadow: 0 10px 20px rgba(93, 197, 119, 0.253);  */
+    box-shadow: 0 10px 20px rgba(59, 165, 168, 0.253);
+
+}
+
+/* Reflejo utilizando pseudo-elemento */
+.specialist-card::before {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+    opacity: 0.3;
+    transform: scaleY(-1); /* Invierte el reflejo */
+    border-radius: inherit;
+    z-index: -1; /* El reflejo está por debajo */
+    pointer-events: none; /* El reflejo no interfiere con los clicks */
+}
+
+.dz-card img {
+    transition: transform 0.3s ease;
+}
+
+.dz-card:hover img {
+    transform: scale(1.05); /* Zoom en la imagen */
+}
+.image-container {
+    width: 200%;  /* Se adapta al ancho del contenedor padre */
+    height: 200px; /* Ajusta este valor según el tamaño de cuadrado que desees */
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.image-square {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra completamente el contenedor */
+    object-position: center; /* Centra la imagen dentro del contenedor */
+    display: block;
+}
+.dz-media {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    /* height: 250px; Ajusta esta altura según tu diseño */
+    width: 100%;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.image-container {
+    width: 100%;  
+    height: 100%;
+}
+
+.image-square {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.particular {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.particular .brand-tag h4 {
+    margin: 0;
+}
+
+.particular .dz-review {
+    display: flex;
+    align-items: center;
+}
+
+.particular .dz-review i {
+    margin-right: 5px;
+}
+
+.particular .dz-review .r-status {
+    margin-left: 5px;
+}
+.uppercase{
+    font-size: 22px !important;
+}.star{
+    color: #FFD700;
+}
+.hover-heart {
+    transition: all 0.3s ease;
+    
+    &:hover {
+        i {
+            color: #ff4d4d; /* o el color que prefieras */
+        }
+    }
+}

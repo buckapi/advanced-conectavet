@@ -1,0 +1,26 @@
+<div #slider id="slider" data-width="100">
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"><i class="icon feather icon-x"></i></button>
+
+    <ul>
+      <li class="actslide">
+        <div class="slide2" style="background-image: url('https://unsplash.it/g/1500/2200?image=838');"></div>
+      </li>
+      <li>
+        <div class="slide2" style="background-image: url('https://unsplash.it/g/1500/1000?image=1078');"></div>
+      </li>
+      <li>
+        <div class="slide2" style="background-image: url('https://unsplash.it/g/1500/1000?image=1077');"></div>
+      </li>
+      <li>
+        <div class="slide2" style="background-image: url('https://unsplash.it/g/1500/1200?image=345');"></div>
+      </li>
+    </ul>
+  
+    <button (click)="prevSlide()" class="control_prev">‹</button>
+    <button (click)="nextSlide()" class="control_next">›</button>
+  
+    <div class="progress">
+      <div class="bar"></div>
+    </div>
+  </div>
+  

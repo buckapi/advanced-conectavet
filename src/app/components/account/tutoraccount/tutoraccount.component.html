@@ -1,0 +1,161 @@
+<!-- <div class="profile-area row" style="padding-top: 10%;" *ngIf="auth.getCurrentUser()"> -->
+    <div
+  class="profile-area row"
+  [ngClass]="{'mobile-padding': !isMobile()}"
+  *ngIf="auth.getCurrentUser().type==='tutor'">
+  <!-- Contenido de tu div -->
+<!-- </div> -->
+    <div class="col-md-4" 
+    [hidden]="global.tutorOption=='pets' && isMobile()"
+    >
+        <div class="main-profile">
+            <div class="media">
+                <div class="profile-container">
+                    <img src="{{ auth.getCurrentUser().images[0] ? auth.getCurrentUser().images[0] : 'https://static.vecteezy.com/system/resources/previews/026/966/960/non_2x/default-avatar-profile-icon-of-social-media-user-vector.jpg' }}"
+                         alt="profile-image"
+                         class="profile-image">
+                    <!-- <div class="edit">
+                        <input type="file" class="form-control d-none" id="imageUpload" accept=".png, .jpg, .jpeg">
+                        <label for="imageUpload">
+                            <i class="fi fi-rr-upload"></i>
+                        </label>
+                    </div> -->
+                </div>
+                
+                   
+                <h3 class="name mb-0 " style="margin-top: 10px !important; margin-left: 10px !important;"><span
+                        class="greetings"></span> &#64;{{ currentUser.username }}</h3>
+            </div>
+        </div>
+        <div [hidden]="!global.showTutorMenu && isMobile()">
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500">Mi conectavet</h4>
+            </div>
+            <div class="dz-list style-1 m-b20">
+                <ul>
+                    <li>
+                        <a (click)="global.setTutorOption('pets')" class="item-content item-link"
+                            style="cursor: pointer;">
+                            <div class="list-icon">
+                                <i class="fi  fi-rr-apps-add"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title" [ngClass]="{'menuOption':  global.tutorOption === 'pets'}">Mis
+                                    mascotas</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li>                        
+                        <a class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi  fi-rr-heart text-light"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title text-light"
+                                    [ngClass]="{'menuOption':  global.tutorOption === ' '}"
+                                    >Lista de
+                                    favoriitos</span>
+                            </div>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-comment text-light"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title text-light"
+                                    [ngClass]="{'menuOption':  global.tutorOption === 'messajes'}">Mensajes</span>
+                            </div>
+                        </a>
+                    </li> -->
+
+                    <li>
+                        <a class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-list-timeline text-light"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title text-light"
+                                    [ngClass]="{'menuOption':  global.tutorOption === 'agenda'}">Historico de visitas</span>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500 capitalize-first">Ajustes de cuenta</h4>
+            </div>
+            <div class="dz-list style-1 ">
+                <ul>
+                    <li>
+                        <a class="item-content item-link" (click)="global.setTutorOption('profile')"
+                            class="item-content item-link" style="cursor: pointer;">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-user"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title" [ngClass]="{'menuOption':  global.tutorOption === 'profile'}">Mi
+                                    perfil</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-bell text-light"></i>
+                            </div>
+                            <div class="dz-inner me-2">
+                                <span class="title text-light">Notificaciones</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="title-bar">
+                <h4 class="title mb-0 font-w500"></h4>
+            </div>
+            <div class="dz-list style-1">
+                <ul>
+                    <li>
+                        <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="cursor: pointer;"
+                            (click)="global.setAdminOption('security')" class="item-content item-link">
+                            <!-- <div class="list-icon" >
+                            <i class="fi fi-rr-lock"></i>
+                        </div> -->
+                            <span class="dz-icon">
+                                <i class="feather icon-log-out"></i>
+                            </span>
+                            <div class="dz-inner">
+                                <span class="title">Salir</span>
+                            </div>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-md-8">
+        <app-pets [hidden]="global.tutorOption!='pets'"></app-pets>
+        <app-profile [hidden]="global.tutorOption!='profile'"></app-profile>
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom9" aria-labelledby="offcanvasBottomLabel9">
+
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="offcanvasBottomLabel3">Agregar mascota
+
+
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="icon feather icon-x"></i>
+        </button>
+    </div>
+    <app-addpet ></app-addpet>
+</div>

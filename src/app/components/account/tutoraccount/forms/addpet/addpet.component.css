@@ -1,0 +1,19 @@
+.custom-file-upload {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.custom-label {
+    display: inline-block;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa; /* Color de fondo */
+    color: #333; /* Color del texto */
+    transition: background-color 0.3s;
+}
+
+.custom-label:hover {
+    background-color: #e2e6ea; /* Color de fondo al pasar el mouse */
+}

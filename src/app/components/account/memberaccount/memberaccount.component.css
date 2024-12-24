@@ -1,0 +1,39 @@
+.hover-effect:hover {
+    color: #3ba5a8 !important;
+    background-color: #f0f0f0; /* Cambia este color según tus necesidades */
+}
+.list-icon i:hover {
+    color: #3ba5a8 !important;
+}
+.dz-inner .title:hover {
+    color: #3ba5a8 !important;
+}
+.item-link:hover{
+    color: #3ba5a8 !important;
+
+}
+.menuOption{
+    color: #3ba5a8 !important;
+}
+.scrollable-area {
+    max-height: 600px; /* Ajusta este valor según sea necesario */
+    overflow-y: auto;
+    display: block; /* Asegúrate de que el contenedor sea un bloque */
+}   
+
+.profile-image {
+    cursor:pointer;
+    border: 5px solid #00a8a8;
+    min-width: 180px;
+    min-height: 180px;
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: 50%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 12px 10px rgba(0, 0, 0, 0.1); /* Sombra inicial */
+}
+
+.profile-image:hover {
+    transform: translateY(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra al pasar el mouse */
+}

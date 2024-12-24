@@ -1,0 +1,178 @@
+<header class="header header-fixed style-2 " [hidden]="global.isScrollingDown || global.activeRoute=='shopping'">
+    <div class="header-content" [hidden]="global.isScrollingDown">
+        <div class="left-content" [hidden]="global.activeRoute!='account' || !auth.isLogin()">
+            <a href="javascript:void(0);" class="menu-toggler bg-white pe-2 rounded-xl">
+                <div class="media">
+                    <div class="media-35 m-r10">
+                        <img *ngIf="auth.getCurrentUser()" class="rounded-xl"src="{{ auth.getCurrentUser().images[0] ? auth.getCurrentUser().images[0] : 'assets/images/default.png' }}" alt="">
+                    </div>
+                    <h6 class="mb-0 font-13" *ngIf="auth.getCurrentUser()?.full_name">  &#64;{{auth.getCurrentUser().username}}</h6>
+                </div>
+            </a>
+        </div>
+        <div class="left-content" [hidden]="auth.isLogin() && global.activeRoute==='account' ">
+            <a href="javascript:void(0);" class="menu-toggler  pe-2 ">
+                <div class="">
+                    <div class="">
+                        
+                        <img class="" src="assets/images/app-logo/logo.png" style=" max-width: 220px ;" alt="">
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="mid-content"></div>
+        <div class="right-content d-flex align-items-center gap-3"  >
+            <!-- <a class="notification-badge font-20" 
+            [hidden]="!auth.isLogin() || global.activeRoute=='account'"
+            >
+                <i class="icon feather icon-bell"></i>
+                <span class="badge badge-danger">14</span>
+            </a> -->
+            <a (click)="toggleScroll()" class="icon font-20" 
+            
+            [hidden]="global.activeRoute=='account' || (global.activeRoute=='account' && auth.isAdmin())"
+            >
+            <i class="icon feather icon-search"></i>
+        </a>
+        <app-cart-button style="padding-top: 10px;"></app-cart-button>
+
+    <app-authbox [hidden]="auth.isLogin() || isMobile || global.activeRoute=='account' "></app-authbox>
+        </div>
+    </div>
+</header>
+<header class="header header-fixed shadow" style="background-color: white;" [hidden]="!global.isScrollingDown || global.activeRoute=='shopping'">
+    <div class="header-content" [hidden]="!global.isScrollingDown">
+        <div class="left-content">
+            <a href="javascript:void(0);" class="menu-toggler bg-white pe-2 rounded-xl">
+                <div class="media">
+                    <div class="media-35 m-r10" [hidden]="!auth.isLogin()">
+                        <img class="rounded-xl" src="assets/images/avatar/1.png" alt="">
+                    </div>
+                    <div class="" [hidden]="auth.isLogin() || isMobile">
+                        <img class="" src="assets/images/app-logo/logo.png" alt="">
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="mid-content px-2"
+        [hidden]="global.activeRoute=='account' "
+        >
+            <div class="input-group input-group-icon input-sm">
+                <span class="input-group-text">
+                    <div class="input-icon">
+                        <i class="feather icon-search opacity-100"></i>
+                    </div>
+                </span>
+                <input type="search" class="form-control font-16" placeholder="Que estas buscando?">
+            </div>
+        </div>
+        <div
+        
+        [hidden]="global.activeRoute=='account' "
+        class="right-content d-flex align-items-center gap-3 lh-1 ps-2">
+            <ul class="dz-tab nav nav-pills light style-1 list">
+                <li class="nav-item">
+                    <button
+                    [hidden]="global.activeRoute=='account' "
+                    class="nav-link" (click)="global.setModalType('filter')" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasBottom3" aria-controls="offcanvasBottom3"><i
+                            class="icon feather icon-list"></i></button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <app-categories 
+    
+    [hidden]="global.activeRoute=='account' "
+    ></app-categories>
+</header>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header" [hidden]="global.modalType=='reel'">
+        <h5 class="offcanvas-title" id="offcanvasBottomLabel" [hidden]="global.modalType=='reel'">Búsquueda Avanzada</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"><i
+                class="icon feather icon-x"></i></button>
+    </div>
+    <div class="offcanvas-body" [hidden]="global.modalType=='reel'">
+        <app-categories></app-categories>
+        <app-services></app-services>
+    </div>
+    <app-reeldetail [hidden]="global.modalType=='filter'">
+    </app-reeldetail>
+</div>
+
+<!-- <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom3" aria-labelledby="offcanvasBottomLabel3"> -->
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom3" aria-labelledby="offcanvasBottomLabel3">
+
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="offcanvasBottomLabel3">Búsqueda avanzada</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="icon feather icon-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- <div class="filter-inner-content">
+            <div class="title-bar">
+                <h5 class="title mb-0">Destacados</h5>
+                <a href="products.html">ver todas</a>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <div class="form-check style-2">
+                    <input class="form-check-input" type="checkbox" name="filterCheck" id="filterCheck1" checked="">
+                    <label class="form-check-label" for="filterCheck1">
+                        Royal Canine
+                    </label>
+                </div>
+                <div class="form-check style-2">
+                    <input class="form-check-input" type="checkbox" name="filterCheck" id="filterCheck2">
+                    <label class="form-check-label" for="filterCheck2">
+                        Purina
+                    </label>
+                </div>
+                <div class="form-check style-2">
+                    <input class="form-check-input" type="checkbox" name="filterCheck" id="filterCheck3">
+                    <label class="form-check-label" for="filterCheck3">
+                        Blue Buffalo
+                    </label>
+                </div>
+                <div class="form-check style-2">
+                    <input class="form-check-input" type="checkbox" name="filterCheck" id="filterCheck4">
+                    <label class="form-check-label" for="filterCheck4">
+                        Origin
+                    </label>
+                </div>
+                <div class="form-check style-2">
+                    <input class="form-check-input" type="checkbox" name="filterCheck" id="filterCheck5">
+                    <label class="form-check-label" for="filterCheck5">
+                        Nutra
+                    </label>
+                </div>
+            </div>
+            
+        </div> -->
+        <div class="filter-inner-content">
+        
+            <app-categories></app-categories>
+        </div>
+        <div class="filter-inner-content">
+       
+            <app-services></app-services>
+        </div>
+        <!-- <div class="filter-inner-content">
+            <div class="title-bar">
+                <h5 class="title mb-0">Price:</h5>
+            </div>
+            <div class="range-slider style-1">
+                <div class="mb-3 title font-w600 font-16">
+                    <span class="example-val title slider-margin-value-min"></span>
+                    <span class="example-val title slider-margin-value-max"></span>
+                </div>
+                <div id="slider-tooltips"></div>
+            </div>
+        </div> -->
+        <div class="d-flex align-items-center gap-2">
+            <a href="javascript:void(0);" class="btn btn-light font-w400 w-100">Limpiar parametros</a>
+            <a href="javascript:void(0);" class="btn btn-primary font-w400 w-100">Mostrart () resultados</a>
+        </div>
+    </div>
+</div>
+

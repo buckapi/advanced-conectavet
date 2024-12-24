@@ -1,0 +1,139 @@
+<main class="page-content">
+    <div class="container px-0 pt-0">
+        <h1>Creemos tu cuenta</h1>
+        <div class="row dz-authentication-area" style="padding-top: 0px !important;">
+            <div class="col-lg-4 dz-left" [hidden]="isMobile">
+                <div class="dz-media" [hidden]="isMobile">
+                    <img src="assets/images/authentication/pic2.png" alt="">
+                    <a href="javascript:void(0);" class="back-btn">
+                        <i class="icon feather icon-chevron-left"></i>
+                    </a>
+                </div>
+                <div class="section-head">
+                    <h3 class="title">Crea tu cuenta</h3>
+                    <p class="capitalize-first">Conectavet, red de veterinarios a un click</p>
+                </div>
+            </div>
+            <div class="col-lg-2 " [hidden]="isMobile">
+
+            </div>
+            <div class="col-lg-5 dz-right" >
+                <div class="steps" >
+                    <span class="circle active" (click)="setOption('')" style="cursor: pointer;">1</span>
+                    <span class="circle" >2</span>
+                    <span class="circle">3</span>
+                    <div class="progress-bar">
+                      <span class="indicator"></span>
+                    </div>
+                  </div>
+
+                <h1 [hidden]="global.option!=''" class="text-center mb-4">Tipo de cuenta</h1>
+                <h1 [hidden]="global.option!='tutor'" class="text-center mb-4">Datos de usuario</h1>
+                <h1 [hidden]="global.option!='clinica'" class="text-center mb-4">Datos de la clínica</h1>
+
+                <div class="row g-3 mb-3" [hidden]="global.option!=''">
+                    <div class="col-6  ">
+                        <div class="">
+                            <div class="" style="padding: 0 0 50px 0 !important; margin: 0 !important;">
+                                <a  (click)="setOption('tutor')">
+                                    <img src="assets/images/tutorPets.png" style="max-width: 50%;" alt="image">
+                                </a>
+            
+                                <a (click)="setOption('tutor')"
+                                    class="btn fixed-btn btn-primary font-16 btn-sm w-50 gap-1" > <span style="font-weight: bold; font-size: 20px;">Tutor</span>
+                                    </a>
+                                </div>
+                            <h5>Únite e inscribe a tu mascota</h5>
+
+                            </div>
+                    </div>
+                    <div class="col-6  justify-content-center">
+                        <div class="">
+                            <div class="" style="padding: 0 0 50px 0 !important; margin: 0 !important;">
+                                <a (click)="setOption('clinica')">
+                                    <img src="assets/images/clinic.png"  style="max-width: 50%;" alt="image">
+                                </a>
+                                
+                                <a (click)="setOption('clinica')"
+                                class="btn fixed-btn btn-primary font-16 btn-sm w-50 gap-1"><span style="font-weight: bold; font-size: 20px;">Clínica</span>
+                            </a>
+                        </div>
+                        <h5>Registra tu centro médico para ser parte de nuestra comunidad</h5>
+                    </div>
+                </div>
+                </div>
+            
+                <div class="account-section" [hidden]="global.option!='tutor'">
+                    <form (ngSubmit)="registerTutor()">
+                        <!-- <div class="mb-3">
+                            <label class="form-label" for="name">Nombre*</label>
+                            <input type="text" id="name" class="form-control" [(ngModel)]="name" name="name" required>
+                        </div> -->
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email *</label>
+                            <input type="email" id="email" class="form-control" [(ngModel)]="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Contraseña*</label>
+                            <div class="input-group input-group-icon mb-2">
+                                <input type="password" id="password" class="form-control dz-password" [(ngModel)]="password" name="password" required>
+                                <span class="input-group-text show-pass">
+                                    <i class="icon feather icon-eye-off eye-close"></i>
+                                    <i class="icon feather icon-eye eye-open"></i>
+                                </span>
+                            </div>
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" value="" id="Checked-1" required>
+                                <label class="form-check-label" for="Checked-1">Estoy de acuerdo con los Términos, la
+                                    Política de Privacidad y las Tarifas</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-thin btn-lg w-100 btn-primary">Crear cuenta</button>
+                    </form>
+                </div>
+
+                <div class="account-section" [hidden]="global.option!='clinica'">
+                    <form (ngSubmit)="registerClinic()">
+                        <div class="mb-3">
+                            <label class="form-label" for="clinicName">Nombre de la Clínica*</label>
+                            <input type="text" id="clinicName" class="form-control" [(ngModel)]="clinicName" name="clinicName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="clinicEmail">Email de la Clínica*</label>
+                            <input type="email" id="clinicEmail" class="form-control" [(ngModel)]="clinicEmail" name="clinicEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="clinicPhone">Teléfono de la Clínica*</label>
+                            <input type="tel" id="clinicPhone" class="form-control" [(ngModel)]="clinicPhone" name="clinicPhone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="clinicAddress">Dirección de la Clínica*</label>
+                            <input type="text" id="clinicAddress" class="form-control" [(ngModel)]="clinicAddress" name="clinicAddress" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="clinicPassword">Contraseña*</label>
+                            <div class="input-group input-group-icon mb-2">
+                                <input type="password" id="clinicPassword" class="form-control dz-password" [(ngModel)]="clinicPassword" name="clinicPassword" required>
+                                <span class="input-group-text show-pass">
+                                    <i class="icon feather icon-eye-off eye-close"></i>
+                                    <i class="icon feather icon-eye eye-open"></i>
+                                </span>
+                            </div>
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" value="" id="Checked-2" required>
+                                <label class="form-check-label" for="Checked-2">Estoy de acuerdo con los Términos, la
+                                    Política de Privacidad y las Tarifas</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-thin btn-lg w-100 btn-primary">Registrar Clínica</button>
+                    </form>
+                </div>
+
+                <div class="btn-link link-fixed">¿Ya tienes una cuenta? <a (click)="global.setRoute('login')"
+                        style="cursor: pointer;" class="text-underline font-w600">Inicia sesión</a></div>
+            </div>
+            
+            
+        </div>
+    </div>
+</main>

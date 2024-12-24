@@ -1,0 +1,40 @@
+<div class="form-container">
+    <h2>Registro de Nuevo Usuario</h2>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div class="form-group mb-3">
+      <label for="name" class="form-label">Nombre Completo:</label>
+      <input 
+        type="text" 
+        id="name"
+        formControlName="name"
+        class="form-control"
+        placeholder="Ingrese su nombre completo">
+      
+      <div *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched" class="error-message">
+        <span *ngIf="userForm.get('name')?.errors?.['required']">El nombre es requerido</span>
+      </div>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="email" class="form-label">Correo Electrónico:</label>
+      <input 
+        type="email" 
+        id="email"
+        formControlName="email"
+        class="form-control"
+        placeholder="Ingrese su correo electrónico">
+      
+      <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="error-message">
+        <span *ngIf="userForm.get('email')?.errors?.['required']">El correo electrónico es requerido</span>
+        <span *ngIf="userForm.get('email')?.errors?.['email']">Ingrese un correo electrónico válido</span>
+      </div>
+    </div>
+
+    <button 
+      type="submit" 
+      [disabled]="userForm.invalid"
+      class="btn btn-primary w-100">
+      Registrar
+    </button>
+  </form>
+</div>
