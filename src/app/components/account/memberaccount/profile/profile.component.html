@@ -81,14 +81,24 @@
             </span>
             {{fields.full_name || ''}}
           </button>
-          <div *ngIf="visibleFields['full_name']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-user"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['full_name']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-user"></i>
+                </div>
+              </span>
+              <input class="form-control" id="full_name" type="text" [(ngModel)]="fields.full_name"
+                (input)="onInputChange('full_name', fields.full_name)" placeholder="Nombre o Razón Social" />
+            </div>
+            <div *ngIf="isLoading['full_name']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="full_name" type="text" [(ngModel)]="fields.full_name"
-              (input)="onInputChange('full_name', fields.full_name)" placeholder="Nombre o Razón Social" />
+            </div>
+            <div *ngIf="isLoading['full_name']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -99,32 +109,52 @@
             </span>
             {{fields.bio || ''}}
           </button>
-          <div *ngIf="visibleFields['bio']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-file-text"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['bio']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-file-text"></i>
+                </div>
+              </span>
+              <textarea class="form-control" id="bio" [(ngModel)]="fields.bio" (input)="onInputChange('bio', fields.bio)"
+                placeholder="Escriba una breve descripción"></textarea>
+            </div>
+            <div *ngIf="isLoading['bio']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <textarea class="form-control" id="bio" [(ngModel)]="fields.bio" (input)="onInputChange('bio', fields.bio)"
-              placeholder="Escriba una breve descripción"></textarea>
+            </div>
+            <div *ngIf="isLoading['bio']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
         <div class="mb-2">
-          <button class="btn btn-link" [disabled]="canEditRut === false" (click)="toggleField('rut')">
+          <button class="btn btn-link" (click)="toggleField('rut')">
             <span class="text-muted">
               RUT:
             </span>
             {{fields.rut || ''}}
           </button>
-          <div *ngIf="visibleFields['rut'] && canEditRut" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="fi fi-rr-credit-card font-20"></i>
-              </div>
-            </span>
-            <input class="form-control" id="rut" type="text" [(ngModel)]="fields['rut']" placeholder="RUT" />
-            <button class="btn btn-primary" (click)="confirmSaveRut()">Guardar RUT</button>
+          <div class="d-flex">
+            <div *ngIf="visibleFields['rut']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="fas fa-id-card"></i>
+                </div>
+              </span>
+              <input type="text" class="form-control" 
+                     *ngIf="!fields.rut"
+                     placeholder="Ingrese su RUT" 
+                     [(ngModel)]="rut"
+                     (change)="updateRut()"
+                     [maxlength]="12">
+              <input type="text" class="form-control" 
+                     *ngIf="fields.rut"
+                     [value]="fields.rut"
+                     disabled>
+            </div>
           </div>
         </div>
 
@@ -136,14 +166,42 @@
             </span>
             {{fields.address || ''}}
           </button>
-          <div *ngIf="visibleFields['address']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-map-pin"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['address']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-map-pin"></i>
+                </div>
+              </span>
+              <input class="form-control" id="address" type="text" [(ngModel)]="fields.address"
+                (input)="onInputChange('address', fields.address)" placeholder="Dirección" />
+            </div>
+            <div *ngIf="isLoading['address']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
+            </div>
+            <div *ngIf="isLoading['address']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+
+       
+          <button class="btn btn-link"  >
+            <span class="text-muted">
+              Ubicación en el Mapa
             </span>
-            <input class="form-control" id="address" type="text" [(ngModel)]="fields.address"
-              (input)="onInputChange('address', fields.address)" placeholder="Dirección" />
+
+          </button>
+
+          <!-- <label class="form-label">Ubicación en el Mapa</label> -->
+          <div class="d-flex ">
+            <input type="text" class="form-control me-2" [value]="fields.lat + ', ' + fields.lng" readonly>
+            <button type="button" class="btn btn-primary" (click)="openMap()">
+              <i class="fas fa-map-marker-alt"></i> Seleccionar Ubicación
+            </button>
           </div>
         </div>
 
@@ -154,14 +212,24 @@
             </span>
             {{fields.phone || ''}}
           </button>
-          <div *ngIf="visibleFields['phone']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-map-pin"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['phone']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-map-pin"></i>
+                </div>
+              </span>
+              <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
+                (input)="onInputChange('phone', fields.phone)" placeholder="Teléfono" />
+            </div>
+            <div *ngIf="isLoading['phone']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
-              (input)="onInputChange('phone', fields.phone)" placeholder="Teléfono" />
+            </div>
+            <div *ngIf="isLoading['phone']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
 
         </div>
@@ -172,12 +240,22 @@
             </span>
             {{fields.region || ''}}
           </button>
-          <label *ngIf="visibleFields['region']" for="region" class="form-label">Región:</label>
-          <select *ngIf="visibleFields['region']" class="form-select" id="region" [(ngModel)]="selectedRegion"
-            (change)="onRegionChange()">
-            <option value="" disabled selected>Seleccione una región</option>
-            <option *ngFor="let region of regions" [value]="region.name">{{ region.name }}</option>
-          </select>
+          <div class="d-flex ">
+            <label *ngIf="visibleFields['region']" for="region" class="form-label">Región:</label>
+            <select *ngIf="visibleFields['region']" class="form-select" id="region" [(ngModel)]="selectedRegion"
+              (change)="onRegionChange()">
+              <option value="" disabled selected>Seleccione una región</option>
+              <option *ngFor="let region of regions" [value]="region.name">{{ region.name }}</option>
+            </select>
+            <div *ngIf="isLoading['region']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
+              </div>
+            </div>
+            <div *ngIf="isLoading['region']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
+          </div>
         </div>
 
         <div class="mb-2">
@@ -187,12 +265,21 @@
             </span>
             {{fields.comuna || ''}}
           </button>
-          <label *ngIf="visibleFields['comune']" for="comune" class="form-label">Comuna:</label>
-          <select *ngIf="visibleFields['comune']" class="form-select" id="comune" [(ngModel)]="selectedComune"
-            (change)="onComuneChange()">
-            <option value="" disabled selected>Seleccione una comuna</option>
-            <option *ngFor="let comune of filteredComunes" [value]="comune">{{ comune }}</option>
-          </select>
+          <div class="d-flex ">
+            <select *ngIf="visibleFields['comune']" class="form-select" id="comune" [(ngModel)]="selectedComune"
+              (change)="onComuneChange()">
+              <option value="" disabled selected>Seleccione una Comuna</option>
+              <option *ngFor="let comune of filteredComunes" [value]="comune">{{ comune }}</option>
+            </select>
+            <div *ngIf="isLoading['comuna']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
+              </div>
+            </div>
+            <div *ngIf="isLoading['comuna']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
+          </div>
         </div>
 
         <div class="mb-2">
@@ -202,28 +289,38 @@
             </span>
             {{displaySelectedDays()}}
           </button>
-          <div *ngIf="visibleFields['days']" class="input-group input-group-icon">
-            <div class="dz-select-btn">
-              <input type="checkbox" class="btn-check" id="day-L" [(ngModel)]="selectedDays['L']" (change)="updateDays()">
-              <label class="btn" for="day-L">L</label>
-              
-              <input type="checkbox" class="btn-check" id="day-M" [(ngModel)]="selectedDays['M']" (change)="updateDays()">
-              <label class="btn" for="day-M">M</label>
-              
-              <input type="checkbox" class="btn-check" id="day-X" [(ngModel)]="selectedDays['X']" (change)="updateDays()">
-              <label class="btn" for="day-X">M</label>
-              
-              <input type="checkbox" class="btn-check" id="day-J" [(ngModel)]="selectedDays['J']" (change)="updateDays()">
-              <label class="btn" for="day-J">J</label>
-              
-              <input type="checkbox" class="btn-check" id="day-V" [(ngModel)]="selectedDays['V']" (change)="updateDays()">
-              <label class="btn" for="day-V">V</label>
-              
-              <input type="checkbox" class="btn-check" id="day-S" [(ngModel)]="selectedDays['S']" (change)="updateDays()">
-              <label class="btn" for="day-S">S</label>
-              
-              <input type="checkbox" class="btn-check" id="day-D" [(ngModel)]="selectedDays['D']" (change)="updateDays()">
-              <label class="btn" for="day-D">D</label>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['days']" class="input-group input-group-icon">
+              <div class="dz-select-btn">
+                <input type="checkbox" class="btn-check" id="day-L" [(ngModel)]="selectedDays['L']" (change)="updateDays()">
+                <label class="btn" for="day-L">L</label>
+                
+                <input type="checkbox" class="btn-check" id="day-M" [(ngModel)]="selectedDays['M']" (change)="updateDays()">
+                <label class="btn" for="day-M">M</label>
+                
+                <input type="checkbox" class="btn-check" id="day-X" [(ngModel)]="selectedDays['X']" (change)="updateDays()">
+                <label class="btn" for="day-X">M</label>
+                
+                <input type="checkbox" class="btn-check" id="day-J" [(ngModel)]="selectedDays['J']" (change)="updateDays()">
+                <label class="btn" for="day-J">J</label>
+                
+                <input type="checkbox" class="btn-check" id="day-V" [(ngModel)]="selectedDays['V']" (change)="updateDays()">
+                <label class="btn" for="day-V">V</label>
+                
+                <input type="checkbox" class="btn-check" id="day-S" [(ngModel)]="selectedDays['S']" (change)="updateDays()">
+                <label class="btn" for="day-S">S</label>
+                
+                <input type="checkbox" class="btn-check" id="day-D" [(ngModel)]="selectedDays['D']" (change)="updateDays()">
+                <label class="btn" for="day-D">D</label>
+              </div>
+            </div>
+            <div *ngIf="isLoading['days']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
+              </div>
+            </div>
+            <div *ngIf="isLoading['days']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
             </div>
           </div>
         </div>
@@ -235,21 +332,31 @@
             </span>
             {{fields.hours || ''}}
           </button>
-          <div *ngIf="visibleFields['hours']" class="input-group input-group-icon">
-            <div class="d-flex align-items-center gap-2">
-              <p-calendar [(ngModel)]="startTime" 
-                         [timeOnly]="true" 
-                         hourFormat="12" 
-                         placeholder="Hora de apertura"
-                         (onSelect)="updateHours()">
-              </p-calendar>
-              <span>a</span>
-              <p-calendar [(ngModel)]="endTime" 
-                         [timeOnly]="true" 
-                         hourFormat="12" 
-                         placeholder="Hora de cierre"
-                         (onSelect)="updateHours()">
-              </p-calendar>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['hours']" class="input-group input-group-icon">
+              <div class="d-flex  gap-2">
+                <p-calendar [(ngModel)]="startTime" 
+                           [timeOnly]="true" 
+                           hourFormat="12" 
+                           placeholder="Hora de apertura"
+                           (onSelect)="updateHours()">
+                </p-calendar>
+                <span>a</span>
+                <p-calendar [(ngModel)]="endTime" 
+                           [timeOnly]="true" 
+                           hourFormat="12" 
+                           placeholder="Hora de cierre"
+                           (onSelect)="updateHours()">
+                </p-calendar>
+              </div>
+            </div>
+            <div *ngIf="isLoading['hours']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
+              </div>
+            </div>
+            <div *ngIf="isLoading['hours']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
             </div>
           </div>
         </div>
@@ -263,14 +370,24 @@
             </span>
             {{fields.manager_name || ''}}
           </button>
-          <div *ngIf="visibleFields['manager_name']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-user"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['manager_name']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-user"></i>
+                </div>
+              </span>
+              <input class="form-control" id="manager_name" type="text" [(ngModel)]="fields.manager_name"
+                (input)="onInputChange('manager_name', fields.manager_name)" placeholder="Nombre del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_name']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="manager_name" type="text" [(ngModel)]="fields.manager_name"
-              (input)="onInputChange('manager_name', fields.manager_name)" placeholder="Nombre del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_name']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -281,14 +398,24 @@
             </span>
             {{fields.manager_phone || ''}}
           </button>
-          <div *ngIf="visibleFields['manager_phone']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-phone"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['manager_phone']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-phone"></i>
+                </div>
+              </span>
+              <input class="form-control" id="manager_phone" type="text" [(ngModel)]="fields.manager_phone"
+                (input)="onInputChange('manager_phone', fields.manager_phone)" placeholder="Teléfono del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_phone']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="manager_phone" type="text" [(ngModel)]="fields.manager_phone"
-              (input)="onInputChange('manager_phone', fields.manager_phone)" placeholder="Teléfono del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_phone']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -299,14 +426,24 @@
             </span>
             {{fields.manager_email || ''}}
           </button>
-          <div *ngIf="visibleFields['manager_email']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-mail"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['manager_email']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-mail"></i>
+                </div>
+              </span>
+              <input class="form-control" id="manager_email" type="text" [(ngModel)]="fields.manager_email"
+                (input)="onInputChange('manager_email', fields.manager_email)" placeholder="Email del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_email']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="manager_email" type="text" [(ngModel)]="fields.manager_email"
-              (input)="onInputChange('manager_email', fields.manager_email)" placeholder="Email del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_email']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -317,15 +454,25 @@
             </span>
             {{fields.manager_position || ''}}
           </button>
-          <div *ngIf="visibleFields['manager_position']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-briefcase"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['manager_position']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-briefcase"></i>
+                </div>
+              </span>
+              <input class="form-control" id="manager_position" type="text" [(ngModel)]="fields.manager_position"
+                (input)="onInputChange('manager_position', fields.manager_position)"
+                placeholder="Cargo del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_position']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="manager_position" type="text" [(ngModel)]="fields.manager_position"
-              (input)="onInputChange('manager_position', fields.manager_position)"
-              placeholder="Cargo del administrador" />
+            </div>
+            <div *ngIf="isLoading['manager_position']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -340,14 +487,24 @@
             </span>
             {{fields.bank_name || ''}}
           </button>
-          <div *ngIf="visibleFields['bank_name']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-briefcase"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['bank_name']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-briefcase"></i>
+                </div>
+              </span>
+              <input class="form-control" id="bank_name" type="text" [(ngModel)]="fields.bank_name"
+                (input)="onInputChange('bank_name', fields.bank_name)" placeholder="Nombre del banco" />
+            </div>
+            <div *ngIf="isLoading['bank_name']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="bank_name" type="text" [(ngModel)]="fields.bank_name"
-              (input)="onInputChange('bank_name', fields.bank_name)" placeholder="Nombre del banco" />
+            </div>
+            <div *ngIf="isLoading['bank_name']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -358,14 +515,24 @@
             </span>
             {{fields.account_number || ''}}
           </button>
-          <div *ngIf="visibleFields['account_number']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-hash"></i>
+          <div class="d-flex">
+            <div *ngIf="visibleFields['account_number']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-hash"></i>
+                </div>
+              </span>
+              <input class="form-control" id="account_number" type="text" [(ngModel)]="fields.account_number"
+                (input)="onInputChange('account_number', fields.account_number)" placeholder="Número de cuenta" />
+            </div>
+            <div *ngIf="isLoading['account_number']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="account_number" type="text" [(ngModel)]="fields.account_number"
-              (input)="onInputChange('account_number', fields.account_number)" placeholder="Número de cuenta" />
+            </div>
+            <div *ngIf="isLoading['account_number']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
 
@@ -376,29 +543,31 @@
             </span>
             {{fields.account_holder || ''}}
           </button>
-          <div *ngIf="visibleFields['account_holder']" class="input-group input-group-icon">
-            <span class="input-group-text">
-              <div class="input-icon">
-                <i class="icon feather icon-user"></i>
+          <div class="d-flex ">
+            <div *ngIf="visibleFields['account_holder']" class="input-group input-group-icon flex-grow-1">
+              <span class="input-group-text">
+                <div class="input-icon">
+                  <i class="icon feather icon-user"></i>
+                </div>
+              </span>
+              <input class="form-control" id="account_holder" type="text" [(ngModel)]="fields.account_holder"
+                (input)="onInputChange('account_holder', fields.account_holder)" placeholder="Nombre del titular" />
+            </div>
+            <div *ngIf="isLoading['account_holder']?.loading" class="ms-2">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Guardando...</span>
               </div>
-            </span>
-            <input class="form-control" id="account_holder" type="text" [(ngModel)]="fields.account_holder"
-              (input)="onInputChange('account_holder', fields.account_holder)" placeholder="Nombre del titular" />
+            </div>
+            <div *ngIf="isLoading['account_holder']?.success" class="ms-2">
+              <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+            </div>
           </div>
         </div>
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label class="form-label">Dirección</label>
           <input type="text" class="form-control" [(ngModel)]="fields.address" name="address">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Ubicación en el Mapa</label>
-          <div class="d-flex align-items-center">
-            <input type="text" class="form-control me-2" [value]="fields.lat + ', ' + fields.lng" readonly>
-            <button type="button" class="btn btn-primary" (click)="openMap()">
-              <i class="fas fa-map-marker-alt"></i> Seleccionar Ubicación
-            </button>
-          </div>
-        </div>
+        </div> -->
+       
       </form>
     </div>
   </div>

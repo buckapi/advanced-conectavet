@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ImageService } from '@app/services/image.service';
 import { GlobalService } from '@app/services/global.service';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
-import Swal from 'sweetalert2';
 import PocketBase from 'pocketbase';
 import { CalendarModule } from 'primeng/calendar';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -83,7 +82,7 @@ export class ProfileComponent implements OnInit {
     },
     {
       name: 'Región Metropolitana de Santiago',
-      communes: ['Santiago', 'Cerro Navia', 'Conchalí', 'El Bosque', 'Estación Central', 'Huechuraba', 'Independencia', 'La Cisterna', 'La Florida', 'La Granja', 'La Pintana', 'La Reina', 'Las Condes', 'Lo Barnechea', 'Lo Espejo', 'Lo Prado', 'Macul', 'Maipú', 'Ñuñoa', 'Pedro Aguirre Cerda', 'Peñalolén', 'Providencia', 'Pudahuel', 'Quilicura', 'Quinta Normal', 'Recoleta', 'Renca', 'San Joaquín', 'San Miguel', 'San Ramón', 'Vitacura', 'Puente Alto', 'San Bernardo', 'Buin', 'Calera de Tango', 'Paine', 'Melipilla', 'Curacaví', 'María Pinto', 'San Pedro', 'Talagante', 'El Monte', 'Isla de Maipo', 'Padre Hurtado', 'Peñaflor']
+      communes: ['Santiago', 'Cerro Navia', 'Conchalí', 'El Bosque', 'Estación Central', 'Hualpén', 'Independencia', 'La Cisterna', 'La Florida', 'La Granja', 'La Pintana', 'La Reina', 'Las Condes', 'Lo Barnechea', 'Lo Espejo', 'Lo Prado', 'Macul', 'Maipú', 'Ñuñoa', 'Pedro Aguirre Cerda', 'Peñalolén', 'Providencia', 'Pudahuel', 'Quilicura', 'Quinta Normal', 'Recoleta', 'Renca', 'San Joaquín', 'San Miguel', 'San Ramón', 'Vitacura', 'Puente Alto', 'San Bernardo', 'Buin', 'Calera de Tango', 'Paine', 'Melipilla', 'Curacaví', 'María Pinto', 'San Pedro', 'Talagante', 'El Monte', 'Isla de Maipo', 'Padre Hurtado', 'Peñaflor']
     },
     {
       name: 'Región de O’Higgins',
@@ -133,19 +132,20 @@ export class ProfileComponent implements OnInit {
     const region = this.regions.find(r => r.name === this.selectedRegion);
     this.filteredComunes = region ? region.communes : [];
     this.selectedComune = ''; // Resetear la provincia seleccionada
-    this.onInputChange('region', this.selectedRegion);
+
+    // Trigger update for region with loading state
+    if (this.selectedRegion) {
+      this.updateFields('region', this.selectedRegion);
+    }
+
     this.toggleField('comune'); 
   }
 
-  onComuneChange() {
-    this.onInputChange('comuna', this.selectedComune);
-    
-    Swal.fire({
-      title: 'Éxito',
-      text: 'Ubicación actualizada correctamente',
-      icon: 'success',
-      confirmButtonText: 'Ok'
-    });
+  onComuneChange(): void {
+    // Trigger update for commune with loading state
+    if (this.selectedComune) {
+      this.updateFields('comuna', this.selectedComune);
+    }
   }
 
   canEditRut: boolean = false;
@@ -189,6 +189,12 @@ export class ProfileComponent implements OnInit {
     manager_position: false,
   };
 
+  isLoading: { 
+    [key: string]: {
+      loading: boolean, 
+      success: boolean 
+    } 
+  } = {};
 
   private debounceTimers: { [key: string]: any } = {};
   @ViewChild('imageUpload', { static: false }) imageUpload!: ElementRef;
@@ -197,6 +203,7 @@ currentUser = {
   images: ['assets/images/default.png'], // Imagen predeterminada
 }; selectedImage: File | null = null;
   selectedImagePrev: string | null = null;
+  selectedImagePrevUrl: string | null = null;
   apiUrl = 'https://db.conectavet.cl:8080/api/files/';
 
   private pb: PocketBase;
@@ -241,9 +248,10 @@ currentUser = {
   }
 
   onInputChange(fieldName: string, value: string): void {
-    if (fieldName === 'comuna' ) {
+    if (fieldName === 'comuna') {
       return;
     }
+    
     if (this.debounceTimers[fieldName]) {
       clearTimeout(this.debounceTimers[fieldName]);
     }
@@ -251,14 +259,26 @@ currentUser = {
     this.debounceTimers[fieldName] = setTimeout(() => {
       this.updateFields(fieldName, value);
     }, 4000);
-    if (fieldName === 'region' ) {
+    
+    if (fieldName === 'region') {
       this.onRegionChange();
     }
   }
 
   async updateFields(fieldName: string, value: string): Promise<void> {
+    // Initialize the loading state for the field
+    this.isLoading[fieldName] = { 
+      loading: true, 
+      success: false 
+    };
+    this.cdr.detectChanges(); // Trigger change detection
+
     try {
       const memberId = this.fields.id;
+      
+      // Simulate a minimum loading time to make the spinner visible
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       await this.pb.collection('members').update(memberId, { [fieldName]: value });
 
       if (fieldName === 'full_name') {
@@ -267,10 +287,55 @@ currentUser = {
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
 
-      Swal.fire('Éxito', `${fieldName} se ha actualizado correctamente.`, 'success');
+      // Special handling for region, commune, days, and hours
+      if (fieldName === 'region') {
+        this.fields.region = value;
+        this.visibleFields['region'] = false;
+      }
+
+      if (fieldName === 'comuna') {
+        this.fields.comuna = value;
+        this.visibleFields['comune'] = false;
+      }
+
+      if (fieldName === 'days') {
+        this.fields.days = value;
+        // Do NOT hide days selector
+      }
+
+      if (fieldName === 'hours') {
+        this.fields.hours = value;
+      }
+
+      // Remove loading state and show success state
+      this.isLoading[fieldName].loading = false;
+      this.isLoading[fieldName].success = true;
+      this.cdr.detectChanges();
+
+      // Remove success state after 2 seconds
+      setTimeout(() => {
+        this.isLoading[fieldName].success = false;
+        
+        if (fieldName === 'region') {
+          this.visibleFields['region'] = false;
+        }
+        if (fieldName === 'comuna') {
+          this.visibleFields['comune'] = false;
+        }
+        // Do NOT hide days selector
+        
+        this.cdr.detectChanges();
+      }, 2000);
+
       console.log(`${fieldName} actualizado a "${value}".`);
     } catch (error) {
-      Swal.fire('Error', `Hubo un problema al actualizar ${fieldName}.`, 'error');
+      // Ensure loading state is removed even on error
+      this.isLoading[fieldName] = { 
+        loading: false, 
+        success: false 
+      };
+      this.cdr.detectChanges();
+
       console.error(`Error al actualizar ${fieldName}:`, error);
     }
   }
@@ -358,27 +423,15 @@ currentUser = {
           localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
   
           // Notificación de éxito
-          Swal.fire({
-            icon: 'success',
-            title: 'Imagen actualizada',
-            text: 'La imagen se ha subido correctamente.',
-          });
+          console.log('Imagen actualizada correctamente');
         }
       } catch (error: any) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al subir imagen',
-          text: 'No se pudo actualizar la imagen. Inténtelo de nuevo.',
-        });
         console.error('Error al subir la imagen o actualizar registros:', error.response?.data || error);
+        this.showErrorNotification('No se pudo actualizar la imagen. Inténtelo de nuevo.');
       }
     } else {
-      Swal.fire({
-        icon: 'warning',
-        title: 'No se seleccionó archivo',
-        text: 'Por favor selecciona un archivo para subir.',
-      });
       console.warn('No se seleccionó ningún archivo.');
+      this.showWarningNotification('Por favor selecciona un archivo para subir.');
     }
   }
 
@@ -388,18 +441,35 @@ currentUser = {
 
   async confirmSaveRut() {
     this.canEditRut = false;
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'El RUT solo podrá ser ingresado una vez. Después de guardar, no podrás modificarlo.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, guardar',
-      cancelButtonText: 'Cancelar',
-    });
+    const result = await this.showConfirmDialog(
+      '¿Estás seguro?', 
+      'El RUT solo podrá ser ingresado una vez. Después de guardar, no podrás modificarlo.'
+    );
 
-    if (result.isConfirmed) {
+    if (result) {
       this.updateFields('rut', this.fields.rut);
     }
+  }
+
+  // Helper method to show a confirmation dialog
+  private showConfirmDialog(title: string, text: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const confirmed = window.confirm(text);
+      resolve(confirmed);
+    });
+  }
+
+  // Helper methods for notifications
+  private showErrorNotification(message: string) {
+    console.error(message);
+    // You can replace this with your preferred notification method
+    alert(message);
+  }
+
+  private showWarningNotification(message: string) {
+    console.warn(message);
+    // You can replace this with your preferred notification method
+    alert(message);
   }
 
   updateHours() {
@@ -411,9 +481,11 @@ currentUser = {
           hour12: true 
         }).toUpperCase();
       };
-      
+
       this.fields.hours = `${formatTime(this.startTime)} - ${formatTime(this.endTime)}`;
-      this.onInputChange('hours', this.fields.hours);
+      
+      // Use updateFields to save hours with loading state
+      this.updateFields('hours', this.fields.hours);
     }
   }
 
@@ -450,7 +522,11 @@ currentUser = {
       .map(([day, _]) => day);
     
     this.fields.days = selectedDays.join(', ');
-    this.onInputChange('days', this.fields.days);
+    
+    // Use updateFields to save days with loading state
+    if (this.fields.days) {
+      this.updateFields('days', this.fields.days);
+    }
   }
 
   displaySelectedDays() {
@@ -480,5 +556,34 @@ currentUser = {
     } catch (error) {
       console.error('Error al abrir el mapa:', error);
     }
+  }
+
+  // Add rut property
+  rut: string = '';
+
+  // Add method to update RUT
+  updateRut() {
+    if (this.rut) {
+      // Format RUT if needed
+      const formattedRut = this.formatRut(this.rut);
+      
+      // Use updateFields to save RUT with loading state
+      this.updateFields('rut', formattedRut);
+    }
+  }
+
+  // Helper method to format RUT
+  private formatRut(rut: string): string {
+    // Remove any existing formatting
+    rut = rut.replace(/[.-]/g, '').toUpperCase();
+    
+    // Separate body and verification digit
+    const body = rut.slice(0, -1);
+    const verifier = rut.slice(-1);
+    
+    // Format body with dots and dash
+    const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    return `${formattedBody}-${verifier}`;
   }
 }
