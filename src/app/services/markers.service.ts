@@ -70,7 +70,7 @@ export class MarkersService {
           name: `${specialist.full_name}`,
           lat: lat || randomCoords.lat,
           lng: lng || randomCoords.lng,
-          description: `${address} - ${specialist.phone || '+56 9 xxxx xxxx'}`,
+          description: `${address} - ${specialist.bio || 'sin biografia'}`,
           imageUrl: specialist.images?.[0] || 'assets/images/default-profile.png'
         };
       }))
