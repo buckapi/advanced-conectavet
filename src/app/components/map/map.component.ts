@@ -401,6 +401,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     // Remove any remaining marker elements
     document.querySelectorAll('.mapboxgl-marker').forEach(marker => marker.remove());
   }
+  isMobile() {
+    return window.innerWidth <= 768;
+  }
 
   private fitMapToMarkers() {
     if (!this.markers.length) return;

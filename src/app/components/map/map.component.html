@@ -1,9 +1,8 @@
 <p></p>
-holaaa
 <div id="map" class="map-container" 
 [ngClass]="{
-    'map-container': global.isMobile, 
-    'map-container-web': !global.isMobile    
+    'map-container': global.isMobile()  && !global.webShowMap, 
+    'map-container-web': !global.isMobile()  && global.webShowMap    
   }"
 ></div>
 
