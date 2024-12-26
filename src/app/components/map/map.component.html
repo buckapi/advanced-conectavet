@@ -1,3 +1,10 @@
 <p></p>
 
-<div id="map" class="map-container"></div>
+<div id="map" class="map-container" 
+[ngClass]="{
+    'map-container': !global.webShowMap, 
+    'map-container-web': global.webShowMap
+  }"
+></div>
+
+

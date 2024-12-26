@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { GlobalService } from '@app/services/global.service';
@@ -9,6 +9,8 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { IDropdownSettings } from 'ng-multiselect-dropdown';
 import PocketBase from 'pocketbase';
 import Swal from 'sweetalert2';
+import { Offcanvas } from 'bootstrap';
+
 interface ImageRecord {
   collectionId: string;
   id: string;
@@ -60,7 +62,7 @@ interface FormData {
   templateUrl: './addprofessional.component.html',
   styleUrl: './addprofessional.component.css',
 })
-export class AddprofessionalComponent {
+export class AddprofessionalComponent implements OnDestroy {
   @ViewChild('imageUpload', { static: false }) imageUpload!: ElementRef;
   apiUrl = 'https://db.conectavet.cl:8080/api/files/';
   private pb: PocketBase;
@@ -73,6 +75,7 @@ export class AddprofessionalComponent {
   public services: string[] = [];
   public idMember: string = '';
   public selectedServices: string[] = [];
+  public loadingServices: boolean = false;
   idCategory: string = '';
   formData: FormData = {
     images: [],
@@ -128,6 +131,7 @@ export class AddprofessionalComponent {
     private realtimeService: RealtimeServicesService
   ) {
     this.pb = new PocketBase('https://db.conectavet.cl:8080');
+    this.loadServices();
   }
   onImageChange(event: any): void {
     const file = event.target.files[0];
@@ -142,20 +146,23 @@ export class AddprofessionalComponent {
   }
   async addProfessional() {
     if (!this.validateForm()) {
-      return; // Detener la ejecución si hay errores de validación.
+      return;
     }
+
     this.idMember = this.auth.getUserId();
     const formData = new FormData();
     formData.append('type', 'test');
     formData.append('userId', this.idMember);
+    
     if (this.selectedImage) {
       formData.append('image', this.selectedImage);
     }
-    this.idMember = this.auth.getUserId();
+
     try {
       let newImageRecord: ImageRecord | null = await this.pb
         .collection('images')
         .create(formData);
+
       if (newImageRecord) {
         console.log('Imagen subida:', newImageRecord);
         this.formData.images.push(
@@ -167,31 +174,25 @@ export class AddprofessionalComponent {
             newImageRecord.image
         );
 
-        const newProfessional =
-          await this.professionalService.createProfessional({
-            images: this.formData.images,
-            name: this.professionalName,
-            gender: this.gender,
-            services: this.selectedServices,
-            IdMember: this.idMember,
-            status: this.isVisible ? 'visible' : 'hidden',
-          });
+        const newProfessional = await this.professionalService.createProfessional({
+          images: this.formData.images,
+          name: this.professionalName,
+          gender: this.gender,
+          services: this.selectedServices,
+          IdMember: this.idMember,
+          status: this.isVisible ? 'visible' : 'hidden',
+        });
 
-        this.formData.images = [];
-        this.professionalName = '';
-        this.selectedServices = [];
-        this.gender = '';
-
-        newImageRecord = null;
-        this.selectedImage = null;
-        this.imageUpload.nativeElement.value = '';
-
+        // Show success message
         Swal.fire({
           title: 'Éxito!',
           text: 'Profesional agregado correctamente.',
           icon: 'success',
-          confirmButtonText: 'Aceptar',
+          confirmButtonText: 'Aceptar'
         });
+
+        // Reset the form after successful save
+        this.resetForm();
 
         console.log('Profesional agregado:', newProfessional);
       } else {
@@ -199,7 +200,7 @@ export class AddprofessionalComponent {
           title: 'Error!',
           text: 'La imagen no se subió correctamente.',
           icon: 'error',
-          confirmButtonText: 'Aceptar',
+          confirmButtonText: 'Aceptar'
         });
       }
     } catch (error) {
@@ -207,30 +208,118 @@ export class AddprofessionalComponent {
         title: 'Error!',
         text: 'No se pudo agregar el profesional.',
         icon: 'error',
-        confirmButtonText: 'Aceptar',
+        confirmButtonText: 'Aceptar'
       });
       console.error('Error al agregar el profesional:', error);
     }
   }
-validateForm(): boolean {
-  if (!this.selectedImage) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'Por favor, suba una imagen de perfil.',
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return false;
+  resetForm() {
+    // Reset form fields
+    this.professionalName = '';
+    this.gender = '';
+    this.selectedServices = [];
+    this.isVisible = false;
+    
+    // Reset image fields
+    this.selectedImage = null;
+    this.selectedImagePrev = null;
+    this.images = [];
+    
+    // Reset form data
+    this.formData = {
+      images: [],
+      documents: [],
+      avatar: [],
+      certificates: [],
+      full_name: '',
+      email: '',
+      phone: '',
+      address: '',
+      consultationAddress: '',
+      city: '',
+      country: '',
+      gender: '',
+      profession: '',
+      studyArea: '',
+      university: '',
+      graduationYear: '',
+      specialties: [],
+      category: '',
+      services: '',
+      availability: '',
+      days: Array(7).fill(true),
+      membershipPlan: '',
+      advertiseServices: [],
+      schedule: '',
+      status: '',
+      monday: true,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+      sunday: false,
+      membership: 'Basic Plan',
+      advertiseProfile: true,
+      advertisePlatform: false,
+    };
+
+    // Reset file input
+    if (this.imageUpload && this.imageUpload.nativeElement) {
+      this.imageUpload.nativeElement.value = '';
+    }
+
+    // Close the offcanvas and clean up
+    const offcanvas = document.getElementById('offcanvasBottom9');
+    if (offcanvas) {
+      const bsOffcanvas = Offcanvas.getInstance(offcanvas);
+      if (bsOffcanvas) {
+        bsOffcanvas.hide();
+      }
+      
+      // Limpiar manualmente el backdrop y las clases modal
+      setTimeout(() => {
+        const backdrop = document.querySelector('.offcanvas-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }, 150);
+    }
   }
-  if (!this.professionalName) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'Por favor, ingrese el nombre del profesional.',
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return false;
+
+  ngOnDestroy() {
+    // Asegurarse de limpiar cuando el componente se destruye
+    const backdrop = document.querySelector('.offcanvas-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+    }
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
   }
+
+  validateForm(): boolean {
+    if (!this.selectedImage) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Por favor, suba una imagen de perfil.',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+      });
+      return false;
+    }
+    if (!this.professionalName) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Por favor, ingrese el nombre del profesional.',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+      });
+      return false;
+    }
   
 
 
@@ -264,5 +353,26 @@ validateForm(): boolean {
     } else {
       this.global.categorySelected = false;
     }
+  }
+
+  async loadServices() {
+    this.loadingServices = true;
+    try {
+      await this.realtimeServices.reloadServices();
+    } catch (error) {
+      console.error('Error loading services:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'No se pudieron cargar los servicios. Por favor, intente nuevamente.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    } finally {
+      this.loadingServices = false;
+    }
+  }
+
+  async reloadServices() {
+    await this.loadServices();
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import PocketBase from 'pocketbase';
-import { BehaviorSubject, Observable } from 'rxjs'; // {{ edit_1 }}
+import { BehaviorSubject, Observable } from 'rxjs'; 
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class RealtimeServicesService implements OnDestroy {
   public services$: Observable<any[]> =
     this.servicesSubject.asObservable();
 
-  constructor(private servicesRealtime:RealtimeServicesService) { // {{ edit_2 }}
+  constructor() { 
     this.pb = new PocketBase('https://db.conectavet.cl:8080');
     this.subscribeToServices();
   }
@@ -43,18 +43,29 @@ export class RealtimeServicesService implements OnDestroy {
   }
 
   private async updateServicesList() {
-    // Obtener la lista actualizada de especialistas
-    const records = await this.pb
-      .collection('services')
-      .getFullList(200 /* cantidad máxima de registros */, {
-        sort: '-created', // Ordenar por fecha de creación
-      });
-    
-    // Invertir el orden de los registros
-    const reversedRecords = records.reverse(); // {{ edit_1 }}
-    
-    this.servicesSubject.next(reversedRecords); // {{ edit_2 }}
+    try {
+      // Obtener la lista actualizada de especialistas
+      const records = await this.pb
+        .collection('services')
+        .getFullList(200 /* cantidad máxima de registros */, {
+          sort: '-created', // Ordenar por fecha de creación
+        });
+      
+      // Invertir el orden de los registros
+      const reversedRecords = records.reverse();
+      
+      this.servicesSubject.next(reversedRecords);
+    } catch (error) {
+      console.error('Error updating services list:', error);
+      throw error;
+    }
   }
+
+  // Public method to manually reload services
+  public async reloadServices(): Promise<void> {
+    await this.updateServicesList();
+  }
+
   ngOnDestroy() {
     // Desuscribirse cuando el servicio se destruye
     this.pb.collection('services').unsubscribe('*');

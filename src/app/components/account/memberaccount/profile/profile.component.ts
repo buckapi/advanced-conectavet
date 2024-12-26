@@ -8,6 +8,7 @@ import PocketBase from 'pocketbase';
 import { CalendarModule } from 'primeng/calendar';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MapModalComponent } from '@app/components/shared/map-modal/map-modal.component';
+import Swal from 'sweetalert2';
 
 interface ImageRecord {
   collectionId: string;
@@ -241,6 +242,8 @@ currentUser = {
         this.selectedDays[day.trim() as keyof typeof this.selectedDays] = true;
       });
     }
+    this.canEditRut = !this.fields.rut;
+    // this.testRutValidation();
   }
 
   toggleField(field: keyof typeof this.visibleFields): void {
@@ -440,36 +443,213 @@ currentUser = {
   }
 
   async confirmSaveRut() {
-    this.canEditRut = false;
-    const result = await this.showConfirmDialog(
-      '¿Estás seguro?', 
-      'El RUT solo podrá ser ingresado una vez. Después de guardar, no podrás modificarlo.'
-    );
+    // If RUT is already saved, prevent further editing
+    if (this.fields.rut) {
+      Swal.fire({
+        icon: 'info',
+        title: 'RUT ya guardado',
+        text: 'El RUT ya ha sido guardado y no puede modificarse.',
+        confirmButtonColor: '#3ba5a8'
+      });
+      return false;
+    }
 
-    if (result) {
-      this.updateFields('rut', this.fields.rut);
+    // Validate RUT before showing confirmation
+    const cleanRut = this.rut.replace(/[.-]/g, '').toUpperCase();
+    if (!this.validateRut(cleanRut)) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'RUT Inválido',
+        text: 'Por favor, ingrese un RUT válido en formato XX.XXX.XXX-X',
+        confirmButtonColor: '#3ba5a8'
+      });
+      return false;
+    }
+
+    const result = await Swal.fire({
+      title: '¿Estás seguro de guardar tu RUT?',
+      html: `
+        <p>Advertencia: El RUT solo podrá ser ingresado una vez.</p>
+        <p>Después de guardar, <strong>NO PODRÁS modificar tu RUT</strong>.</p>
+        <p>Asegúrate de que el RUT sea correcto:</p>
+        <h3 class="text-primary">${this.formatRut(this.rut)}</h3>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3ba5a8',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, guardar RUT',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // Format and save RUT
+        const formattedRut = this.formatRut(this.rut);
+        this.fields.rut = formattedRut;
+        
+        // Update RUT in backend
+        await this.updateFields('rut', formattedRut);
+
+        // Show success message
+        await Swal.fire({
+          title: 'RUT Guardado',
+          text: 'Tu RUT ha sido guardado exitosamente.',
+          icon: 'success',
+          confirmButtonColor: '#3ba5a8'
+        });
+
+        // Disable further RUT edits ONLY after successful save
+        this.canEditRut = false;
+        this.visibleFields['rut'] = false;
+
+        return true;
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : 'No se pudo guardar el RUT. Inténtalo de nuevo.';
+        
+        Swal.fire({
+          title: 'Error',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonColor: '#d33'
+        });
+
+        // Keep edit mode active if save fails
+        this.canEditRut = true;
+
+        return false;
+      }
+    }
+    return false;
+  }
+
+  formatRutInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/[^0-9kK]/g, '');
+    
+    // Limit input to 9 characters (8 digits + 1 check digit)
+    if (value.length > 9) {
+      value = value.slice(0, 9);
+    }
+    
+    // Format RUT with dots and dash
+    let formattedRut = '';
+    if (value.length > 1) {
+      const body = value.slice(0, -1);
+      const checkDigit = value.slice(-1);
+      
+      // Add dots for thousands separator
+      formattedRut = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      formattedRut += `-${checkDigit}`;
+    } else {
+      formattedRut = value;
+    }
+    
+    // Update model and input value
+    this.rut = formattedRut;
+    input.value = formattedRut;
+  }
+
+  updateRut(): void {
+    // Validate and format RUT
+    if (this.rut) {
+      // Remove any existing formatting and validate
+      const cleanRut = this.rut.replace(/[.-]/g, '').toUpperCase();
+      
+      // Basic RUT validation
+      if (this.validateRut(cleanRut)) {
+        // Format RUT with dots and dash
+        this.rut = this.formatRut(cleanRut);
+        
+        // Only allow editing if RUT hasn't been saved before
+        this.canEditRut = !this.fields.rut;
+      } else {
+        // Keep the input field active if RUT is invalid
+        this.canEditRut = true;
+      }
+    } else {
+      // Disable edit if no RUT is entered
+      this.canEditRut = false;
     }
   }
 
-  // Helper method to show a confirmation dialog
-  private showConfirmDialog(title: string, text: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const confirmed = window.confirm(text);
-      resolve(confirmed);
+  private formatRut(rut: string): string {
+    // Remove any existing formatting
+    rut = rut.replace(/[.-]/g, '').toUpperCase();
+    
+    // Separate body and verification digit
+    const body = rut.slice(0, -1);
+    const verifier = rut.slice(-1);
+    
+    // Format body with dots
+    const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    return `${formattedBody}-${verifier}`;
+  }
+
+  private validateRut(rut: string): boolean {
+    // Remove any existing formatting and convert to uppercase
+    rut = rut.replace(/[.-]/g, '').toUpperCase();
+    
+    // Check if RUT has at least 2 characters
+    if (rut.length < 2) return false;
+    
+    // Separate body and check digit
+    const body = rut.slice(0, -1);
+    const checkDigit = rut.slice(-1);
+    
+    // Validate body is a number
+    if (!/^\d+$/.test(body)) return false;
+    
+    // Calculate check digit
+    let sum = 0;
+    let multiplier = 2;
+    
+    // Iterate through body digits from right to left
+    for (let i = body.length - 1; i >= 0; i--) {
+      sum += parseInt(body[i]) * multiplier;
+      multiplier = multiplier === 7 ? 2 : multiplier + 1;
+    }
+    
+    // Calculate expected check digit
+    const remainder = 11 - (sum % 11);
+    
+    // Convert calculated check digit to final form
+    let finalCheckDigit: string;
+    switch (remainder) {
+      case 10:
+        finalCheckDigit = 'K';
+        break;
+      case 11:
+        finalCheckDigit = '0';
+        break;
+      default:
+        finalCheckDigit = remainder.toString();
+    }
+    
+    // Compare calculated check digit with provided check digit
+    return finalCheckDigit === checkDigit;
+  }
+
+  private testRutValidation() {
+    // Test cases with various RUT combinations
+    const testCases = [
+      '77.777.777-7',   // Repeated digits
+      '45.457.787-8',   // Mixed digits
+      '12.345.678-9',   // Sequential digits
+      '98.765.432-0',   // Descending digits
+      '11.111.111-1',   // All 1s
+      '22.222.222-2',   // All 2s
+      '10.000.000-K',   // RUT with K check digit
+      '54.545.454-5'    // The specific RUT mentioned
+    ];
+
+    testCases.forEach(rut => {
+      const cleanRut = rut.replace(/[.-]/g, '').toUpperCase();
+      console.log(`RUT: ${rut}, Valid: ${this.validateRut(cleanRut)}`);
     });
-  }
-
-  // Helper methods for notifications
-  private showErrorNotification(message: string) {
-    console.error(message);
-    // You can replace this with your preferred notification method
-    alert(message);
-  }
-
-  private showWarningNotification(message: string) {
-    console.warn(message);
-    // You can replace this with your preferred notification method
-    alert(message);
   }
 
   updateHours() {
@@ -561,29 +741,16 @@ currentUser = {
   // Add rut property
   rut: string = '';
 
-  // Add method to update RUT
-  updateRut() {
-    if (this.rut) {
-      // Format RUT if needed
-      const formattedRut = this.formatRut(this.rut);
-      
-      // Use updateFields to save RUT with loading state
-      this.updateFields('rut', formattedRut);
-    }
+  // Helper methods for notifications
+  private showErrorNotification(message: string) {
+    console.error(message);
+    // You can replace this with your preferred notification method
+    alert(message);
   }
 
-  // Helper method to format RUT
-  private formatRut(rut: string): string {
-    // Remove any existing formatting
-    rut = rut.replace(/[.-]/g, '').toUpperCase();
-    
-    // Separate body and verification digit
-    const body = rut.slice(0, -1);
-    const verifier = rut.slice(-1);
-    
-    // Format body with dots and dash
-    const formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    
-    return `${formattedBody}-${verifier}`;
+  private showWarningNotification(message: string) {
+    console.warn(message);
+    // You can replace this with your preferred notification method
+    alert(message);
   }
 }

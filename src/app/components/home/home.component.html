@@ -5,7 +5,7 @@
         <div class="dz-box style-2" style="padding-top: 0px !important;">
             <div class="title-bar">
                 <h5 class="title mb-0">Clínicas recomendadas</h5>
-                <ul class="dz-tab nav nav-pills light style-1 list" role="tablist">
+                <ul class="dz-tab nav nav-pills light style-1 list" role="tablist" *ngIf="global.isMobile()">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="list" data-bs-toggle="pill" data-bs-target="#pills-list"
                             type="button" role="tab" aria-controls="pills-list" aria-selected="true"
@@ -13,53 +13,157 @@
                             <i class="icon feather icon-list"></i>
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
+                    <li class="nav-item" role="presentation" *ngIf="global.isMobile()">
                         <button class="nav-link" id="grid" data-bs-toggle="pill" data-bs-target="#pills-grid"
                             type="button" role="tab" aria-controls="pills-grid" aria-selected="false" tabindex="-1"
                             (click)="toggleView('grid')">
                             <i class="icon feather icon-grid"></i>
                         </button>
-                    </li>
-                </ul>
+                    </li>          
+                </ul> 
+                <button class="nav-link" style=" border-color : transparent; cursor: pointer; background-color: transparent !important; padding: 25px 0px 0px 0px! important   ;" (click)="toggleMap()">
+                    <i class="icon feather" style="color: #000; font-size: 20px;" [ngClass]="global.webShowMap ? 'icon feather icon-grid' : 'icon feather icon-map-pin'"></i>
+                </button>
+             
             </div>
-            <div class="row">
-                <div class="col-12 m-b35" [ngClass]="{
-                    'col-12': isListView, 
-                    'col-6': !isListView && !auth.isAdmin(), 
-                    'col-lg-2': !auth.isAdmin(),
-                    'col-lg-1': auth.isAdmin()
-                }" *ngFor="let specialist of global.specialists | filterSpecialists:auth.isAdmin()">
-                    <div class="dz-card style-2 specialist-card" style="cursor: pointer ;     border-style: solid ; border-width: 1px ; border-color: #3ba5a8;">
-                        <div class="dz-media" (click)="onClinicClick(specialist)">
-                            <a class="image-container">
+            <div class="row" *ngIf="!global.isMobile()">
+                <div class=" col-6" *ngIf="global.webShowMap">                    
+                   <div class="row specialists-scroll-container">
+                    <div class=" row">
+                        <div class="col-12 m-b35" [ngClass]="{
+                            'col-12': isListView, 
+                            'col-6': !isListView && !auth.isAdmin(), 
+                            'col-lg-4': !auth.isAdmin(),
+                            'col-lg-3': auth.isAdmin()
+                        }" *ngFor="let specialist of global.specialists | filterSpecialists:auth.isAdmin()"
+                        (mouseenter)="onSpecialistHover(specialist)"
+                        (mouseleave)="onSpecialistUnhover(specialist)"
+                        >
+                            <div class="dz-card style-2 specialist-card" style="cursor: pointer ;     border-style: solid ; border-width: 1px ; border-color: #3ba5a8;">
                                 <div class="dz-media">
-                                    <img [src]="specialist.images?.[0] ?? 'https://static.vecteezy.com/system/resources/previews/013/149/674/non_2x/unavailable-image-icon-in-trendy-flat-style-isolated-on-white-background-photo-gallery-symbol-for-web-and-mobile-apps-free-vector.jpg'"
-                                        alt="image" class="responsive-image image-square">
-                                    <a class="item-bookmark style-2 hover-heart" (click)="mostrarFavorito($event, specialist.id)">
-                                        <i class="feather icon-heart-on"></i>
+                                    <a class="image-container">
+                                        <div class="dz-media">
+                                            <img [src]="specialist.images?.[0] ?? 'https://static.vecteezy.com/system/resources/previews/013/149/674/non_2x/unavailable-image-icon-in-trendy-flat-style-isolated-on-white-background-photo-gallery-symbol-for-web-and-mobile-apps-free-vector.jpg'"
+                                                alt="image" class="responsive-image image-square">
+                                            <a class="item-bookmark style-2 hover-heart" (click)="mostrarFavorito($event, specialist.id)">
+                                                <i class="feather icon-heart-on"></i>
+                                            </a>
+                                        </div>
                                     </a>
                                 </div>
-                            </a>
+                                <div class="dz-content">
+                                    <ul class="dz-top-meta mb-2 particular">
+                                        <span class="brand-tag">
+                                            <h5 class="">{{specialist.full_name}}</h5>
+                                        </span>
+                                        <li class="dz-review">
+                                            <i class="feather icon-star-on star"></i>
+                                            <span class="r-rating">{{specialist.rating}}</span>
+                                            <span class="r-status" *ngIf="!global.isMobile()">({{specialist.ratingQuantity}})</span>
+                                        </li>
+                                    </ul>
+                                    <div *ngIf="auth.isAdmin()" class="form-check form-switch">
+                                        <input class="form-check-input form-check-success" id="flexSwitchCheckDefault"
+                                            type="checkbox" [checked]="specialist.status === 'approved'"
+                                            (change)="global.toggleSpecialistStatus(specialist)">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="dz-content">
-                            <ul class="dz-top-meta mb-2 particular">
-                                <span class="brand-tag">
-                                    <h5 class="">{{specialist.full_name}}</h5>
-                                </span>
-                                <li class="dz-review">
-                                    <i class="feather icon-star-on star" *ngFor="let star of getStarsArray(specialist.rating)"></i>
-                                    <span class="r-rating">{{specialist.rating}}</span>
-                                    <span class="r-status" *ngIf="!global.isMobile()">({{specialist.ratingQuantity}})</span>
-                                </li>
-                            </ul>
-                            <div *ngIf="auth.isAdmin()" class="form-check form-switch">
-                                <input class="form-check-input form-check-success" id="flexSwitchCheckDefault"
-                                    type="checkbox" [checked]="specialist.status === 'approved'"
-                                    (change)="global.toggleSpecialistStatus(specialist)">
+                    </div>
+                   </div>
+                </div>
+                <div class="row col-6" *ngIf="global.webShowMap">
+                    <app-map></app-map>
+                </div>
+                <div class="row col-12" *ngIf="!global.webShowMap">                    
+                    <div class="col-12 m-b35" [ngClass]="{
+                        'col-12': isListView, 
+                        'col-6': !isListView && !auth.isAdmin(), 
+                        'col-lg-2': !auth.isAdmin(),
+                        'col-lg-1': auth.isAdmin()
+                    }" *ngFor="let specialist of global.specialists | filterSpecialists:auth.isAdmin()"
+                    (mouseenter)="onSpecialistHover(specialist)"
+                    (mouseleave)="onSpecialistUnhover(specialist)"
+                    >
+                        <div class="dz-card style-2 specialist-card" style="cursor: pointer ;     border-style: solid ; border-width: 1px ; border-color: #3ba5a8;">
+                            <div class="dz-media" (click)="onClinicClick(specialist)">
+                                <a class="image-container">
+                                    <div class="dz-media">
+                                        <img [src]="specialist.images?.[0] ?? 'https://static.vecteezy.com/system/resources/previews/013/149/674/non_2x/unavailable-image-icon-in-trendy-flat-style-isolated-on-white-background-photo-gallery-symbol-for-web-and-mobile-apps-free-vector.jpg'"
+                                            alt="image" class="responsive-image image-square">
+                                        <a class="item-bookmark style-2 hover-heart" (click)="mostrarFavorito($event, specialist.id)">
+                                            <i class="feather icon-heart-on"></i>
+                                        </a>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dz-content">
+                                <ul class="dz-top-meta mb-2 particular">
+                                    <span class="brand-tag">
+                                        <h5 class="">{{specialist.full_name}}</h5>
+                                    </span>
+                                    <li class="dz-review">
+                                        <i class="feather icon-star-on star"></i>
+                                        <span class="r-rating">{{specialist.rating}}</span>
+                                        <span class="r-status" *ngIf="!global.isMobile()">({{specialist.ratingQuantity}})</span>
+                                    </li>
+                                </ul>
+                                <div *ngIf="auth.isAdmin()" class="form-check form-switch">
+                                    <input class="form-check-input form-check-success" id="flexSwitchCheckDefault"
+                                        type="checkbox" [checked]="specialist.status === 'approved'"
+                                        (change)="global.toggleSpecialistStatus(specialist)">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                
+            </div>
+
+
+
+            <div class="row" *ngIf="global.isMobile()">
+                    <div class="col-12 m-b35" [ngClass]="{
+                        'col-12': isListView, 
+                        'col-6': !isListView && !auth.isAdmin(), 
+                        'col-lg-2': !auth.isAdmin(),
+                        'col-lg-1': auth.isAdmin()
+                    }" *ngFor="let specialist of global.specialists | filterSpecialists:auth.isAdmin()"
+                    (mouseenter)="onSpecialistHover(specialist)"
+                    (mouseleave)="onSpecialistUnhover(specialist)"
+                    >
+                        <div class="dz-card style-2 specialist-card" style="cursor: pointer ;     border-style: solid ; border-width: 1px ; border-color: #3ba5a8;">
+                            <div class="dz-media" (click)="onClinicClick(specialist)">
+                                <a class="image-container">
+                                    <div class="dz-media">
+                                        <img [src]="specialist.images?.[0] ?? 'https://static.vecteezy.com/system/resources/previews/013/149/674/non_2x/unavailable-image-icon-in-trendy-flat-style-isolated-on-white-background-photo-gallery-symbol-for-web-and-mobile-apps-free-vector.jpg'"
+                                            alt="image" class="responsive-image image-square">
+                                        <a class="item-bookmark style-2 hover-heart" (click)="mostrarFavorito($event, specialist.id)">
+                                            <i class="feather icon-heart-on"></i>
+                                        </a>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dz-content">
+                                <ul class="dz-top-meta mb-2 particular">
+                                    <span class="brand-tag">
+                                        <h5 class="">{{specialist.full_name}}</h5>
+                                    </span>
+                                    <li class="dz-review">
+                                        <i class="feather icon-star-on star" *ngFor="let star of getStarsArray(specialist.rating)"></i>
+                                        <span class="r-rating">{{specialist.rating}}</span>
+                                        <span class="r-status" *ngIf="!global.isMobile()">({{specialist.ratingQuantity}})</span>
+                                    </li>
+                                </ul>
+                                <div *ngIf="auth.isAdmin()" class="form-check form-switch">
+                                    <input class="form-check-input form-check-success" id="flexSwitchCheckDefault"
+                                        type="checkbox" [checked]="specialist.status === 'approved'"
+                                        (change)="global.toggleSpecialistStatus(specialist)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>

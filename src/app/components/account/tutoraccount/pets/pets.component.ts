@@ -7,6 +7,8 @@ import { HistoryComponent } from '../history/history.component';
 import { Pet, RealtimePetsService } from '@app/services/realtime-pet.service';
 import { PetService } from '@app/services/pet.service';
 import Swal from 'sweetalert2';
+import * as bootstrap from 'bootstrap';
+
 interface PetInterface {
   // Define las propiedades de PetInterface aquí
   name: string;
@@ -98,7 +100,9 @@ filteredPets: any[] = [];
     this.global.petSelected=pet;
   }
   validatePetsLimit() {
-    const currentPets = this.pets.length || 0;
+    const userId = this.auth.getUserId();
+    const tutorPets = this.pets.filter(pet => pet.idTutor === userId);
+    const currentPets = tutorPets.length;
     
     if (currentPets >= 1) {
       Swal.fire({
@@ -109,7 +113,12 @@ filteredPets: any[] = [];
         confirmButtonColor: '#3ba5a8'
       });
     } else {
-      this.global.setFormOption('category');
+      // Open the offcanvas using Bootstrap
+      const offcanvas = document.getElementById('offcanvasBottom9');
+      if (offcanvas) {
+        const bsOffcanvas = new bootstrap.Offcanvas(offcanvas);
+        bsOffcanvas.show();
+      }
     }
   }
 }

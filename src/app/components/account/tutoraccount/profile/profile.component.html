@@ -60,69 +60,116 @@
             </div>
             <form>
               <div class="mb-2">
-                <button class="btn btn-link" (click)="toggleField('full_name')">
+                <button class="btn btn-link bs-success" (click)="toggleField('full_name')">
                   <span class="text-muted">
                     Nombre completo:
                   </span> {{fields.full_name || ''}}
                 </button>
-                <div *ngIf="visibleFields.full_name" class="input-group input-group-icon">
-                  <span class="input-group-text">
-                    <div class="input-icon">
-                      <i class="icon feather icon-user"></i>
+                <div *ngIf="visibleFields.full_name" class="d-flex">
+                  <div class="input-group input-group-icon flex-grow-1">
+                    <span class="input-group-text">
+                      <div class="input-icon">
+                        <i class="icon feather icon-user"></i>
+                      </div>
+                    </span>
+                    <input class="form-control" id="full_name" type="text" [(ngModel)]="fields.full_name"
+                      (input)="onInputChange('full_name', fields.full_name)" placeholder="Ingrese full_name" />
+                  </div>
+                  <div *ngIf="isLoading['full_name']?.loading" class="ms-2">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                      <span class="visually-hidden">Guardando...</span>
                     </div>
-                  </span>
-                  <input class="form-control" id="full_name" type="text" [(ngModel)]="fields.full_name"
-                    (input)="onInputChange('full_name', fields.full_name)" placeholder="Nombre completo" />
+                  </div>
+                  <div *ngIf="isLoading['full_name']?.success" class="ms-2">
+                    <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+                  </div>
                 </div>
               </div>
               <div class="mb-2">
-                <button class="btn btn-link" [disabled]="canEditRut === false" (click)="toggleField('rut')">
+                <button class="btn btn-link bs-success" [disabled]="canEditRut === false" (click)="toggleField('rut')">
                   <span class="text-muted">
                     RUT:
                   </span>
                   {{fields.rut || ''}}
                 </button>
-                <div *ngIf="visibleFields.rut && canEditRut" class="input-group input-group-icon">
-                  <span class="input-group-text">
-                    <div class="input-icon">
-                      <i class="fi fi-rr-credit-card font-20"></i>
+                <div *ngIf="visibleFields['rut'] && canEditRut" class="d-flex flex-column">
+                  <div class="alert alert-warning mb-2" role="alert">
+                    <i class="icon feather icon-alert-triangle me-2"></i>
+                    Advertencia: El RUT debe ingresarse en formato XX.XXX.XXX-X 
+                    (por ejemplo, 12.345.678-9). Solo podrá ser ingresado una vez 
+                    y no se podrá modificar después.
+                  </div>
+                  <div class="d-flex">
+                    <div class="input-group input-group-icon flex-grow-1">
+                      <span class="input-group-text">
+                        <div class="input-icon">
+                          <i class="fi fi-rr-credit-card font-20"></i>
+                        </div>
+                      </span>
+                      <input class="form-control" id="rut" type="text" 
+                             [(ngModel)]="rut" 
+                             placeholder="Ingrese RUT (XX.XXX.XXX-X)" 
+                             (input)="formatRutInput($event)"
+                             maxlength="12">
+                      <button class="btn btn-primary" (click)="confirmSaveRut()" [disabled]="!rut">
+                        <div class="d-flex align-items-center">
+                          <span>Guardar RUT</span>
+                        </div>
+                      </button>
                     </div>
-                  </span>
-                  <input class="form-control" id="rut" type="text" [(ngModel)]="fields.rut" placeholder="RUT" />
-                  <button class="btn btn-primary" (click)="confirmSaveRut()">Guardar RUT</button>
+                  </div>
                 </div>
               </div>
               <div class="mb-2">
-                <button class="btn btn-link" (click)="toggleField('address')">
+                <button class="btn btn-link bs-success" (click)="toggleField('address')">
                   <span class="text-muted">
                     Dirección:
-                  </span>
-                  {{fields.address || ''}}
+                  </span> {{fields.address || ''}}
                 </button>
-                <div *ngIf="visibleFields.address" class="input-group input-group-icon">
-                  <span class="input-group-text">
-                    <div class="input-icon">
-                      <i class="icon feather icon-map-pin"></i>
+                <div *ngIf="visibleFields.address" class="d-flex">
+                  <div class="input-group input-group-icon flex-grow-1">
+                    <span class="input-group-text">
+                      <div class="input-icon">
+                        <i class="icon feather icon-map-pin"></i>
+                      </div>
+                    </span>
+                    <input class="form-control" id="address" type="text" [(ngModel)]="fields.address"
+                      (input)="onInputChange('address', fields.address)" placeholder="Ingrese address" />
+                  </div>
+                  <div *ngIf="isLoading['address']?.loading" class="ms-2">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                      <span class="visually-hidden">Guardando...</span>
                     </div>
-                  </span>
-                  <input class="form-control" id="address" type="text" [(ngModel)]="fields.address"
-                    (input)="onInputChange('address', fields.address)" placeholder="Dirección" />
+                  </div>
+                  <div *ngIf="isLoading['address']?.success" class="ms-2">
+                    <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+                  </div>
                 </div>
               </div>
               <div class="mb-2">
-                <button class="btn btn-link" (click)="toggleField('phone')">
+                <button class="btn btn-link bs-success" (click)="toggleField('phone')">
                   <span class="text-muted">
                     Teléfono:
                   </span>{{fields.phone || ''}}
                 </button>
-                <div *ngIf="visibleFields.phone" class="input-group input-group-icon">
-                  <span class="input-group-text">
-                    <div class="input-icon">
-                      <i class="icon feather icon-phone"></i>
+                <div *ngIf="visibleFields.phone" class="d-flex">
+                  <div class="input-group input-group-icon flex-grow-1">
+                    <span class="input-group-text">
+                      <div class="input-icon">
+                        <i class="icon feather icon-phone"></i>
+                      </div>
+                    </span>
+                    <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
+                      (input)="onInputChange('phone', fields.phone)" placeholder="Ingrese phone" />
+                  </div>
+                  <div *ngIf="isLoading['phone']?.loading" class="ms-2">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                      <span class="visually-hidden">Guardando...</span>
                     </div>
-                  </span>
-                  <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
-                    (input)="onInputChange('phone', fields.phone)" placeholder="Teléfono" />
+                  </div>
+                  <div *ngIf="isLoading['phone']?.success" class="ms-2">
+                    <img src="assets/images/check.gif" style="width: 24px; height: 24px;" alt="Guardado">
+                  </div>
                 </div>
               </div>
             </form>

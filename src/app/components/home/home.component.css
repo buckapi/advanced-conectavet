@@ -108,3 +108,35 @@
         }
     }
 }
+
+/* Scrollable Specialists Container */
+.specialists-scroll-container {
+    max-height: calc(100vh - 250px); /* Adjust height as needed */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+.specialists-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between specialist cards */
+}
+
+/* Custom Scrollbar */
+.specialists-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.specialists-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.specialists-scroll-container::-webkit-scrollbar-thumb {
+    background: #3ba5a8; /* Match your theme color */
+    border-radius: 10px;
+}
+
+.specialists-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #2c8c8f;
+}

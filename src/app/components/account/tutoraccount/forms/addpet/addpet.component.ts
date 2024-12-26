@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import PocketBase from 'pocketbase';
 import Swal from 'sweetalert2';
+import * as bootstrap from 'bootstrap';
 
 interface ImageRecord {
   collectionId: string;
@@ -27,14 +28,14 @@ interface PetData {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './addpet.component.html',
-  styleUrl: './addpet.component.css',
+  styleUrls: ['./addpet.component.css'],
 })
 export class AddpetComponent {
   @ViewChild('imageUpload', { static: false }) imageUpload!: ElementRef;
-  
+
   apiUrl = 'https://db.conectavet.cl:8080/api/files/';
   private pb: PocketBase;
- 
+
   public selectedImage: File | null = null;
   public selectedImagePrev: File | null = null;
   public petName: string = '';
@@ -47,15 +48,15 @@ export class AddpetComponent {
   public images: string[] = [];
   public idTutor: string = '';
   public otherPetType: string = '';
-   formData:PetData = {
-    images: [] ,
+  formData: PetData = {
+    images: [],
     name: '',
     type: '',
     idTutor: '',
     status: '',
     petWeight: 0,
     petAge: 0,
-    petColor: '' 
+    petColor: '',
   };
 
   constructor(public auth: AuthPocketbaseService) {
@@ -85,8 +86,6 @@ export class AddpetComponent {
       reader.readAsDataURL(file);
     }
   }
-  
-
 
   async addPet() {
     if (!this.validateForm()) {
@@ -97,7 +96,7 @@ export class AddpetComponent {
     const formData = new FormData();
     formData.append('type', 'pet');
     formData.append('userId', this.idTutor);
-    
+
     if (this.selectedImage) {
       formData.append('image', this.selectedImage);
     }
@@ -108,7 +107,6 @@ export class AddpetComponent {
         .create(formData);
 
       if (newImageRecord) {
-
         console.log('Imagen subida:', newImageRecord);
         this.formData.images.push(
           this.apiUrl +
@@ -117,25 +115,22 @@ export class AddpetComponent {
             newImageRecord.id +
             '/' +
             newImageRecord.image
-          );
-     
+        );
 
         const petData: PetData = {
-          petWeight: this.formData.petWeight,
-          petAge: this.formData.petAge,
-          petColor: this.formData.petColor,
+          petWeight: this.petWeight || 0,
+          petAge: this.petAge || 0,
+          petColor: this.petColor,
           images: this.formData.images,
           name: this.petName,
-          type: this.petType,
+          type: this.petType === 'otro' ? this.otherPetType : this.petType,
           idTutor: this.idTutor,
-          status: this.isVisible ? 'visible' : 'hidden'
+          status: this.isVisible ? 'visible' : 'hidden',
         };
 
         await this.pb.collection('pets').create(petData);
 
-        // Resetear formulario
-        this.resetForm();
-
+        // Show success message
         Swal.fire({
           title: 'Éxito!',
           text: 'Mascota agregada correctamente.',
@@ -143,6 +138,8 @@ export class AddpetComponent {
           confirmButtonText: 'Aceptar',
         });
 
+        // Reset the form after successful save
+        this.resetForm();
       } else {
         Swal.fire({
           title: 'Error!',
@@ -161,11 +158,12 @@ export class AddpetComponent {
       console.error('Error al agregar la mascota:', error);
     }
   }
+
   validateForm(): boolean {
     console.log('selectedImage:', this.selectedImage); // Para ver si la imagen está definida
     console.log('petName:', this.petName); // Para ver el nombre
     console.log('petType:', this.petType); // Para ver el tipo
-    
+
     if (!this.selectedImage) {
       Swal.fire({
         title: 'Error!',
@@ -175,7 +173,7 @@ export class AddpetComponent {
       });
       return false;
     }
-  
+
     if (!this.petName) {
       Swal.fire({
         title: 'Error!',
@@ -185,7 +183,7 @@ export class AddpetComponent {
       });
       return false;
     }
-  
+
     if (!this.petType) {
       Swal.fire({
         title: 'Error!',
@@ -195,52 +193,50 @@ export class AddpetComponent {
       });
       return false;
     }
-  
+
     return true;
   }
-  
-  // validateForm(): boolean {
-  //   if (!this.selectedImage) {
-  //     Swal.fire({
-  //       title: 'Error!',
-  //       text: 'Por favor, suba una imagen de la mascota.',
-  //       icon: 'warning',
-  //       confirmButtonText: 'Aceptar',
-  //     });
-  //     return false;
-  //   }
 
-  //   if (!this.petName) {
-  //     Swal.fire({
-  //       title: 'Error!',
-  //       text: 'Por favor, ingrese el nombre de la mascota.',
-  //       icon: 'warning',
-  //       confirmButtonText: 'Aceptar',
-  //     });
-  //     return false;
-  //   }
-
-  //   if (!this.petType) {
-  //     Swal.fire({
-  //       title: 'Error!',
-  //       text: 'Por favor, seleccione el tipo de mascota.',
-  //       icon: 'warning',
-  //       confirmButtonText: 'Aceptar',
-  //     });
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
-
-  private resetForm(): void {
-    this.images = [];
+  resetForm() {
+    // Reset form fields
     this.petName = '';
+    this.petWeight = null;
+    this.petAge = null;
+    this.petColor = '';
+    this.petBreed = '';
     this.petType = '';
+    this.otherPetType = '';
+    this.isVisible = false;
+
+    // Reset image fields
     this.selectedImage = null;
     this.selectedImagePrev = null;
-    if (this.imageUpload) {
+    this.images = [];
+
+    // Reset form data
+    this.formData = {
+      images: [],
+      name: '',
+      type: '',
+      idTutor: '',
+      status: '',
+      petWeight: 0,
+      petAge: 0,
+      petColor: '',
+    };
+
+    // Reset file input
+    if (this.imageUpload && this.imageUpload.nativeElement) {
       this.imageUpload.nativeElement.value = '';
+    }
+
+    // Close the offcanvas
+    const offcanvas = document.getElementById('offcanvasBottom9');
+    if (offcanvas) {
+      const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
+      if (bsOffcanvas) {
+        bsOffcanvas.hide();
+      }
     }
   }
 }

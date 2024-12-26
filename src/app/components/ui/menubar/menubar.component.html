@@ -1,17 +1,17 @@
 <div class="menubar-area footer-fixed" 
      [ngClass]="{'bg-transparent': !auth.isLogin()}" 
-     style="margin: 10px 10px 10px 10px !important; width: 95%; border-radius: 50px;">
+     style="margin: 10px 10px 10px 10px !important; width: 95%; border-radius: 50px; background-color: transparent !important;">
    <div class="toolbar-inner menubar-nav" style="justify-content: space-around;" [hidden]="global.activeRoute=='shopping'">
-      <a [hidden]="!auth.isLogin()" (click)="global.setRoute('home')" [class.active]="global.activeRoute === 'home'" class="nav-link">
+      <!-- <a [hidden]="!auth.isLogin()" (click)="global.setRoute('home')" [class.active]="global.activeRoute === 'home'" class="nav-link">
         <i class="fi fi-rr-home"></i>
-      </a>
+      </a> -->
       <a class="nav-link marker-icon" (click)="preventClick($event)" style="position: relative;">         
         <img src="https://app.conectavet.cl/assets/images/banner_title_img02.png" alt="Marker Image" style="height: 45px; box-shadow: 0px 10px 20px 0px rgba(255, 36, 23, 0.5);border-radius: 50%;">   
         <span class="arrow-badge" [ngClass]="{'slide-up': isOffcanvasActive}" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%);"></span>
       </a>
-      <a [hidden]="!auth.isLogin()" class="nav-link" (click)="global.setRoute('favorites')"  [class.active]="global.activeRoute === 'favorites'">
+      <!-- <a [hidden]="!auth.isLogin()" class="nav-link" (click)="global.setRoute('favorites')"  [class.active]="global.activeRoute === 'favorites'">
         <i class="fi fi-rr-star"></i>
-      </a>
+      </a> -->
     </div>
     <div class="toolbar-inner menubar-nav" style="justify-content: space-around;">
 

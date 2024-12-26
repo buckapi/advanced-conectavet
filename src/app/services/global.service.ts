@@ -6,6 +6,7 @@ import { RealtimeProfessionalsService } from './realtime-professional.service';
 import { Pet } from './realtime-pet.service';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { MarkersService } from './markers.service';
 
 export interface Clinic {
   id: string;
@@ -45,6 +46,8 @@ export class GlobalService {
   showHistory = false;
   professionalsCount: number = 0;
   idS: string = "";
+webShowMap: boolean = true;
+
   categoryFiltersAplcated = false;
   adminOptionn: string = '';
   memberOption: string = 'profile';
@@ -60,6 +63,7 @@ export class GlobalService {
   myServices: any[] = [];
   myServicesAct: any[] = [];
   categories: any[] = [];
+  focusMarker: any = null;
   cart: any[] = [];
   categorySelected: any = { // Cambiar 'category' a 'Category'
   };
@@ -98,6 +102,7 @@ export class GlobalService {
   constructor(
     public realtimeSpecialists: RealtimeSpecialistsService,
     public realtimeProfessionals: RealtimeProfessionalsService,
+    public markersService: MarkersService,
     private router: Router
 
   ) {
