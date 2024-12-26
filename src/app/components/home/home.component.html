@@ -21,7 +21,7 @@
                         </button>
                     </li>          
                 </ul> 
-                <button class="nav-link" style=" border-color : transparent; cursor: pointer; background-color: transparent !important; padding: 25px 0px 0px 0px! important   ;" (click)="toggleMap()">
+                <button *ngIf="!global.isMobile()" class="nav-link" style=" border-color : transparent; cursor: pointer; background-color: transparent !important; padding: 25px 0px 0px 0px! important   ;" (click)="toggleMap()">
                     <i class="icon feather" style="color: #000; font-size: 20px;" [ngClass]="global.webShowMap ? 'icon feather icon-grid' : 'icon feather icon-map-pin'"></i>
                 </button>
              
