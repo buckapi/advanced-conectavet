@@ -181,7 +181,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         offset: 10, // Pequeño desplazamiento predeterminado
         anchor: undefined, // Dejar que Mapbox determine el mejor anclaje dinámicamente
         className: 'custom-popup popup-constrained',
-        maxWidth: '170px', // Reducir el ancho máximo
+        // maxWidth: '170px', // Asegurar ancho consistente
         focusAfterOpen: false // Prevenir enfoque automático
       })
       .setHTML(this.createPopupContent(marker))
@@ -241,18 +241,123 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private createPopupContent(marker: Marker): string {
     // Crear contenido HTML personalizado para el popup del marcador
-    return `
-      <div class="popup-container">
-        <div class="popup-content">
-          <div class="popup-image">
-            <img src="${marker.imageUrl}" alt="${marker.name}" class="popup-profile-image">
-          </div>
-          <div class="popup-details">
-            <h5 class="popup-name">${marker.name}</h5>
-            <p class="popup-description">${marker.description}</p>
-          </div>
-        </div>
+    return `<div class="popup-container">
+  <div class="popup-content">
+    <div class="popup-image">
+      <img src="${marker.imageUrl}" alt="${marker.name}" class="popup-profile-image">
+    </div>
+    <div class="popup-details">
+      <div class="popup-header">
+        <h5 class="popup-name">
+          ${marker.name}
+          <span class="popup-rating">
+          <span class="popup-rating-value"> 
+          ${marker.rating}
+          </span>
+          <i class="fas fa-star"></i>
+          </span>
+        </h5>
       </div>
+      <p class="popup-description">${marker.description}</p>
+      <p class="popup-address">
+        <i class="fas fa-map-marker-alt"></i>
+        ${marker.address}
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .popup-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .popup-rating-value {
+    font-weight: bold;
+  color: #000; }
+
+  .popup-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #fff;
+/*    border-radius: 8px;*/
+    padding: 10px;
+/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);*/
+    max-width: 350px; /* Limita el ancho total */
+    box-sizing: border-box;
+  }
+
+  .popup-image {
+    flex-shrink: 0;
+    max-width: 100px; /* Tamaño máximo para la imagen */
+  }
+    .custom-popup .mapboxgl-popup-content {
+      padding: 0 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.2) !important;
+    }
+
+  .popup-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .popup-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .popup-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .popup-rating {
+    font-size: 14px;
+    color: #ffcc00;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .popup-description {
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+  }
+
+  .popup-address {
+    font-size: 12px;
+    color: #777;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .fas.fa-star {
+    color: #ffcc00;
+  }
+</style>
+
     `;
   }
 
@@ -328,7 +433,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (originalMarker) {
       return `
         <div class="custom-popup" style="
-          max-width: 170px ! important;
+          max-width: 280px;
           background: white;
           border-radius: 8px;
           overflow: hidden;
@@ -337,7 +442,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         ">
           <div style="
             width: 100%;
-            height: 120px;
+            height: 160px;
             overflow: hidden;
             position: relative;
           ">
@@ -351,18 +456,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
               onerror="this.src='assets/images/default-clinic.jpg'"
             >
           </div>
-          <div style="padding: 10px;">
+          <div style="padding: 15px;">
             <h4 style="
-              margin: 0 0 6px 0;
+              margin: 0 0 8px 0;
               color: #333;
-              font-size: 14px;
+              font-size: 16px;
               font-weight: 600;
             ">${originalMarker.name}</h4>
             <p style="
               margin: 0;
               color: #666;
-              font-size: 12px;
-              line-height: 1.3;
+              font-size: 14px;
+              line-height: 1.4;
             ">${originalMarker.description || 'Clínica veterinaria'}</p>
           </div>
         </div>

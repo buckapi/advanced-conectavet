@@ -7,6 +7,8 @@ export interface Marker {
   name: string;
   lat: number;
   lng: number;
+  address: string;
+  rating: number;
   description: string;
   imageUrl: string;
 }
@@ -70,8 +72,10 @@ export class MarkersService {
           name: `${specialist.full_name}`,
           lat: lat || randomCoords.lat,
           lng: lng || randomCoords.lng,
-          description: `${address} - ${specialist.bio || 'sin biografia'}`,
-          imageUrl: specialist.images?.[0] || 'assets/images/default-profile.png'
+          rating: specialist.rating || 0,
+          description: `${specialist.bio || 'sin biografia'}`,
+          imageUrl: specialist.images?.[0] || 'assets/images/default-profile.png',
+          address: specialist.address || address
         };
       }))
     );
