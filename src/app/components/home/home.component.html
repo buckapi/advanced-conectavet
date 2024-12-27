@@ -151,7 +151,8 @@
                                         <h5 class="">{{specialist.full_name}}</h5>
                                     </span>
                                     <li class="dz-review">
-                                        <i class="feather icon-star-on star" *ngFor="let star of getStarsArray(specialist.rating)"></i>
+                                        <i class="feather icon-star-on star"></i>
+                                        <!-- <i class="feather icon-star-on star" *ngFor="let star of getStarsArray(specialist.rating)"></i> -->
                                         <span class="r-rating">{{specialist.rating}}</span>
                                         <span class="r-status" *ngIf="!global.isMobile()">({{specialist.ratingQuantity}})</span>
                                     </li>

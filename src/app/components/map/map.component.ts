@@ -27,13 +27,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private markersService: MarkersService,
     public global: GlobalService
   ) {
-    // Token público de Mapbox
+    // Token público de Mapbox para autenticación de mapas
     (mapboxgl as any).accessToken = 'pk.eyJ1IjoiY29uZWN0YXZldC1jb20iLCJhIjoiY20ybDZpc2dmMDhpMDJpb21iZGI1Y2ZoaCJ9.WquhO_FA_2FM0vhYBaZ_jg';
 
-    // Suscripción a los marcadores
+    // Suscripción a los marcadores para obtener actualizaciones
     this.markerSubscription = this.markersService.getMarkers().subscribe(
       markers => {
-        console.log('Markers received:', markers);
+        console.log('Marcadores recibidos:', markers);
         this.markers = markers;
         if (this.map && this.map.isStyleLoaded()) {
           this.addMarkersToMap();
@@ -42,7 +42,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       },
       error => {
-        console.error('Error loading markers:', error);
+        console.error('Error al cargar marcadores:', error);
       }
     );
   }
@@ -52,21 +52,24 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    // Inicializar el mapa después de que la vista esté completamente renderizada
     this.initializeMap();
   }
 
   ngOnDestroy() {
+    // Desuscribirse para evitar fugas de memoria
     if (this.markerSubscription) {
       this.markerSubscription.unsubscribe();
     }
 
-    // Remove the global click listener
+    // Eliminar el listener global de clic
     if (this.closePopupsListener && this.map) {
       this.map.getCanvas().removeEventListener('click', this.closePopupsListener);
     }
   }
 
   private initializeMap() {
+    // Crear una nueva instancia de mapa con configuraciones específicas
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v12',
@@ -76,10 +79,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       maxZoom: 16
     });
 
-    // Controles de navegación
+    // Agregar controles de navegación al mapa
     this.map.addControl(new mapboxgl.NavigationControl({ showCompass: true, showZoom: true }));
 
-    // Control de geolocalización
+    // Crear y agregar control de geolocalización
     const geolocateControl = new mapboxgl.GeolocateControl({
       positionOptions: { enableHighAccuracy: true },
       trackUserLocation: true,
@@ -87,13 +90,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.map.addControl(geolocateControl);
 
+    // Agregar un marcador rojo cuando se obtiene la ubicación del usuario
     geolocateControl.on('geolocate', (e: any) => {
       const userMarker = new mapboxgl.Marker({ color: 'red' })
         .setLngLat([e.coords.longitude, e.coords.latitude])
         .addTo(this.map);
     });
 
-    // Add zoom and move event listeners to update marker positions
+    // Agregar eventos de zoom y movimiento para actualizar posiciones de marcadores
     this.map.on('zoom', () => {
       this.updateMarkerPositions();
     });
@@ -103,10 +107,11 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.map.on('load', () => {
-      console.log('Map loaded successfully');
+      console.log('Mapa cargado exitosamente');
       this.addMarkersToMap();
     });
 
+    // Intentar obtener la ubicación actual del usuario
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -114,7 +119,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           this.map.flyTo({ center: [longitude, latitude], zoom: 13, essential: true });
         },
         (error) => {
-          console.warn('Geolocation error:', error);
+          console.warn('Error de geolocalización:', error);
           this.defaultMapAnimation();
         }
       );
@@ -124,7 +129,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateMarkerPositions() {
-    // Reposition all markers to maintain their correct location
+    // Reposicionar todos los marcadores para mantener su ubicación correcta
     this.mapMarkers.forEach(marker => {
       const lngLat = marker.getLngLat();
       const point = this.map.project(lngLat);
@@ -133,67 +138,70 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private defaultMapAnimation() {
+    // Animación predeterminada para centrar el mapa en la ubicación inicial
     this.map.flyTo({ center: [this.centerLng, this.centerLat], zoom: 11, essential: true });
   }
 
   private addMarkersToMap() {
-    // Clear existing mapMarkers array
+    // Limpiar el arreglo de mapMarkers existente
     this.mapMarkers = [];
-    this.mapPopups = []; // Ensure popups array is also cleared
+    this.mapPopups = []; // Asegurar que el arreglo de popups también esté limpio
 
     // Remover marcadores existentes
     this.clearAllMarkers();
 
     // Verificar si hay marcadores
     if (!this.markers || this.markers.length === 0) {
-      console.warn('No markers available to add to map');
+      console.warn('No hay marcadores disponibles para agregar al mapa');
       return;
     }
 
-    // Create bounds to fit all markers
+    // Crear límites para ajustar todos los marcadores
     const bounds = new mapboxgl.LngLatBounds();
 
     this.markers.forEach(marker => {
+      // Crear un elemento de marcador personalizado
       const el = document.createElement('div');
       el.className = 'custom-marker always-visible';
       el.style.backgroundImage = 'url(assets/images/marker.png)';
-      el.style.width = '40px'; // Slightly larger marker
+      el.style.width = '40px'; // Marcador ligeramente más grande
       el.style.height = '40px';
       el.style.backgroundSize = 'cover';
       el.style.transition = 'transform 0.2s ease';
       el.style.cursor = 'pointer';
-      el.style.zIndex = '1000'; // Ensure markers are always on top
-      el.style.position = 'absolute'; // Ensure consistent positioning
-      el.style.pointerEvents = 'auto'; // Ensure clickable
-      el.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'; // Add subtle shadow for visibility
+      el.style.zIndex = '1000'; // Asegurar que los marcadores estén siempre en la parte superior
+      el.style.position = 'absolute'; // Asegurar posicionamiento consistente
+      el.style.pointerEvents = 'auto'; // Asegurar que se pueda hacer clic
+      el.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'; // Agregar sombra sutil para visibilidad
 
-      // Create popup for this marker
+      // Crear un popup para este marcador
       const popup = new mapboxgl.Popup({
         closeButton: true,
         closeOnClick: false,
-        offset: 10, // Small default offset
-        anchor: undefined, // Let Mapbox determine the best anchor dynamically
+        offset: 10, // Pequeño desplazamiento predeterminado
+        anchor: undefined, // Dejar que Mapbox determine el mejor anclaje dinámicamente
         className: 'custom-popup popup-constrained',
-        maxWidth: '300px', // Ensure consistent width
-        focusAfterOpen: false // Prevent automatic focus
+        maxWidth: '170px', // Reducir el ancho máximo
+        focusAfterOpen: false // Prevenir enfoque automático
       })
       .setHTML(this.createPopupContent(marker))
       .setLngLat([marker.lng, marker.lat]);
 
+      // Crear un nuevo marcador
       const newMarker = new mapboxgl.Marker({
         element: el,
-        anchor: 'bottom', // Anchor marker at bottom for precise positioning
-        offset: [0, 0] // No additional offset
+        anchor: 'bottom', // Anclar marcador en la parte inferior para posicionamiento preciso
+        offset: [0, 0] // Sin desplazamiento adicional
       })
         .setLngLat([marker.lng, marker.lat])
         .setPopup(popup)
         .addTo(this.map);
 
-      // Add click event to marker
+      // Agregar evento de clic al marcador
       el.addEventListener('click', (e) => {
         e.stopPropagation();
 
-        // Close other popups
+        // Cerrar otros popups
         this.mapMarkers.forEach(m => {
           const existingPopup = m.getPopup();
           if (existingPopup && m !== newMarker) {
@@ -201,36 +209,38 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
 
-        // Toggle this popup
+        // Alternar este popup
         const existingPopup = newMarker.getPopup();
         if (existingPopup) {
-          // If popup is already open, close it
+          // Si el popup ya está abierto, cerrarlo
           if (existingPopup.isOpen()) {
             existingPopup.remove();
           } else {
-            // Otherwise, open it
+            // De lo contrario, abrirlo
             existingPopup.addTo(this.map);
           }
         }
       });
       
-      // Add marker to bounds
+      // Agregar marcador a los límites
       bounds.extend([marker.lng, marker.lat]);
       this.mapMarkers.push(newMarker);
       this.mapPopups.push(popup);
     });
 
-    // Always fit bounds if markers exist
+    // Siempre ajustar los límites si existen marcadores
     if (!bounds.isEmpty()) {
       this.map.fitBounds(bounds, {
         padding: { top: 50, bottom: 50, left: 50, right: 50 },
         duration: 1000,
-        maxZoom: 15 // Limita el zoom máximo al ajustar los bounds
+        pitch: 25,
+        maxZoom: 15 // Limitar el zoom máximo al ajustar los límites
       });
     }
   }
 
   private createPopupContent(marker: Marker): string {
+    // Crear contenido HTML personalizado para el popup del marcador
     return `
       <div class="popup-container">
         <div class="popup-content">
@@ -246,8 +256,21 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     `;
   }
 
+  private clearAllMarkers() {
+    // Eliminar todos los marcadores existentes del mapa
+    this.mapMarkers.forEach(marker => marker.remove());
+    this.mapMarkers = [];
+    
+    // Eliminar todos los popups
+    this.mapPopups.forEach(popup => popup.remove());
+    this.mapPopups = [];
+    
+    // Eliminar cualquier elemento de marcador restante
+    document.querySelectorAll('.mapboxgl-marker').forEach(marker => marker.remove());
+  }
+
   highlightMarker(lng: number, lat: number) {
-    // Find the specific marker
+    // Encontrar el marcador específico
     const markerToHighlight = this.mapMarkers.find(marker => {
       const markerLngLat = marker.getLngLat();
       return Math.abs(markerLngLat.lng - lng) < 0.0001 && 
@@ -255,7 +278,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if (markerToHighlight) {
-      // Scale up the marker with transition
+      // Escalar el marcador con transición
       const el = markerToHighlight.getElement();
       if (el) {
         el.style.transition = 'transform 0.3s ease-out';
@@ -263,7 +286,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         el.style.zIndex = '1000';
       }
 
-      // Center the map on the marker while keeping other markers visible
+      // Centrar el mapa en el marcador manteniendo otros marcadores visibles
       const currentZoom = this.map.getZoom();
       this.map.easeTo({
         center: [lng, lat],
@@ -277,7 +300,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   unhighlightMarker(lng: number, lat: number) {
-    // Find the specific marker
+    // Encontrar el marcador específico
     const markerToReset = this.mapMarkers.find(marker => {
       const markerLngLat = marker.getLngLat();
       return Math.abs(markerLngLat.lng - lng) < 0.0001 && 
@@ -285,7 +308,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if (markerToReset) {
-      // Reset marker scale
+      // Restablecer la escala del marcador
       const el = markerToReset.getElement();
       if (el) {
         el.style.transition = 'transform 0.3s ease-out';
@@ -296,7 +319,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getPopupContentForMarker(marker: mapboxgl.Marker): string {
-    // Find the original marker data
+    // Encontrar los datos originales del marcador
     const originalMarker = this.markers.find(m => 
       Math.abs(m.lng - marker.getLngLat().lng) < 0.0001 && 
       Math.abs(m.lat - marker.getLngLat().lat) < 0.0001
@@ -305,7 +328,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     if (originalMarker) {
       return `
         <div class="custom-popup" style="
-          max-width: 280px;
+          max-width: 170px ! important;
           background: white;
           border-radius: 8px;
           overflow: hidden;
@@ -314,7 +337,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         ">
           <div style="
             width: 100%;
-            height: 160px;
+            height: 120px;
             overflow: hidden;
             position: relative;
           ">
@@ -328,18 +351,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
               onerror="this.src='assets/images/default-clinic.jpg'"
             >
           </div>
-          <div style="padding: 15px;">
+          <div style="padding: 10px;">
             <h4 style="
-              margin: 0 0 8px 0;
+              margin: 0 0 6px 0;
               color: #333;
-              font-size: 16px;
+              font-size: 14px;
               font-weight: 600;
             ">${originalMarker.name}</h4>
             <p style="
               margin: 0;
               color: #666;
-              font-size: 14px;
-              line-height: 1.4;
+              font-size: 12px;
+              line-height: 1.3;
             ">${originalMarker.description || 'Clínica veterinaria'}</p>
           </div>
         </div>
@@ -349,7 +372,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMarkerPopup(lng: number, lat: number) {
-    // Find the specific marker
+    // Encontrar el marcador específico
     const markerToShow = this.mapMarkers.find(marker => {
       const markerLngLat = marker.getLngLat();
       return Math.abs(markerLngLat.lng - lng) < 0.0001 && 
@@ -357,14 +380,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if (markerToShow) {
-      // Close other popups
+      // Cerrar otros popups
       this.mapMarkers.forEach(m => {
         if (m !== markerToShow) {
           m.getPopup()?.remove();
         }
       });
 
-      // Show this marker's popup
+      // Mostrar el popup de este marcador
       const popup = markerToShow.getPopup();
       if (popup) {
         popup.addTo(this.map);
@@ -373,7 +396,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   hideMarkerPopup(lng: number, lat: number) {
-    // Find the specific marker
+    // Encontrar el marcador específico
     const markerToHide = this.mapMarkers.find(marker => {
       const markerLngLat = marker.getLngLat();
       return Math.abs(markerLngLat.lng - lng) < 0.0001 && 
@@ -381,28 +404,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if (markerToHide) {
-      // Hide this marker's popup
+      // Ocultar el popup de este marcador
       const popup = markerToHide.getPopup();
       if (popup) {
         popup.remove();
       }
     }
-  }
-
-  private clearAllMarkers() {
-    // Remove all existing markers from the map
-    this.mapMarkers.forEach(marker => marker.remove());
-    this.mapMarkers = [];
-    
-    // Remove all popups
-    this.mapPopups.forEach(popup => popup.remove());
-    this.mapPopups = [];
-    
-    // Remove any remaining marker elements
-    document.querySelectorAll('.mapboxgl-marker').forEach(marker => marker.remove());
-  }
-  isMobile() {
-    return window.innerWidth <= 768;
   }
 
   private fitMapToMarkers() {
@@ -411,6 +418,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     const bounds = new mapboxgl.LngLatBounds();
     this.markers.forEach(marker => bounds.extend([marker.lng, marker.lat]));
 
+    // Ajustar los límites del mapa para mostrar todos los marcadores
     this.map.fitBounds(bounds, { padding: 50, maxZoom: 15 , pitch: 45 });
   }
 
@@ -423,26 +431,33 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       duration?: number
     }
   ) {
+    // Opciones predeterminadas para mover la ubicación
     const defaultOptions = {
       offset: [0, 0],
       zoom: 11,
       duration: 800
     };
 
+    // Combinar opciones predeterminadas con opciones personalizadas
     const finalOptions = { ...defaultOptions, ...options };
 
-    // Adjust the center point based on the offset
+    // Ajustar el punto central basado en el desplazamiento
     const centerPoint = this.map.project([lng, lat]);
     const adjustedCenter = this.map.unproject([
       centerPoint.x + (finalOptions.offset[0] || 0),
       centerPoint.y + (finalOptions.offset[1] || 0)
     ]);
 
+    // Mover el mapa suavemente a la nueva ubicación
     this.map.easeTo({
       center: [adjustedCenter.lng, adjustedCenter.lat],
       zoom: finalOptions.zoom,
       duration: finalOptions.duration,
       essential: true
     });
+  }
+
+  isMobile() {
+    return window.innerWidth <= 768;
   }
 }
