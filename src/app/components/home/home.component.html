@@ -2,7 +2,7 @@
     <div class="container pt-20 pb-20">
         <app-banner></app-banner>
         <app-categories [hidden]="configService.showServices"></app-categories>
-        <div class="dz-box style-2" style="padding-top: 0px !important;">
+        <div class="dz-box style-2" style="padding-top: 0px !important; border-bottom: none !important;">
             <div class="title-bar">
                 <h5 class="title mb-0">Clínicas recomendadas</h5>
                 <ul class="dz-tab nav nav-pills light style-1 list" role="tablist" *ngIf="global.isMobile()">
@@ -28,7 +28,7 @@
             </div>
             <div class="row" *ngIf="!global.isMobile()">
                 <div class=" col-6" *ngIf="global.webShowMap">                    
-                   <div class="row specialists-scroll-container" style="padding: 5px !important;">
+                   <div class="row specialists-scroll-container" style="padding: 5px !important; min-height: 600px !important; max-height: 600px !important;">
                     <div class=" row">
                         <div class="col-12 m-b35" [ngClass]="{
                             'col-12': isListView, 
@@ -38,6 +38,7 @@
                         }" *ngFor="let specialist of global.specialists | filterSpecialists:auth.isAdmin()"
                         (mouseenter)="onSpecialistHover(specialist)"
                         (mouseleave)="onSpecialistUnhover(specialist)"
+                        (click)="onClinicClick(specialist)"
                         >
                             <div class="dz-card style-2 specialist-card" style="cursor: pointer ;     border-style: solid ; border-width: 1px ; border-color: #3ba5a8;">
                                 <div class="dz-media">
