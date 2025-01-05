@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import axios from 'axios';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -45,15 +46,29 @@ export class NewUserComponent implements OnInit {
       this.authService.registerUser(email, password, 'tutor', name, '')
         .subscribe({
           next: (response) => {
-            Swal.fire({
-              icon: 'success',
-              title: '¡Usuario registrado exitosamente!',
-              html: `La contraseña temporal es: <strong>${password}</strong><br>Por favor, guárdela en un lugar seguro.`,
-              confirmButtonText: 'Ir al login'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                this.router.navigate(['/login']);
-              }
+            axios.post('https://www.conectavet.cl:5542/welcome', {
+              toEmail: email,
+              toName: name,
+              templateId: 1,
+              params: { name, param1: password }
+            }).then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: '¡Usuario registrado exitosamente!',
+                html: `La contraseña temporal ha sido enviada a su correo electrónico.`,
+                confirmButtonText: 'Ir al login'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.router.navigate(['/login']);
+                }
+              });
+            }).catch((emailError) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al enviar el correo',
+                text: 'El usuario fue registrado, pero no se pudo enviar el correo electrónico. Por favor, contacte al soporte.',
+                confirmButtonText: 'Aceptar'
+              });
             });
           },
           error: (error) => {
