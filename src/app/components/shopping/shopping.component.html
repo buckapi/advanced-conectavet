@@ -100,6 +100,8 @@
               </div>
             
         </div>
+        <div class="text-center mt-4" *ngIf="auth.isLogin()">
+          <button class="btn btn-primary" (click)="processOrder()">Procesar Orden</button>
         </div>
-      
+      </div>
 </main>

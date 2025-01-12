@@ -10,6 +10,8 @@ import { NotLoggedInComponent } from '../sections/not-logged-in/not-logged-in.co
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { NewUserComponent } from '../sections/new-user/new-user.component';
 import { AuthFlowComponent } from '../auth-flow/auth-flow.component';
+import { TransactionService } from '@app/services/transaction.service'; // Asegúrate de tener este servicio
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-shopping',
@@ -31,9 +33,25 @@ export class ShoppingComponent {
 constructor
 (
   public auth: AuthPocketbaseService ,
+  private transactionService: TransactionService ,
   public global: GlobalService){
 } 
+processOrder() {
+  const buyOrder = uuidv4(); // Genera un identificador único para la orden
+  const sessionId = uuidv4(); // Genera un identificador de sesión único
+  const amount = this.calculateTotal(); // Usa tu método para calcular el total
+  const returnUrl = 'https://conectavet.cl/payment-result'; // URL de retorno
 
+  this.transactionService.createTransaction(buyOrder, sessionId, amount, returnUrl)
+    .then((response: any) => {
+      console.log('Create Transaction Response:', response);
+      window.location.href = response.data.url;
+    })
+    .catch((error: any) => {
+      console.error('Error:', error);
+      Swal.fire('Error', 'No se pudo procesar la orden.', 'error');
+    });
+}
 ngOnInit(): void {
   // Detectar si es dispositivo móvil
   this.checkMobileDevice();
@@ -41,6 +59,31 @@ ngOnInit(): void {
   window.addEventListener('resize', () => {
     this.checkMobileDevice();
   });
+
+  // Verificar si hay un token_ws en la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const token_ws = urlParams.get('token_ws');
+  if (token_ws) {
+    this.commitTransaction(token_ws);
+  }
+}
+
+commitTransaction(token_ws: string) {
+  this.transactionService.commitTransaction(token_ws)
+    .then((response: any) => {
+      console.log('Commit Transaction Response:', response);
+      if (response.data.status === 'AUTHORIZED') {
+        // Mostrar mensaje de éxito
+        Swal.fire('Pago exitoso', 'Tu pago ha sido procesado exitosamente.', 'success');
+      } else {
+        // Mostrar mensaje de error
+        Swal.fire('Pago rechazado', 'Hubo un problema con tu pago.', 'error');
+      }
+    })
+    .catch((error: any) => {
+      console.error('Error:', error);
+      Swal.fire('Error', 'No se pudo confirmar el pago.', 'error');
+    });
 }
 register() {
   this.global.newUser = true;
@@ -113,4 +156,3 @@ updateCart() {
     });
 }
 }
-
