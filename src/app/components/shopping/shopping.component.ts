@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatCommonModule } from '@angular/material/core';
 import { GlobalService } from '@app/services/global.service';
-import { AuthboxComponent } from "../sections/authbox/authbox.component";
 import { FormsModule } from '@angular/forms';
 import { noop } from 'rxjs';
 import { NotLoggedInComponent } from '../sections/not-logged-in/not-logged-in.component';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { NewUserComponent } from '../sections/new-user/new-user.component';
-import { AuthFlowComponent } from '../auth-flow/auth-flow.component';
 import { TransactionService } from '@app/services/transaction.service'; // Asegúrate de tener este servicio
 import { v4 as uuidv4 } from 'uuid';
 
@@ -17,11 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
   selector: 'app-shopping',
   standalone: true,
   imports: [
-    AuthFlowComponent,
     NewUserComponent,
     MatCommonModule, 
     CommonModule, 
-    AuthboxComponent, 
     FormsModule,
     NotLoggedInComponent],
   templateUrl: './shopping.component.html',
@@ -37,15 +33,29 @@ constructor
   public global: GlobalService){
 } 
 processOrder() {
-  const buyOrder = uuidv4(); // Genera un identificador único para la orden
+  const buyOrder = uuidv4().replace(/-/g, '').substring(0, 26); // Genera un identificador único para la orden y lo acorta
   const sessionId = uuidv4(); // Genera un identificador de sesión único
   const amount = this.calculateTotal(); // Usa tu método para calcular el total
-  const returnUrl = 'https://conectavet.cl/payment-result'; // URL de retorno
-
+  const returnUrl = 'https://conectavet.cl:5564/payment-result'; // URL de retorno
   this.transactionService.createTransaction(buyOrder, sessionId, amount, returnUrl)
     .then((response: any) => {
       console.log('Create Transaction Response:', response);
-      window.location.href = response.data.url;
+      console.log('Full response data:', JSON.stringify(response.data, null, 2));
+      
+      if (!response.data || !response.data.url) {
+        console.error('No URL found in response');
+        Swal.fire('Error', 'No se pudo obtener la URL de pago.', 'error');
+        return;
+      }
+
+      if (!response.data.token_ws) {
+        console.error('No token found in response');
+        Swal.fire('Error', 'No se pudo obtener el token de pago.', 'error');
+        return;
+      }
+
+      console.log('URL:', response.data.url , 'Token:', response.data.token_ws);
+     window.location.href = `${response.data.url}`;
     })
     .catch((error: any) => {
       console.error('Error:', error);
