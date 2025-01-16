@@ -148,7 +148,7 @@ export class RegisterComponent implements OnInit {
     this.auth.loginUser(email, password).subscribe(
       (response) => {
         console.log('Inicio de sesión exitoso', response);
-        this.global.setRoute('under'); // O la ruta que desees después del inicio de sesión
+        this.global.setRoute('home'); // O la ruta que desees después del inicio de sesión
       },
       (error) => {
         console.error('Error al iniciar sesión después del registro', error);

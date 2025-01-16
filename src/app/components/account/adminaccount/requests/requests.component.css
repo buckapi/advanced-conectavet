@@ -1,0 +1,43 @@
+/* Aplicar la sombra y la elevación cuando el elemento es hovered */
+.hoverable:hover {
+    transform: translateY(-5px); /* Eleva el elemento */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Agrega una sombra suave */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Suaviza la transición */
+}
+
+/* Estilo adicional para cuando no se pasa el mouse */
+.hoverable {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Elevar y sombrear la fila cuando se pasa el mouse */
+.hoverable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilo para filas seleccionadas */
+.hoverable.selected {
+    background-color: #f0f8ff; /* Color de fondo para la fila seleccionada */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra más intensa para fila seleccionada */
+}
+
+/* Estilo del checkbox, si deseas personalizarlo */
+td input[type="checkbox"] {
+    transform: scale(1.2); /* Aumentar el tamaño del checkbox */
+}
+
+/* Estilos para el botón de procesar */
+.action-cell {
+    width: 150px;
+}
+
+.process-btn {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.hoverable:hover .process-btn {
+    opacity: 1;
+}

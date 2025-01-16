@@ -2,7 +2,7 @@
      [ngClass]="{'bg-transparent': !auth.isLogin()}" 
      style="margin: 10px 10px 10px 10px !important; width: 95%; border-radius: 50px; background-color: transparent !important;">
    <div class="toolbar-inner menubar-nav" style="justify-content: space-around;" [hidden]="global.activeRoute=='shopping'">
-      <!-- <a [hidden]="!auth.isLogin()" (click)="global.setRoute('under')" [class.active]="global.activeRoute === 'home'" class="nav-link">
+      <!-- <a [hidden]="!auth.isLogin()" (click)="global.setRoute('home')" [class.active]="global.activeRoute === 'home'" class="nav-link">
         <i class="fi fi-rr-home"></i>
       </a> -->
       <a class="nav-link marker-icon" (click)="preventClick($event)" style="position: relative;">         

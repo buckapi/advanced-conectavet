@@ -10,11 +10,18 @@ import { CategoriesadministratorComponent } from "./categoriesadministrator/cate
 import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { RequestsComponent } from './requests/requests.component';
+import { SettingsComponent } from './settings/settings.component';
+import { placements } from '@popperjs/core';
+import { PlansComponent } from './plans/plans.component';
+import { StatsComponent } from './stats/stats.component';
 
 @Component({
   selector: 'app-adminaccount',
   standalone: true,
   imports: [
+    StatsComponent,
+    PlansComponent,
+    SettingsComponent,
     CommonModule, 
     RequestsComponent,
     ServicesadministratorComponent, 

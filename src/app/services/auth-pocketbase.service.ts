@@ -193,7 +193,7 @@ export class AuthPocketbaseService {
     localStorage.removeItem('memberId');
     localStorage.removeItem('status');
     this.pb.authStore.clear();
-    this.global.setRoute('under');
+    this.global.setRoute('home');
     // this.virtualRouter.routerActive = "home";
     return new Observable<any>((observer) => {
       observer.next(); // Indicar que la operación de cierre de sesión ha completado
@@ -207,7 +207,7 @@ export class AuthPocketbaseService {
   permision() {
     const currentUser = this.getCurrentUser();
     if (!currentUser || !currentUser.type) {
-      this.global.setRoute('under'); // Redirigir al usuario a la ruta 'home' si no hay tipo definido
+      this.global.setRoute('home'); // Redirigir al usuario a la ruta 'home' si no hay tipo definido
       return;
     }
     // Llamar a la API para obtener información actualizada del usuario
@@ -217,7 +217,7 @@ export class AuthPocketbaseService {
           if (!updatedUser["biography"] || !updatedUser["days"]) { // Acceso a 'biography' usando corchetes
             this.global.setRoute('account'); // Redirigir al usuario a la ruta 'complete-profile'
           } else {
-            this.global.setRoute('under');
+            this.global.setRoute('home');
             this.complete = true; // Redirigir al usuario a la ruta 'home'
           }
           break;
@@ -225,7 +225,7 @@ export class AuthPocketbaseService {
           if (!(updatedUser["images"]) || !(updatedUser["address"])) {
             this.global.setRoute('account'); // Redirigir al usuario a la ruta 'complete-profile'
           } else {
-            this.global.setRoute('under');
+            this.global.setRoute('home');
             this.complete = true; // Redirigir al usuario a la ruta 'home'
           }
           break;
@@ -234,7 +234,7 @@ export class AuthPocketbaseService {
       }
     }).catch(error => {
       console.error('Error al obtener la información del usuario:', error);
-      this.global.setRoute('under'); // Redirigir a 'home' en caso de error
+      this.global.setRoute('home'); // Redirigir a 'home' en caso de error
     });
   }
   setUser(user: UserInterface): void {

@@ -41,13 +41,13 @@
                         </a>
                     </li>
                     <li>
-                        <a style="cursor: pointer;" (click)="global.setAdminOption('notifications')"
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('plans')"
                             class="item-content item-link">
                             <div class="list-icon">
-                                <i class="fi fi-rr-bell"></i>
+                                <i class="fi fi-rr-diamond"></i>
                             </div>
                             <div class="dz-inner me-2">
-                                <span class="title">Notificaciones</span>
+                                <span class="title">Planes y Membresías</span>
                             </div>
                         </a>
                     </li>
@@ -66,6 +66,17 @@
                             </div>
                             <div class="dz-inner">
                                 <span class="title">Solicitudes WEB</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a style="cursor: pointer;" (click)="global.setAdminOption('stats')"
+                            class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="icon feather icon-bar-chart"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title">Estadísticas</span>
                             </div>
                         </a>
                     </li>
@@ -110,9 +121,11 @@
         </div>
     </div>
     <div class="col-md-8">
+        <app-plans [hidden]="global.adminOptionn!='plans'"></app-plans>
         <app-requests [hidden]="global.adminOptionn!='requests'"></app-requests>
         <app-servicesadministrator [hidden]="global.adminOptionn!='services'"></app-servicesadministrator>
         <app-categoriesadministrator [hidden]="global.adminOptionn!='categories'"></app-categoriesadministrator>
+        <app-stats [hidden]="global.adminOptionn!='stats'"></app-stats>
     </div>
 </div>
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom9" aria-labelledby="offcanvasBottomLabel9">
@@ -125,6 +138,7 @@
             <i class="icon feather icon-x"></i>
         </button>
     </div>
+    <app-settings *ngIf="global.formOption=='security'"></app-settings>
     <app-addservice *ngIf="global.formOption=='service'"></app-addservice>
     <app-addcategory *ngIf="global.formOption=='category'"></app-addcategory>
 </div>

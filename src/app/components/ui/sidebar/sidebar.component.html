@@ -16,7 +16,7 @@
     </a>
     <ul class="nav navbar-nav" [hidden]="!auth.isLogin() ">
         <li (click)="goRoute('home')" [hidden]=" auth.isMember()">
-            <a class="nav-link" style="cursor: pointer;" (click)="global.setRoute('under')">
+            <a class="nav-link" style="cursor: pointer;" (click)="global.setRoute('home')">
                 <span class="dz-icon">
                     <i class="fi fi-rr-home"></i>
                 </span>

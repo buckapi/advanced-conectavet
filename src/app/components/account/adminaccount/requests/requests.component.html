@@ -1,33 +1,57 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
+        <div class="">
             <div class="card-body">
                 <div class="pt-4">
                     <h6>Web Requests </h6>
-                    <div class="list-group">
+                    <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Email</th>
-                                    <th>Mensaje</th>
-                                    <th>Nombre</th>
-                                    <th>Tipo</th>
+                                    <th class="text-right"></th>
+                                    <th>Usuario</th>
+                                    <th>Fecha</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let item of requestsWebs">
-                                    <td>{{item.email}}</td>
-                                    <td>{{item.howDid}}</td>
-                                    <td>{{item.name}}</td>
+                                <tr *ngFor="let item of requestsWebs" 
+                                    class="hoverable" 
+                                    [class.selected]="item.selected"
+                                    [attr.data-id]="item.id"
+                                    style="cursor: pointer;">
+                                    <td class="text-right">
+                                        <input type="checkbox" 
+                                               [(ngModel)]="item.selected" 
+                                               (change)="onSelectionChange(item)"
+                                               (click)="$event.stopPropagation()">
+                                    </td>
                                     <td>
-                                        <span class="badge" [ngClass]="{
-                                            'badge-primary': item.typeRegister === 'tutor',
-                                            'badge-success': item.typeRegister === 'especialista',
-                                            'badge-warning': item.typeRegister === 'peluqueria canina',
-                                            'badge-info': item.typeRegister === 'veterinaria'
-                                        }">
-                                            {{item.typeRegister}}
-                                        </span>
+                                        <div class="d-flex align-items-center" [ngbTooltip]="item.howDid" placement="top">
+                                            <div>
+                                                <h6 class="mb-1">{{item.name}} ( 
+                                                    <span class="text-dark" [ngClass]="{
+                                                        'btn-primary': item.typeRegister === 'tutor',
+                                                        'btn-success': item.typeRegister === 'especialista',
+                                                        'btn-info': item.typeRegister === 'peluqueria canina',
+                                                        'btn-danger': item.typeRegister === 'veterinaria'
+                                                    }">
+                                                    </span>
+                                                    <span class="text-muted">
+                                                        {{item.typeRegister}}
+                                                    </span>
+                                                    )</h6>
+                                                <p class="mb-0 text-muted">{{item.email}}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{item.created | friendlyDate}}</td>
+                                    <td class="action-cell">
+                                        <button class="btn btn-primary btn-sm process-btn" 
+                                                (click)="processRequest(item); $event.stopPropagation()">
+                                            <i class="fi fi-rr-check me-2"></i>
+                                            Procesar Registro
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
