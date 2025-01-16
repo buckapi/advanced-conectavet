@@ -11,7 +11,7 @@
 	<!-- Preloader end-->
 
 	<!-- Header -->
-	<app-header [hidden]=" global.activeRoute=='login'||  
+	<app-header [hidden]="global.activeRoute=='under' || global.activeRoute=='login'||  
 	global.activeRoute=='chat'|| global.activeRoute=='messages' ||global.activeRoute=='register' || global.activeRoute=='addpet' || global.activeRoute=='clinicdetail' || global.activeRoute=='shopping'"></app-header>
 	<app-backheader 
 	[hidden]="global.activeRoute=='chat' 
@@ -29,7 +29,7 @@
 	<div class="dark-overlay" id="overlay"></div>
 	<app-sidebar ></app-sidebar>
 	<!-- Sidebar End -->
-
+  <app-under [hidden]="global.activeRoute!='under'"></app-under>
 	<app-home [hidden]="global.activeRoute!='home'"></app-home>
 	<app-shopping [hidden]="global.activeRoute!='shopping'"></app-shopping>
 	<app-register [hidden]="global.activeRoute!='register'"></app-register>

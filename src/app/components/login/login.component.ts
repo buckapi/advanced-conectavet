@@ -53,7 +53,7 @@ export class LoginComponent {
           // if (currentUser.type === 'clinica' && (!currentUser.biography  || !currentUser.days)) {
           //   this.global.setRoute('account'); // Redirigir al usuario a la ruta 'complete-profile'
           // } else {
-          //   this.global.setRoute('home'); // Redirigir al usuario a la ruta 'home'
+          //   this.global.setRoute('under'); // Redirigir al usuario a la ruta 'home'
           // }
         },
         error: (error) => {

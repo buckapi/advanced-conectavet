@@ -33,7 +33,7 @@ import { Marker } from '@app/services/markers.service';
 export class HomeComponent implements OnInit, OnDestroy {
   specialists: any[] = [];
   categories: any[] = [];
-  activeRoute = 'home';
+  activeRoute = 'under';
   isListView: boolean = true;
   @ViewChild(MapComponent) mapComponent!: MapComponent;
   private markersSubscription: Subscription | null = null;

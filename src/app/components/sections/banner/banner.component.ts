@@ -15,7 +15,7 @@ export class BannerComponent {
   specialists: any[] = [];
 
   isMobile: boolean = false;
-  activeRoute = 'home';isListView: boolean = true;  // Por defecto, vista lista
+  activeRoute = 'under';isListView: boolean = true;  // Por defecto, vista lista
   constructor(
     public global: GlobalService,
     public device: DeviceService,

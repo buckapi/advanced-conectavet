@@ -93,7 +93,7 @@ webShowMap: boolean = true;
     images: [], // Inicializa con un array vacío
     services: [] as Service[],
   };
-  activeRoute = 'home';
+  activeRoute = 'under';
   modalType = 'filter';
   private commentsSubscription: (() => void) | null = null;
   private pb: PocketBase;

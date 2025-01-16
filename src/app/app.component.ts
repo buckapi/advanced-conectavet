@@ -24,20 +24,19 @@ import { AuthPocketbaseService } from './services/auth-pocketbase.service';
 import { RealtimeServicesService } from './services/realtime-services.service';
 import { ShoppingComponent } from './components/shopping/shopping.component';
 import { VisitTrackerService } from './services/visit-tracker.service';
+import { UnderComponent } from './components/under/under.component';
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    UnderComponent,
     ShoppingComponent,
     AccountComponent,
-    RouterOutlet,
-    ServicesComponent,
     CommonModule,
     HeaderComponent,
     MenubarComponent,
     SidebarComponent,
     HomeComponent,
-    CategoriesComponent,
     ClinicdetailComponent,
     RegisterComponent,
     LoginComponent,
@@ -51,7 +50,7 @@ import { VisitTrackerService } from './services/visit-tracker.service';
 export class AppComponent implements OnInit {
   // categories: [string, string][] = [];  // Almacena las categorías como tuplas
   specialists: any[] = [];
-  title = 'pets';
+  title = 'conectavet';
   memberId=";"
   menuState: string = 'close'; // Valor inicial del menú
   get categories() {
