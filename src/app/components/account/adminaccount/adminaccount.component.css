@@ -17,3 +17,11 @@
     overflow-y: auto;
     display: block; /* Asegúrate de que el contenedor sea un bloque */
 }   
+
+.scroll-container {
+    height: calc(100vh - 100px); /* Ajusta la altura según la altura total de la ventana, menos el espacio que necesites */
+    width: 100%; /* Se ajusta al ancho completo del contenedor padre */
+    overflow-y: auto; /* Habilita el scroll vertical */
+    overflow-x: hidden; /* Elimina el scroll horizontal */
+    padding: 0; /* Elimina el padding */
+}

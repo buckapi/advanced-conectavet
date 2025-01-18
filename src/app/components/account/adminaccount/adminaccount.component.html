@@ -122,10 +122,15 @@
     </div>
     <div class="col-md-8">
         <app-plans [hidden]="global.adminOptionn!='plans'"></app-plans>
-        <app-requests [hidden]="global.adminOptionn!='requests'"></app-requests>
+        <div class="scroll-container" [hidden]="global.adminOptionn!='requests'">
+            <app-requests></app-requests>
+        </div>
         <app-servicesadministrator [hidden]="global.adminOptionn!='services'"></app-servicesadministrator>
         <app-categoriesadministrator [hidden]="global.adminOptionn!='categories'"></app-categoriesadministrator>
-        <app-stats [hidden]="global.adminOptionn!='stats'"></app-stats>
+        
+        <div class="scroll-container" [hidden]="global.adminOptionn!='stats'">
+            <app-stats ></app-stats>
+        </div>
     </div>
 </div>
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom9" aria-labelledby="offcanvasBottomLabel9">
