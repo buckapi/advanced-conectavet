@@ -5,6 +5,8 @@ import { RealtimeVisitsService } from '@app/services/realtime-visits.service';
 import { Chart, ChartConfiguration, ChartData, registerables } from 'chart.js';
 import { firstValueFrom } from 'rxjs';
 import * as L from 'leaflet';
+import PocketBase, { RecordModel } from 'pocketbase';
+import { FormsModule } from '@angular/forms';
 
 interface Visit {
   device: string;
@@ -26,20 +28,72 @@ interface DeviceInfo {
   osVersion?: string;
 }
 
+interface VisitRecord extends RecordModel {
+  id: string;
+  created: string;
+  location: string;
+  browser: string;
+  country: string;
+  device: string;
+  datetime: string;
+  ip: string;
+  appName: string;
+  visitCount: number;
+  userAgent: string;
+}
+
+// Coordenadas predefinidas para países comunes
+const COUNTRY_COORDINATES: { [key: string]: [number, number] } = {
+  'Spain': [40.4637, -3.7492],
+  'United States': [37.0902, -95.7129],
+  'Mexico': [23.6345, -102.5528],
+  'Brazil': [-14.2350, -51.9253],
+  'Argentina': [-38.4161, -63.6167],
+  'Colombia': [4.5709, -74.2973],
+  'Chile': [-35.6751, -71.5430],
+  'Peru': [-9.1900, -75.0152],
+  'Venezuela': [6.4238, -66.5897],
+  'Ecuador': [-1.8312, -78.1834],
+  'United Kingdom': [55.3781, -3.4360],
+  'France': [46.2276, 2.2137],
+  'Germany': [51.1657, 10.4515],
+  'Italy': [41.8719, 12.5674],
+  'Canada': [56.1304, -106.3468],
+  'China': [35.8617, 104.1954],
+  'Japan': [36.2048, 138.2529],
+  'Australia': [-25.2744, 133.7751],
+  'India': [20.5937, 78.9629],
+  'Russia': [61.5240, 105.3188],
+  'Unknown': [0, 0] // Coordenadas por defecto para países desconocidos
+};
+
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [CommonModule, NgbModule],
+  imports: [CommonModule, NgbModule, FormsModule],
   templateUrl: './stats.component.html',
   styleUrls: ['./stats.component.css']
 })
 export class StatsComponent implements OnInit, OnDestroy {
   @ViewChild('pieChart') pieChartCanvas!: ElementRef;
+  
   selectedVisit: Visit | null = null;
   private chart?: Chart;
   private currentVisits: Visit[] = [];
   private map?: L.Map;
-  private markers: L.Marker[] = [];
+  private markerLayer: L.LayerGroup = new L.LayerGroup(); // Inicializar directamente
+
+  visits: VisitRecord[] = [];
+  currentPage = 1;
+  perPage = 10;
+  totalPages = 0;
+  totalItems = 0;
+  sortField = '-created';
+  filterText = '';
+  isLoading = false;
+  Math = Math; // Para usar Math en el template
+
+  private pb = new PocketBase('https://db.conectavet.cl:8080');
 
   constructor(
     public visitsService: RealtimeVisitsService,
@@ -57,6 +111,9 @@ export class StatsComponent implements OnInit, OnDestroy {
 
     // Initialize map after a short delay to ensure the container is ready
     setTimeout(() => this.initMap(), 100);
+
+    // Cargar listado inicial
+    this.loadVisits();
   }
 
   ngAfterViewInit() {
@@ -96,38 +153,72 @@ export class StatsComponent implements OnInit, OnDestroy {
   private initMap() {
     if (this.map) return;
 
+    // Crear el mapa
     this.map = L.map('worldMap').setView([20, 0], 2);
+    
+    // Añadir el layer de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: ' OpenStreetMap contributors'
     }).addTo(this.map);
+
+    // Añadir el layer de marcadores al mapa
+    this.markerLayer.addTo(this.map);
+
+    // Actualizar los marcadores inicialmente
+    this.updateMapMarkers();
   }
 
-  private async updateMapMarkers() {
-    if (!this.map) return;
+  private getCountryCoordinates(country: string): [number, number] {
+    // Primero buscar en las coordenadas predefinidas
+    const normalizedCountry = Object.keys(COUNTRY_COORDINATES).find(
+      key => key.toLowerCase() === country.toLowerCase()
+    );
 
-    // Clear existing markers
-    this.markers.forEach(marker => marker.remove());
-    this.markers = [];
+    if (normalizedCountry) {
+      return COUNTRY_COORDINATES[normalizedCountry];
+    }
 
-    // Get country stats
+    // Si no se encuentra, usar coordenadas por defecto
+    console.warn(`Using default coordinates for country: ${country}`);
+    return COUNTRY_COORDINATES['Unknown'];
+  }
+
+  private updateMapMarkers() {
+    if (!this.map) {
+      console.warn('Map not initialized');
+      return;
+    }
+
+    // Limpiar marcadores existentes
+    this.markerLayer.clearLayers();
+
+    // Obtener estadísticas de países
     const countryStats = this.getCountryStats();
 
-    // Create markers for each country
-    for (const [country, count] of Object.entries(countryStats)) {
-      try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(country)}`);
-        const data = await response.json();
-        
-        if (data && data[0]) {
-          const marker = L.marker([parseFloat(data[0].lat), parseFloat(data[0].lon)])
-            .bindPopup(`${country}: ${count} visits`)
-            .addTo(this.map);
-          this.markers.push(marker);
-        }
-      } catch (error) {
-        console.error(`Error getting coordinates for ${country}:`, error);
-      }
-    }
+    // Crear marcadores para cada país
+    Object.entries(countryStats).forEach(([country, count]) => {
+      const coordinates = this.getCountryCoordinates(country);
+      
+      // Crear icono personalizado
+      const icon = L.divIcon({
+        className: 'custom-marker',
+        html: `<div class="marker-content">
+                <span class="marker-count">${count}</span>
+              </div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+
+      // Crear marcador con popup
+      L.marker(coordinates, { icon })
+        .bindPopup(`
+          <div class="popup-content">
+            <h4>${country}</h4>
+            <p>Visitas: ${count}</p>
+          </div>
+        `)
+        .addTo(this.markerLayer);
+    });
   }
 
   getDeviceStats(): { [key: string]: number } {
@@ -201,11 +292,77 @@ export class StatsComponent implements OnInit, OnDestroy {
     });
   }
 
+  async loadVisits() {
+    try {
+      this.isLoading = true;
+      let filter = '';
+      
+      if (this.filterText) {
+        filter = `browser ~ "${this.filterText}" || country ~ "${this.filterText}" || device ~ "${this.filterText}"`;
+      }
+
+      const resultList = await this.pb.collection('visits').getList<VisitRecord>(
+        this.currentPage,
+        this.perPage,
+        {
+          sort: this.sortField,
+          filter: filter,
+          expand: ''
+        }
+      );
+
+      this.visits = resultList.items;
+      this.totalItems = resultList.totalItems;
+      this.totalPages = resultList.totalPages;
+    } catch (error) {
+      console.error('Error loading visits:', error);
+      // Mostrar un mensaje de error al usuario
+      this.visits = [];
+      this.totalItems = 0;
+      this.totalPages = 0;
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  onPageChange(page: number) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadVisits();
+    }
+  }
+
+  onSortChange(field: string) {
+    this.sortField = this.sortField === field ? `-${field}` : field;
+    this.currentPage = 1; // Volver a la primera página al cambiar el ordenamiento
+    this.loadVisits();
+  }
+
+  onFilterChange() {
+    this.currentPage = 1; // Volver a la primera página al filtrar
+    this.loadVisits();
+  }
+
+  formatDate(date: string): string {
+    try {
+      return new Date(date).toLocaleString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return date;
+    }
+  }
+
   ngOnDestroy() {
     if (this.chart) {
       this.chart.destroy();
     }
     if (this.map) {
+      this.markerLayer.clearLayers();
       this.map.remove();
     }
   }
