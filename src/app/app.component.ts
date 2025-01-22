@@ -159,7 +159,9 @@ export class AppComponent implements OnInit {
     justify-content: center;
                 }
                 </style>
-                <div><i class="iconoCheck feather icon-check" style="color: green;"></i> <h3 style="display: inline; text-align: center;">Transacción de pago exitosa, orden #${details['buy_order'].slice(-5)}</h3></div>
+                <div>
+                <h3 style="display: inline; text-align: center;">
+                Transacción de pago exitosa, orden #${details['buy_order'].slice(-5)}</h3></div>
 
                   <div style="background-color: #f4f4f4; padding: 5px; border-radius: 5px; font-family: monospace;">
 
