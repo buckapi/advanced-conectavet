@@ -71,13 +71,13 @@
                     </li> -->
 
                     <li>
-                        <a class="item-content item-link">
+                        <a style="cursor: pointer;" (click)="global.setTutorOption('agenda')" class="item-content item-link">
                             <div class="list-icon">
-                                <i class="fi fi-rr-list-timeline text-light"></i>
+                                <i class="fi fi-rr-list-timeline "></i>
                             </div>
                             <div class="dz-inner">
-                                <span class="title text-light"
-                                    [ngClass]="{'menuOption':  global.tutorOption === 'agenda'}">Historico de visitas</span>
+                                <span class="title "
+                                    [ngClass]="{'menuOption':  global.tutorOption === 'agenda'}">Ordenes</span>
                             </div>
                         </a>
                     </li>
@@ -141,6 +141,7 @@
 
 
     <div class="col-md-8">
+        <app-orders [hidden]="global.tutorOption!='agenda'"></app-orders>
         <app-pets [hidden]="global.tutorOption!='pets'"></app-pets>
         <app-profile [hidden]="global.tutorOption!='profile'"></app-profile>
     </div>

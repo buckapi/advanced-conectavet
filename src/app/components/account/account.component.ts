@@ -8,7 +8,10 @@ import { TutoraccountComponent } from './tutoraccount/tutoraccount.component';
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [CommonModule, AdminaccountComponent, MemberaccountComponent,  TutoraccountComponent],
+  imports: [CommonModule, 
+    
+    
+    AdminaccountComponent, MemberaccountComponent,  TutoraccountComponent],
   templateUrl: './account.component.html',
   styleUrl: './account.component.css'
 })

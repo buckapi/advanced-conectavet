@@ -1,0 +1,89 @@
+    <div class="orders-container">
+  <h2>Mis Órdenes</h2>
+  
+  <div class="orders-list" *ngIf="(ordersWithTransactions$ | async) as orders">
+    <div *ngIf="orders.length > 0; else noOrders">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Orden #</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Total</th>
+              <th>Transacción</th>
+              <th>Estado de Pago</th>
+              <th>Método de Pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders" (click)="showTransaction(order)" style="cursor: pointer;">
+              <td>{{order.id.slice(0, 6)}}</td>
+              <td>{{order.created | date:'medium'}}</td>
+              <td>{{order.status}}</td>
+              <td>${{order.total}}</td>
+              <td>{{order.transaction?.token || 'N/A'}}</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'badge-success': order.transaction?.status === 'AUTHORIZED',
+                  'badge-danger': order.transaction?.status === 'REJECTED',
+                  'badge-warning': !order.transaction?.status || order.transaction?.status === 'PENDING'
+                }">
+                  {{order.transaction?.status || 'PENDIENTE'}}
+                </span>
+              </td>
+              <td>{{order.transaction?.paymentType || 'N/A'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <ng-template #noOrders>
+      <div class="no-orders">
+        <p>No tienes órdenes actualmente</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<style>
+.table-responsive {
+  margin-top: 20px;
+}
+
+.badge {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+  padding: 12px;
+}
+
+.table thead th {
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(0,0,0,.075);
+}
+</style>
