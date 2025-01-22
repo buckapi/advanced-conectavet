@@ -147,6 +147,18 @@ export class AppComponent implements OnInit {
               Swal.fire({
                 // title: 'Detalles Completos de la Transacción',
                 html: `
+                <style>
+                .iconoCheck {
+                    width: 24px;
+    background-color: #3ba5a8;
+    height: 24px;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+                }
+                </style>
                 <div><i class="iconoCheck feather icon-check" style="color: green;"></i> <h3 style="display: inline; text-align: center;">Transacción de pago exitosa, orden #${details['buy_order'].slice(-5)}</h3></div>
 
                   <div style="background-color: #f4f4f4; padding: 5px; border-radius: 5px; font-family: monospace;">
@@ -171,13 +183,14 @@ export class AppComponent implements OnInit {
             } else {
               // Display basic transaction details
               Swal.fire({
-                title: 'Detalles de la Transacción',
+                title: 'La transaccion fue rechazada',
                 html: `
-                  <p>ID: ${record['id']}</p>
-                  <p>Monto: ${record['amount']}</p>
+                  <p>*********  ${record['id'].slice(-5)}</p>
+                  <p>Monto: ${record['amount  ']}</p>
                   <p>Estado: ${record['status']}</p>
-                `,
-                icon: 'info',
+                  <p>Por favor vuelva a intentarlo para completar su reserva</p>
+                  `,
+                icon: 'error',
                 confirmButtonText: 'Cerrar'
               });
             }
