@@ -147,30 +147,26 @@ export class AppComponent implements OnInit {
               Swal.fire({
                 // title: 'Detalles Completos de la Transacción',
                 html: `
-                  <div style="text-align: center;">
-                    <img src="assets/images/app-logo/logo.png" alt="Logo" style="width: 400px; margin-bottom: 20px;" />
-                  </div>
-                  <div style="display: flex; justify-content: space-between;">
-                    <div style="flex: 1;">
-                      <p><strong>Fecha de Contabilidad:</strong> ${details['accounting_date']}</p>
-                      <p><strong>Monto:</strong> ${details['amount']}</p>
-                      <p><strong>Código de Autorización:</strong> ${details['authorization_code']}</p>
-                      <p><strong>Orden de Compra:</strong> ${details['buy_order']}</p>
-                      <p><strong>Número de Tarjeta:</strong> ${details['card_detail']['card_number']}</p>
-                    </div>
-                    <div style="flex: 1;">
-                      <p><strong>Número de Cuotas:</strong> ${details['installments_number']}</p>
-                      <p><strong>Código de Tipo de Pago:</strong> ${details['payment_type_code']}</p>
-                      <p><strong>Código de Respuesta:</strong> ${details['response_code']}</p>
-                      <p><strong>ID de Sesión:</strong> ${details['session_id']}</p>
-                      <p><strong>Estado:</strong> ${details['status']}</p>
-                      <p><strong>Fecha de Transacción:</strong> ${details['transaction_date']}</p>
-                      <p><strong>VCI:</strong> ${details['vci']}</p>
-                    </div>
+                <div><i class="iconoCheck feather icon-check" style="color: green;"></i> <h3 style="display: inline; text-align: center;">Transacción de pago exitosa, orden #${details['buy_order'].slice(-5)}</h3></div>
+
+                  <div style="background-color: #f4f4f4; padding: 5px; border-radius: 5px; font-family: monospace;">
+
+                    <p><strong>Fecha de Contabilidad:</strong> ${details['accounting_date']}</p>
+                    <p><strong>Monto:</strong> ${details['amount']}</p>
+                    <p><strong>Código de Autorización:</strong> ${details['authorization_code']}</p>
+                    <p><strong>Número de Tarjeta:</strong> ${details['card_detail']['card_number']}</p>
+                    <p><strong>Número de Cuotas:</strong> ${details['installments_number']}</p>
+                    <p><strong>Código de Tipo de Pago:</strong> ${details['payment_type_code']}</p>
+                    <p><strong>Código de Respuesta:</strong> ${details['response_code']}</p>
+                    <p><strong>ID de Sesión:</strong> ${details['session_id']}</p>
+                    <p><strong>Estado:</strong> ${details['status']}</p>
+                    <p><strong>Fecha de Transacción:</strong> ${details['transaction_date']}</p>
+                    <p><strong>VCI:</strong> ${details['vci']}</p>
                   </div>
                 `,
                 // icon: 'success',
-                confirmButtonText: 'Cerrar'
+                allowOutsideClick: false,
+                showConfirmButton: true,
               });
             } else {
               // Display basic transaction details

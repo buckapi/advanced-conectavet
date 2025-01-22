@@ -22,4 +22,13 @@
       display: none !important; /* Oculta el menubar en pantallas grandes */
     }
   }
-  
+  .iconoCheck {
+    width: 24px;
+    background-color: #3ba5a8;
+    height: 24px;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
