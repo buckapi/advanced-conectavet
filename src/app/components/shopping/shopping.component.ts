@@ -10,6 +10,8 @@ import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { NewUserComponent } from '../sections/new-user/new-user.component';
 import { TransactionService } from '@app/services/transaction.service'; // Asegúrate de tener este servicio
 import { v4 as uuidv4 } from 'uuid';
+import PocketBase from 'pocketbase';
+const pb = new PocketBase('https://db.conectavet.cl:8080');
 
 @Component({
   selector: 'app-shopping',
@@ -32,15 +34,46 @@ constructor
   private transactionService: TransactionService ,
   public global: GlobalService){
 } 
+// processOrder() {
+//   const buyOrder = uuidv4().replace(/-/g, '').substring(0, 26); // Genera un identificador único para la orden y lo acorta
+//   const sessionId = uuidv4(); // Genera un identificador de sesión único
+//   const amount = this.calculateTotal(); // Usa tu método para calcular el total
+//   const returnUrl = 'https://conectavet.cl:5564/payment-result'; // URL de retorno
+//   this.transactionService.createTransaction(buyOrder, sessionId, amount, returnUrl)
+//     .then((response: any) => {
+//       console.log('Create Transaction Response:', response);
+//       console.log('Full response data:', JSON.stringify(response.data, null, 2));
+      
+//       if (!response.data || !response.data.url) {
+//         console.error('No URL found in response');
+//         Swal.fire('Error', 'No se pudo obtener la URL de pago.', 'error');
+//         return;
+//       }
+
+//       if (!response.data.token_ws) {
+//         console.error('No token found in response');
+//         Swal.fire('Error', 'No se pudo obtener el token de pago.', 'error');
+//         return;
+//       }
+
+//       console.log('URL:', response.data.url , 'Token:', response.data.token_ws);
+//      window.location.href = `${response.data.url}`;
+//     })
+//     .catch((error: any) => {
+//       console.error('Error:', error);
+//       Swal.fire('Error', 'No se pudo procesar la orden.', 'error');
+//     });
+// }
+
 processOrder() {
-  const buyOrder = uuidv4().replace(/-/g, '').substring(0, 26); // Genera un identificador único para la orden y lo acorta
-  const sessionId = uuidv4(); // Genera un identificador de sesión único
-  const amount = this.calculateTotal(); // Usa tu método para calcular el total
-  const returnUrl = 'https://conectavet.cl:5564/payment-result'; // URL de retorno
+  const buyOrder = uuidv4().replace(/-/g, '').substring(0, 26);
+  const sessionId = uuidv4();
+  const amount = this.calculateTotal();
+  const returnUrl = 'https://conectavet.cl:5564/payment-result';
+  
   this.transactionService.createTransaction(buyOrder, sessionId, amount, returnUrl)
-    .then((response: any) => {
+    .then(async (response: any) => {
       console.log('Create Transaction Response:', response);
-      console.log('Full response data:', JSON.stringify(response.data, null, 2));
       
       if (!response.data || !response.data.url) {
         console.error('No URL found in response');
@@ -48,14 +81,25 @@ processOrder() {
         return;
       }
 
-      if (!response.data.token_ws) {
-        console.error('No token found in response');
-        Swal.fire('Error', 'No se pudo obtener el token de pago.', 'error');
+      // Crear entrada en el backend
+      const data = {
+        idUser: this.auth.getUserId(), // Asegúrate de que este método exista
+        cart: JSON.stringify(this.global.cart), // Suponiendo que `cart` es un array de objetos
+        total: amount,
+        status: 'PENDING', // O el estado que desees
+        buyOrder: buyOrder
+      };
+
+      try {
+        const record = await pb.collection('orders').create(data);
+        console.log('Order created:', record);
+      } catch (error) {
+        console.error('Error creating order:', error);
+        Swal.fire('Error', 'No se pudo crear la orden.', 'error');
         return;
       }
 
-      console.log('URL:', response.data.url , 'Token:', response.data.token_ws);
-     window.location.href = `${response.data.url}`;
+      window.location.href = `${response.data.url}`;
     })
     .catch((error: any) => {
       console.error('Error:', error);
