@@ -69,6 +69,9 @@ export class OrdersComponent implements OnInit, OnDestroy {
     );
   }
 
+  isMobile() {
+    return this.global.isMobile();
+  }
   ngOnInit(): void {
     this.realtimeOrdersService.loadOrders();
   }

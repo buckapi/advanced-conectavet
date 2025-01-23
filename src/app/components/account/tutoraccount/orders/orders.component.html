@@ -1,5 +1,28 @@
-    <div class="orders-container">
-  <h2>Mis Órdenes</h2>
+<div class="title-bar" style="justify-content: start;">
+  <button 
+      *ngIf="global.tutorOption!='' && !global.showHistory && isMobile()" 
+      (click)="global.resetTutorOption()" 
+      class="btn btn-light"
+      style="margin-right: 10px;">
+      <i class="icon feather icon-chevron-left"></i> 
+  </button>
+  <button 
+      *ngIf="global.tutorOption!='' && global.showHistory " 
+      (click)="global.setTutorOptionToPets()" 
+      class="btn btn-light"
+      style="margin-right: 10px;">
+      <i class="icon feather icon-chevron-left"></i> 
+  </button>
+  <h4 *ngIf="global.showHistory" class="title mb-0 font-w500">ver todas</h4>
+  <h4 *ngIf="!global.showHistory" class="title mb-0 font-w500">Mis Reservas</h4>
+  
+  <!-- Contenedor adicional para el icono de más -->
+  <div style="margin-left: auto;"> 
+ 
+  </div>
+</div>
+   <div class="orders-container">
+  <!-- <h2>Mis Órdenes</h2> -->
   
   <div class="orders-list" *ngIf="(ordersWithTransactions$ | async) as orders">
     <mat-tab-group>
@@ -19,17 +42,17 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th> # Orden </th>
+            <th *ngIf="!isMobile()"> # Orden </th>
             <th>Fecha de reserva</th>
             <th >Estado de la reserva</th>
-            <th>Monto CLP</th>
+            <th *ngIf="!isMobile()">Monto CLP</th>
             <th>Estado de Pago</th>
             <!-- <th>Método de Pago</th> -->
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let order of orders" (click)="openOrderDialog(order)" style="cursor: pointer;">
-            <td>{{order.id.slice(0, 6)}}</td>
+            <td *ngIf="!isMobile()">{{order.id.slice(0, 6)}}</td>
             <td>{{formatDate(order.selectedAppointmentDate)}}</td>
             <td> 
             <span   [ngClass]="{
@@ -42,7 +65,7 @@
             {{order.transaction?.status === 'AUTHORIZED' ? 'AGENDADA' : ( order.transaction?.status === 'REJECTED' ? 'DECLINADA' : '-' )}}
             </span>
             </td>
-            <td> {{order.total | number:'1.2-2'}}</td>
+            <td *ngIf="!isMobile()"> {{order.total | number:'1.2-2'}}</td>
             <td>
               <span  class="badge" [ngClass]="{
                 'badge-success': order.transaction?.status === 'AUTHORIZED',
