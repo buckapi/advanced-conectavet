@@ -21,6 +21,9 @@ interface PetData {
   petWeight: number;
   petAge: number;
   petColor: string;
+  petBreed: string;
+  petType: string;
+  otherPetType: string;
 }
 
 @Component({
@@ -57,6 +60,9 @@ export class AddpetComponent {
     petWeight: 0,
     petAge: 0,
     petColor: '',
+    petBreed: '',
+    petType: '',
+    otherPetType: '',
   };
 
   constructor(public auth: AuthPocketbaseService) {
@@ -126,6 +132,9 @@ export class AddpetComponent {
           type: this.petType === 'otro' ? this.otherPetType : this.petType,
           idTutor: this.idTutor,
           status: this.isVisible ? 'visible' : 'hidden',
+          petBreed: this.petBreed,
+          petType: this.petType,
+          otherPetType: this.otherPetType,
         };
 
         await this.pb.collection('pets').create(petData);
@@ -216,6 +225,7 @@ export class AddpetComponent {
     // Reset form data
     this.formData = {
       images: [],
+      
       name: '',
       type: '',
       idTutor: '',
@@ -223,6 +233,9 @@ export class AddpetComponent {
       petWeight: 0,
       petAge: 0,
       petColor: '',
+      petBreed: '',
+      petType: '',
+      otherPetType: '',
     };
 
     // Reset file input
