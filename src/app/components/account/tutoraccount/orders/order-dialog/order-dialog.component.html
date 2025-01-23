@@ -5,9 +5,21 @@
       <span class="label">Fecha:</span>
       <span class="value">{{formatDate(data.order.selectedAppointmentDate)}}</span>
     </div>
-    <div class="detail-row">
-      <span class="label">Estado:</span>
-      <span class="value">{{data.order.status}}</span>
+    <div class="detail-row"  *ngIf="data.order.transaction?.status === 'AUTHORIZED'">
+      <span class="label">Estado de reserva:</span>
+      <span class="value">
+        {{data.order.status  === 'PENDING' ? 'AGENDADA'   : ( data.order.status === 'REJECTED' ? 'DECLINADA' : '-' )}}
+      </span>
+    </div>
+    <div class="detail-row" *ngIf="data.order.transaction?.status !== 'AUTHORIZED'">
+      <span class="label">Estado de Reserva:</span>
+      <span class="badge" [ngClass]="{
+        'badge-success': data.order.transaction?.status === 'AUTHORIZED',
+        'badge-danger': data.order.transaction?.status === 'REJECTED',
+        'badge-warning': !data.order.transaction?.status || data.order.transaction?.status === 'PENDING'
+      }">
+        {{data.order.transaction?.status === 'PENDING' ? 'PENDIENTE' : ( data.order.transaction?.status === 'REJECTED' ? 'DECLINADA' : '-' )}}
+        </span>
     </div>
    
  
@@ -18,7 +30,7 @@
         'badge-danger': data.order.transaction?.status === 'REJECTED',
         'badge-warning': !data.order.transaction?.status || data.order.transaction?.status === 'PENDING'
       }">
-        {{data.order.transaction?.status || 'PENDIENTE'}}
+        {{data.order.transaction?.status === 'AUTHORIZED' ? 'AUTORIZADO' : ( data.order.transaction?.status === 'REJECTED' ? 'RECHAZADO' : '-' )}}
       </span>
     </div>
 

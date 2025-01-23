@@ -38,7 +38,12 @@ interface ImageRecord {
 export class ProfileComponent implements OnInit {
   canEditRut: boolean = false;
 
-  fields = {
+  fields: {
+    full_name: string;
+    rut: string;
+    address: string;
+    phone: string;
+  } = {
     full_name: '',
     rut: '',
     address: '',
@@ -256,7 +261,63 @@ export class ProfileComponent implements OnInit {
     };
     this.canEditRut = !this.fields.rut;
   }
-  onInputChange(fieldName: string, value: string): void {
+  
+  // Define available countries
+  countries = [
+    { code: '+54', name: 'Argentina', flag: '🇦🇷' },
+    { code: '+56', name: 'Chile', flag: '🇨🇱' },
+    { code: '+57', name: 'Colombia', flag: '🇨🇴' }
+  ];
+  selectedCountry = this.countries[0]; // Default to Argentina
+
+  getCountryFromPhone(phone: string): typeof this.countries[0] {
+    if (!phone) return this.countries[0];
+    
+    for (const country of this.countries) {
+      if (phone.startsWith(country.code)) {
+        return country;
+      }
+    }
+    return this.countries[0];
+  }
+
+  formatPhoneNumber(phone: string): string {
+    // Remove all non-digit characters except the plus sign
+    const cleaned = phone.replace(/[^\d+]/g, '');
+    
+    // Take only the first 10 digits after any country code
+    const digits = cleaned.replace(/^\+\d{2}/, '').slice(0, 10);
+    
+    // Format as XXX-XXX-XXXX if we have enough digits
+    if (digits.length >= 10) {
+      return `${this.selectedCountry.code} ${digits.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')}`;
+    }
+    
+    // Format partially as we type
+    if (digits.length > 6) {
+      return `${this.selectedCountry.code} ${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6)}`;
+    } else if (digits.length > 3) {
+      return `${this.selectedCountry.code} ${digits.slice(0,3)}-${digits.slice(3)}`;
+    }
+    return `${this.selectedCountry.code} ${digits}`;
+  }
+
+  onCountryChange(country: typeof this.countries[0]): void {
+    this.selectedCountry = country;
+    if (this.fields.phone) {
+      // Reformat the existing phone number with the new country code
+      const phoneWithoutCode = this.fields.phone.replace(/^\+\d{2}\s/, '');
+      this.fields.phone = this.formatPhoneNumber(phoneWithoutCode);
+      this.updateFields('phone', this.fields.phone);
+    }
+  }
+
+  onInputChange(fieldName: keyof typeof this.fields, value: string): void {
+    // Format phone number if the field is phone
+    if (fieldName === 'phone') {
+      this.fields.phone = this.formatPhoneNumber(value);
+    }
+
     // Cancela el temporizador anterior para el campo actual
     if (this.debounceTimers[fieldName]) {
       clearTimeout(this.debounceTimers[fieldName]);
@@ -264,11 +325,11 @@ export class ProfileComponent implements OnInit {
 
     // Inicia un nuevo temporizador de 3 segundos
     this.debounceTimers[fieldName] = setTimeout(() => {
-      this.updateFields(fieldName, value);
+      this.updateFields(fieldName, this.fields[fieldName]);
     }, 4000);
   }
 
-  async updateFields(fieldName: string, value: string): Promise<void> {
+  async updateFields(fieldName: keyof typeof this.fields, value: string): Promise<void> {
     const userId = this.auth.getUserId();
 
     try {
@@ -303,7 +364,7 @@ export class ProfileComponent implements OnInit {
       }, 1000);
 
       console.log(`${fieldName} actualizado a "${value}" en ambas entidades.`);
-    } catch (error) {
+    } catch (error: unknown) {
       this.isLoading[fieldName] = { loading: false, success: false };
       console.error(`Error al actualizar ${fieldName}:`, error);
     }
@@ -427,38 +488,22 @@ export class ProfileComponent implements OnInit {
   async fetchTutorData(): Promise<void> {
     try {
       const userId = this.auth.getUserId();
-      console.log('UserId obtenido:', userId);
-
-      const tutorRecord = await this.pb
-        .collection('tutors')
-        .getFirstListItem<TutorRecord>(`userId="${userId}"`);
+      const tutorRecord = await this.auth.findTutorByUserId(userId);
 
       if (tutorRecord) {
-        console.log('Registro completo del tutor:', tutorRecord);
-
-        // Ahora puedes acceder directamente a las propiedades
-        this.fields.full_name = tutorRecord.full_name || '';
-        this.fields.address = tutorRecord.address || '';
-        this.fields.rut = tutorRecord.rut || '';
-        if (!this.fields.rut) {
-          this.canEditRut = true;
+        this.fields = {
+          full_name: tutorRecord.full_name || '',
+          rut: tutorRecord.rut || '',
+          phone: tutorRecord.phone || '',
+          address: tutorRecord.address || ''
+        };
+        // Set the correct country based on the loaded phone number
+        if (this.fields.phone) {
+          this.selectedCountry = this.getCountryFromPhone(this.fields.phone);
         }
-        this.fields.phone = tutorRecord.phone || '';
-
-        console.log('Valores asignados:');
-        console.log('full_name:', this.fields.full_name);
-        console.log('address:', this.fields.address);
-        console.log('rut:', this.fields.rut);
-        console.log('phone:', this.fields.phone);
-        this.cdr.detectChanges();
-        Promise.resolve().then(() => {
-          console.log('Cambio detectado por Angular');
-        });
-      } else {
-        console.warn('No se encontraron datos para el tutor asociado.');
       }
     } catch (error) {
-      console.error('Error detallado al obtener los datos del tutor:', error);
+      console.error('Error al obtener datos del tutor:', error);
     }
   }
 

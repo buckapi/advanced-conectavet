@@ -150,17 +150,32 @@
                 <button class="btn btn-link bs-success" (click)="toggleField('phone')">
                   <span class="text-muted">
                     Teléfono:
-                  </span>{{fields.phone || ''}}
+                  </span>
+                  <span style="font-size: 1.2em; margin-right: 4px;">{{getCountryFromPhone(fields.phone).flag}}</span>
+                  {{fields.phone || ''}}
                 </button>
                 <div *ngIf="visibleFields.phone" class="d-flex">
                   <div class="input-group input-group-icon flex-grow-1">
-                    <span class="input-group-text">
-                      <div class="input-icon">
-                        <i class="icon feather icon-phone"></i>
+                    <div class="input-group-text" style="padding: 0;">
+                      <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 100px; text-align: left;">
+                          <span style="font-size: 1.2em;">{{selectedCountry.flag}}</span> {{selectedCountry.code}}
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li *ngFor="let country of countries">
+                            <a class="dropdown-item" (click)="onCountryChange(country)">
+                              <span style="font-size: 1.2em;">{{country.flag}}</span> {{country.name}} ({{country.code}})
+                            </a>
+                          </li>
+                        </ul>
                       </div>
-                    </span>
-                    <input class="form-control" id="phone" type="text" [(ngModel)]="fields.phone"
-                      (input)="onInputChange('phone', fields.phone)" placeholder="Ingrese phone" />
+                    </div>
+                    <input class="form-control" id="phone" type="tel" [(ngModel)]="fields.phone"
+                      (input)="onInputChange('phone', fields.phone)" 
+                      [placeholder]="'123-456-7890'"
+                      pattern="[\+]?[0-9]{2}\s[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                      maxlength="17"
+                      title="Please enter a valid phone number in the format: +XX XXX-XXX-XXXX" />
                   </div>
                   <div *ngIf="isLoading['phone']?.loading" class="ms-2">
                     <div class="spinner-border spinner-border-sm text-primary" role="status">

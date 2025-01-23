@@ -94,6 +94,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     // First, view the clinic details
     await this.global.viewClinic(clinic);
 
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     // Then, move map to the clinic's location
     this.onSpecialistClick(clinic);
   }

@@ -76,3 +76,26 @@
   align-items: center;    /* Centra verticalmente (si es necesario) */
   height: 100%;           /* Ajusta según el contexto del contenedor */
 }
+
+.dropdown-toggle {
+  border: none;
+  background: transparent;
+  padding: 0.375rem 0.75rem;
+}
+
+.dropdown-toggle:focus {
+  box-shadow: none;
+}
+
+.dropdown-item {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.country-flag {
+  margin-right: 8px;
+}

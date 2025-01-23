@@ -72,7 +72,8 @@
                 'badge-danger': order.transaction?.status === 'REJECTED',
                 'badge-warning': !order.transaction?.status || order.transaction?.status === 'PENDING'
               }">
-                {{order.transaction?.status || 'PENDIENTE'}}
+            {{order.transaction?.status === 'AUTHORIZED' ? 'AUTORIZADO' : ( order.transaction?.status === 'REJECTED' ? 'RECHAZADO' : '-' )}}
+               
               </span>
             </td>
             <!-- <td>{{order.transaction?.paymentType || 'N/A'}}</td> -->
