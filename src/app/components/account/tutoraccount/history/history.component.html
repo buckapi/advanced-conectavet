@@ -46,17 +46,41 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade active show" id="home1" role="tabpanel">
+
+                                <h2 *ngIf="isMobile()" style="padding: 14%;">{{global.petSelected.name}}</h2>
                                 <div  style="display: flex; align-items: center; margin-top: 20px;">
+                                
                                     <img 
                                     
                                     *ngIf="global.petSelected.images && global.petSelected.images.length > 0"
                                     src="{{global.petSelected.images[0]}}" alt="Imagen de perfil" style="width: 150px; height: 150px; margin-right: 20px;  border-radius: 25px !important;">
                                     <div class="pt-4">
-                                        <h6>{{global.petSelected.name}}</h6>
-                                        <h6>Fecha de Nacimiento: {{ global.petSelected.birthDate | date: 'dd \'de\' MMM \'de\' yyyy' }} </h6>
-                                        <h6>Edad ({{ age }})</h6>
-                                        <h6>Raza: {{global.petSelected.breed}}</h6>
-                                        <h6>Especie: {{global.petSelected.species}}</h6>
+                                        <h2 *ngIf="!isMobile()">{{global.petSelected.name}}</h2>
+                                        <!-- <h6>Fecha de Nacimiento: {{ global.petSelected.birthDate | date: 'dd \'de\' MMM \'de\' yyyy' }} </h6> -->
+                                        <h6>Edad
+                                            <span class="text-light">
+                                                ({{ global.petSelected.petAge }} años)
+                                            </span> 
+                                            </h6>
+                                        <h6>Raza:
+                                            <span class="text-light">
+                                                ({{global.petSelected.breed}})
+                                            </span></h6>
+                                        <h6>Especie:
+                                            <span class="text-light">
+                                                ({{global.petSelected.species}})
+                                            </span></h6>
+                                        <h6>Peso: 
+                                            <span class="text-light">
+                                                ({{global.petSelected.petWeight}} kg)
+                                            </span>   </h6>
+                                        <h6>Color: 
+                                            <span class="text-light">
+
+                                                {{global.petSelected.petColor}}
+                                            </span>
+
+                                        </h6>
                                     </div>
 
                                 </div>

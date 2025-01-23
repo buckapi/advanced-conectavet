@@ -218,7 +218,13 @@ constructor(  public config: ConfigService,public global:GlobalService,
     this.services = data; });
 
 }
-
+isMobile(){
+  if (window.innerWidth < 768) {
+    return true;
+  } else {
+    return false;
+  }
+}
 get age(): string {
     const today = new Date();
     if (!this.global.petSelected.birthDate) {

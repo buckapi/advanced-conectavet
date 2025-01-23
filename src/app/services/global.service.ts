@@ -70,6 +70,9 @@ webShowMap: boolean = true;
   };
   petSelected: Pet = {
     id: '',
+  petColor: '',
+  petWeight: 0,
+    petAge: 0,
     name: '',
     species: '',
     birthDate: new Date(),
@@ -178,6 +181,8 @@ webShowMap: boolean = true;
       id: '',
       name: '',
       species: '',
+      petColor: '',
+      petAge: 0,
       breed: '',
       images: [], // JSON array
       birthDate: new Date(),
