@@ -2,59 +2,78 @@
   <h2>Mis Órdenes</h2>
   
   <div class="orders-list" *ngIf="(ordersWithTransactions$ | async) as orders">
-    <div *ngIf="orders.length > 0; else noOrders">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Orden #</th>
-              <th>Fecha</th>
-              <th>Estado</th>
-              <th>Total</th>
-              <th>Transacción</th>
-              <th>Estado de Pago</th>
-              <th>Método de Pago</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let order of orders" (click)="showTransaction(order)" style="cursor: pointer;">
-              <td>{{order.id.slice(0, 6)}}</td>
-              <td>{{order.created | date:'medium'}}</td>
-              <td>{{order.status}}</td>
-              <td>${{order.total}}</td>
-              <td>{{order.transaction?.token || 'N/A'}}</td>
-              <td>
-                <span class="badge" [ngClass]="{
-                  'badge-success': order.transaction?.status === 'AUTHORIZED',
-                  'badge-danger': order.transaction?.status === 'REJECTED',
-                  'badge-warning': !order.transaction?.status || order.transaction?.status === 'PENDING'
-                }">
-                  {{order.transaction?.status || 'PENDIENTE'}}
-                </span>
-              </td>
-              <td>{{order.transaction?.paymentType || 'N/A'}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <ng-template #noOrders>
-      <div class="no-orders">
-        <p>No tienes órdenes actualmente</p>
-      </div>
-    </ng-template>
+    <mat-tab-group>
+      <mat-tab label="Autorizadas">
+        <ng-container *ngTemplateOutlet="orderTable; context: { orders: getFilteredOrders(orders, 'AUTHORIZED') }"></ng-container>
+      </mat-tab>
+      <mat-tab label="Rechazadas">
+        <ng-container *ngTemplateOutlet="orderTable; context: { orders: getFilteredOrders(orders, 'REJECTED') }"></ng-container>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div>
 
+<ng-template #orderTable let-orders="orders">
+  <div *ngIf="orders.length > 0; else noOrders">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Orden #</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Servicios</th>
+            <th>Estado de Pago</th>
+            <th>Método de Pago</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders" (click)="openOrderDialog(order)" style="cursor: pointer;">
+            <td>{{order.id.slice(0, 6)}}</td>
+            <td>{{order.created | date:'medium'}}</td>
+            <td>{{order.status}}</td>
+            <td>${{order.total}}</td>
+            <td>
+              <div *ngFor="let item of order.cart">
+                {{item.name}}
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-success': order.transaction?.status === 'AUTHORIZED',
+                'badge-danger': order.transaction?.status === 'REJECTED',
+                'badge-warning': !order.transaction?.status || order.transaction?.status === 'PENDING'
+              }">
+                {{order.transaction?.status || 'PENDIENTE'}}
+              </span>
+            </td>
+            <td>{{order.transaction?.paymentType || 'N/A'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #noOrders>
+  <div class="no-orders">
+    <p>No hay órdenes para mostrar</p>
+  </div>
+</ng-template>
+
 <style>
+.orders-container {
+  padding: 20px;
+}
+
 .table-responsive {
   margin-top: 20px;
 }
 
 .badge {
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 24px;
   font-weight: 500;
 }
 
@@ -83,7 +102,9 @@
   font-weight: 600;
 }
 
-.table tbody tr:hover {
-  background-color: rgba(0,0,0,.075);
+.no-orders {
+  text-align: center;
+  padding: 20px;
+  color: #666;
 }
 </style>

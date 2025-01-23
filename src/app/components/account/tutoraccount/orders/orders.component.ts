@@ -1,18 +1,27 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { RealtimeOrdersService } from '@app/services/realtime-orders.service';
 import { GlobalService } from '@app/services/global.service';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { TransactionsService } from '@app/services/transactions.service';
-import { Observable, map, switchMap, from, forkJoin } from 'rxjs';
-import Swal from 'sweetalert2';
+import { Observable, map, switchMap, from, forkJoin, tap } from 'rxjs';
+import { OrderDialogComponent } from './order-dialog/order-dialog.component';
 
 @Component({
   selector: 'app-orders',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.css']
+  styleUrls: ['./orders.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTabsModule,
+    MatDialogModule,
+    MatButtonModule
+  ]
 })
 export class OrdersComponent implements OnInit, OnDestroy {
   userOrders$: Observable<any[]>;
@@ -22,74 +31,57 @@ export class OrdersComponent implements OnInit, OnDestroy {
     private realtimeOrdersService: RealtimeOrdersService, 
     public global: GlobalService,
     private auth: AuthPocketbaseService,
-    private transactionsService: TransactionsService
+    private transactionsService: TransactionsService,
+    private dialog: MatDialog
   ) {
     const currentUser = this.auth.getCurrentUser();
+    console.log('Current User:', currentUser);
+
     this.userOrders$ = this.realtimeOrdersService.orders$.pipe(
-      map(orders => orders.filter(order => order.idUser === currentUser?.id))
+      tap(orders => console.log('All Orders:', orders)),
+      map(orders => orders.filter(order => order.idUser === currentUser?.id || order.userId === currentUser?.id)),
+      tap(filteredOrders => console.log('Filtered Orders:', filteredOrders))
     );
 
-    // Cargar órdenes con sus transacciones
     this.ordersWithTransactions$ = this.userOrders$.pipe(
       switchMap(orders => {
-        const ordersWithTransactions = orders.map(order => 
-          from(this.transactionsService.getTransactionByOrderId(order.buyOrder))
-            .pipe(map(transaction => ({
-              ...order,
-              transaction
-            })))
-        );
+        if (orders.length === 0) {
+          console.log('No orders found');
+          return from([[]]);
+        }
+        console.log('Processing orders for transactions:', orders);
+        const ordersWithTransactions = orders.map(order => {
+          const buyOrder = order.buyOrder || order.id;
+          console.log('Getting transaction for order:', buyOrder);
+          return from(this.transactionsService.getTransactionByOrderId(buyOrder)).pipe(
+            map(transaction => {
+              console.log('Transaction found:', transaction);
+              return {
+                ...order,
+                transaction: transaction || null
+              };
+            })
+          );
+        });
         return forkJoin(ordersWithTransactions);
-      })
+      }),
+      tap(finalOrders => console.log('Final Orders with Transactions:', finalOrders))
     );
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.realtimeOrdersService.loadOrders();
   }
 
-  async showTransaction(order: any) {
-    if (order.transaction) {
-      Swal.fire({
-        title: 'Detalles de la Transacción',
-        html: `
-          <div class="transaction-details">
-            <div class="transaction-info">
-              <p><strong>ID Transacción:</strong> ${order.transaction.id}</p>
-              <p><strong>Estado:</strong> ${order.transaction.status}</p>
-              <p><strong>Método de Pago:</strong> ${order.transaction.paymentMethod}</p>
-              <p><strong>Fecha:</strong> ${new Date(order.transaction.created).toLocaleString()}</p>
-              <p><strong>Monto:</strong> $${order.transaction.amount}</p>
-            </div>
-          </div>
-        `,
-        icon: 'info',
-        confirmButtonText: 'Cerrar',
-        confirmButtonColor: '#3085d6'
-      });
-    } else {
-      Swal.fire({
-        title: 'Error',
-        text: 'No se encontró la transacción para esta orden.',
-        icon: 'error',
-        confirmButtonText: 'Cerrar'
-      });
-    }
+  getFilteredOrders(orders: any[], status: string): any[] {
+    return orders.filter(order => order.transaction?.status === status);
   }
 
-  getStatusClass(status: string): string {
-    switch (status?.toLowerCase()) {
-      case 'completed':
-      case 'approved':
-        return 'text-success';
-      case 'pending':
-        return 'text-warning';
-      case 'cancelled':
-      case 'rejected':
-        return 'text-danger';
-      default:
-        return '';
-    }
+  openOrderDialog(order: any): void {
+    this.dialog.open(OrderDialogComponent, {
+      width: '600px',
+      data: { order }
+    });
   }
 
   ngOnDestroy() {

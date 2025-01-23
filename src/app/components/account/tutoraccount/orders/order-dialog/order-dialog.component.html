@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Detalles de la Orden #{{data.order.id.slice(0, 6)}}</h2>
+<mat-dialog-content>
+  <div class="order-details">
+    <div class="detail-row">
+      <span class="label">Fecha:</span>
+      <span>{{data.order.created | date:'medium'}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Estado:</span>
+      <span>{{data.order.status}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Total:</span>
+      <span>{{data.order.total | currency}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Transacción:</span>
+      <span>{{data.order.transaction?.token || 'N/A'}}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Estado de Pago:</span>
+      <span class="badge" [ngClass]="{
+        'badge-success': data.order.transaction?.status === 'AUTHORIZED',
+        'badge-danger': data.order.transaction?.status === 'REJECTED',
+        'badge-warning': !data.order.transaction?.status || data.order.transaction?.status === 'PENDING'
+      }">
+        {{data.order.transaction?.status || 'PENDIENTE'}}
+      </span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Método de Pago:</span>
+      <span>{{data.order.transaction?.paymentType || 'N/A'}}</span>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cerrar</button>
+</mat-dialog-actions>
