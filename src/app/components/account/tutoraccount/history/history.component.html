@@ -1,5 +1,3 @@
-
-
 <div class="col-12">
     <div class="">
         <!-- <div class="card-header d-block" >
@@ -97,21 +95,25 @@
                                 <div class="pt-4">
                                     <h6>Histórico de tratamientos </h6>
                                     <!-- <div class="list-group"> -->
-                                        <div>
-                                        <a *ngFor="let item of maxHistorico.historico"
-                                        class="list-group-item list-group-item-action hover-effect"
-                                        aria-current="true">
-                                         <div class="d-flex w-100 justify-content-between">
-                                             <h6 class="mb-1">
-                                                 <span class="badge badge-primary text-dark" [ngStyle]="{'background-color': item.color}">{{item.category.name}}</span>
-                                                 {{item.motivo}}
-                                             </h6>
-                                             <small>{{item.fecha}}</small>
-                                         </div>
-                                         <p class="mb-1">{{item.observaciones}}.</p>
-                                     </a>
-                                     
-                                    </div>
+                                        <ng-container *ngIf="maxHistorico.historico && maxHistorico.historico.length > 0; else noTreatments">
+                                            <a *ngFor="let item of maxHistorico.historico"
+                                            class="list-group-item list-group-item-action hover-effect"
+                                            aria-current="true">
+                                             <div class="d-flex w-100 justify-content-between">
+                                                 <h6 class="mb-1">
+                                                     <span class="badge badge-primary text-dark" [ngStyle]="{'background-color': item.color}">{{item.category.name}}</span>
+                                                     {{item.motivo}}
+                                                 </h6>
+                                                 <small>{{item.fecha}}</small>
+                                             </div>
+                                             <p class="mb-1">{{item.observaciones}}.</p>
+                                         </a>
+                                        </ng-container>
+                                        <ng-template #noTreatments>
+                                            <div class="alert alert-info" role="alert">
+                                                No hay tratamientos registrados en el historial.
+                                            </div>
+                                        </ng-template>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="contact1" role="tabpanel">
