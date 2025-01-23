@@ -10,7 +10,10 @@ export interface Service {
 
 export interface Pet {
     id: string;
+    petType?: string;
+    otherPetType?: string;
     petWeight?: number;
+    petBreed?: string;
     petColor?: string;
     petAge: number;
     name: string;

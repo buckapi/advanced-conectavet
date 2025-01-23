@@ -71,10 +71,12 @@ webShowMap: boolean = true;
   petSelected: Pet = {
     id: '',
   petColor: '',
+  petBreed: '',
   petWeight: 0,
+  petType: '',
     petAge: 0,
     name: '',
-    species: '',
+    species: '',otherPetType: '',
     birthDate: new Date(),
     breed: '',
     images: [], // JSON array

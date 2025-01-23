@@ -64,16 +64,23 @@
                                             </h6>
                                         <h6>Raza:
                                             <span class="text-light">
-                                                ({{global.petSelected.breed}})
+                                                ({{global.petSelected.petBreed}})
                                             </span></h6>
-                                        <h6>Especie:
-                                            <span class="text-light">
-                                                ({{global.petSelected.species}})
-                                            </span></h6>
+                                        
                                         <h6>Peso: 
                                             <span class="text-light">
                                                 ({{global.petSelected.petWeight}} kg)
                                             </span>   </h6>
+                                        <h6>Tipo: 
+                                                <span class="text-light" *ngIf="!global.petSelected.otherPetType">
+                                                    ({{global.petSelected.petType}})
+                                                </span>
+
+                                                <span class="text-light" *ngIf="global.petSelected.otherPetType">
+                                                    ({{global.petSelected.otherPetType}})
+                                                </span>
+                                            </h6>
+
                                         <h6>Color: 
                                             <span class="text-light">
 
