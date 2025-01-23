@@ -20,7 +20,7 @@
         <thead>
           <tr>
             <th> # Orden </th>
-            <th>Fecha</th>
+            <th>Fecha de reserva</th>
             <th >Estado de la reserva</th>
             <th>Monto CLP</th>
             <th>Estado de Pago</th>
@@ -30,7 +30,7 @@
         <tbody>
           <tr *ngFor="let order of orders" (click)="openOrderDialog(order)" style="cursor: pointer;">
             <td>{{order.id.slice(0, 6)}}</td>
-            <td>{{order.created | date:'medium'}}</td>
+            <td>{{formatDate(order.selectedAppointmentDate)}}</td>
             <td> 
             <span   [ngClass]="{
               'text-primary': order.transaction?.status === 'PENDING',

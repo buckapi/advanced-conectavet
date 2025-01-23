@@ -87,7 +87,10 @@ processOrder() {
         cart: JSON.stringify(this.global.cart), // Suponiendo que `cart` es un array de objetos
         total: amount,
         status: 'PENDING', // O el estado que desees
-        buyOrder: buyOrder
+        buyOrder: buyOrder,
+        selectedAppointmentDate: localStorage.getItem('selectedAppointmentDate') || new Date(),
+        deviceId: localStorage.getItem('deviceId')
+
       };
 
       try {

@@ -37,6 +37,7 @@ interface Service {
 })
 
 export class GlobalService {
+  selectedDate: Date | null = null;
   newUser: boolean = false;
   hasItemsInCart: boolean = false;
   cartStatus$ = new BehaviorSubject<boolean>(false);

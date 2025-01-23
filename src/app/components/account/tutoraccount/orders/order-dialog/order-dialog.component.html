@@ -3,11 +3,11 @@
   <div class="order-details">
     <div class="detail-row">
       <span class="label">Fecha:</span>
-      <span>{{data.order.created | date:'medium'}}</span>
+      <span class="value">{{formatDate(data.order.selectedAppointmentDate)}}</span>
     </div>
     <div class="detail-row">
       <span class="label">Estado:</span>
-      <span>{{data.order.status}}</span>
+      <span class="value">{{data.order.status}}</span>
     </div>
    
  

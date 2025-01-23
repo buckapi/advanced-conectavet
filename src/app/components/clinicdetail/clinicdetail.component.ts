@@ -216,12 +216,16 @@ export class ClinicdetailComponent implements OnInit {
 
   onDateSelected(selectedDate: Date | null): void {
     if (selectedDate) {
+      this.global.selectedDate = selectedDate;
       const formattedDate = this.formatDate(selectedDate);
       console.log('Fecha seleccionada:', formattedDate);
       this.selectedDateText = formattedDate; // Guardar el texto formateado
       this.selectedDates = selectedDate;
+      // Guardar la fecha en localStorage como string ISO
+      localStorage.setItem('selectedAppointmentDate', selectedDate.toISOString());
     } else {
       console.log('No se seleccionó ninguna fecha.');
+      localStorage.removeItem('selectedAppointmentDate');
     }
   }
   

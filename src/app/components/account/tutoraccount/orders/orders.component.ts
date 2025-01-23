@@ -84,6 +84,19 @@ export class OrdersComponent implements OnInit, OnDestroy {
     });
   }
 
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    
+    const diaSemana = diasSemana[date.getDay()];
+    const dia = date.getDate();
+    const mes = meses[date.getMonth()];
+    const anio = date.getFullYear();
+
+    return `${diaSemana} ${dia} de ${mes} de ${anio}`;
+  }
+
   ngOnDestroy() {
     this.realtimeOrdersService.unsubscribeFromRealtimeChanges();
   }
