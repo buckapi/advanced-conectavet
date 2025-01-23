@@ -23,7 +23,6 @@
             <th>Fecha</th>
             <th>Estado de la reserva</th>
             <th>Monto CLP</th>
-            <th>Servicios</th>
             <th>Estado de Pago</th>
             <!-- <th>Método de Pago</th> -->
           </tr>
@@ -34,11 +33,6 @@
             <td>{{order.created | date:'medium'}}</td>
             <td>{{order.status === 'PENDING' ? 'AGENDADA' : order.status}}</td>
             <td> {{order.total | number:'1.2-2'}}</td>
-            <td>
-              <div *ngFor="let item of order.cart">
-                {{item.name}}
-              </div>
-            </td>
             <td>
               <span class="badge" [ngClass]="{
                 'badge-success': order.transaction?.status === 'AUTHORIZED',

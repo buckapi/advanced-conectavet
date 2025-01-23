@@ -9,14 +9,8 @@
       <span class="label">Estado:</span>
       <span>{{data.order.status}}</span>
     </div>
-    <div class="detail-row">
-      <span class="label">Total:</span>
-      <span>{{data.order.total | currency}}</span>
-    </div>
-    <div class="detail-row">
-      <span class="label">Transacción:</span>
-      <span>{{data.order.transaction?.token || 'N/A'}}</span>
-    </div>
+   
+ 
     <div class="detail-row">
       <span class="label">Estado de Pago:</span>
       <span class="badge" [ngClass]="{
@@ -27,12 +21,106 @@
         {{data.order.transaction?.status || 'PENDIENTE'}}
       </span>
     </div>
-    <div class="detail-row">
-      <!-- <span class="label">Método de Pago:</span> -->
-      <!-- <span>{{data.order.transaction?.paymentType || 'N/A'}}</span> -->
+
+    <div class="detail-row" *ngIf="data.order.transaction?.status === 'AUTHORIZED'">
+      <span class="label">Servicios :</span>
+      <div class="services-list">
+        <div *ngFor="let item of data.order.cart" class="service-item">
+          <div class="service-details">
+            <span class="service-name">{{item.name}}</span>
+            <span class="price-container" [matTooltip]="item.price | currency">
+              <mat-icon class="price-icon">monetization_on</mat-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div *ngIf="data.order.transaction?.status === 'AUTHORIZED'">
+      <div class="totals-section">
+        <div class="total-row">
+          <span>Subtotal Servicios:</span>
+          <span class="amount">{{getServicesTotal() | currency}}</span>
+        </div>
+        <div class="total-row commission">
+          <span>Comisión ConectaVet:</span>
+          <span class="amount">{{getConectaVetCommission() | currency}}</span>
+        </div>
+        <div class="total-row final-total">
+          <span>Total:</span>
+          <span class="amount">{{data.order.total | currency}}</span>
+        </div>
+      </div>
     </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Cerrar</button>
 </mat-dialog-actions>
+
+<style>
+.services-list {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.service-item {
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.service-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-name {
+  font-weight: 500;
+}
+
+.price-container {
+  display: flex;
+  align-items: center;
+  cursor: help;
+}
+
+.price-icon {
+  color: #28a745;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.totals-section {
+  margin-top: 20px;
+  border-top: 1px solid #dee2e6;
+  padding-top: 15px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+}
+
+.commission {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.final-total {
+  font-weight: 600;
+  font-size: 1.1em;
+  border-top: 1px solid #dee2e6;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+.amount {
+  font-family: monospace;
+}
+</style>
