@@ -15213,7 +15213,8 @@ select {
   border: 0; }
 
 .dz-stepper {
-  width: 105px; }
+  width: 100%;
+ }
   .dz-stepper small, .dz-stepper .small {
     text-align: center;
     display: block;

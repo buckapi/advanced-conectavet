@@ -1,6 +1,6 @@
 <main class="page-content space-top p-b80">
   <div class="container p-0 row">
-      <div class="dz-product-preview col-12 col-lg-4"
+      <div class="dz-product-preview col-12 col-lg-3"
       [ngClass]="{'col-12': isMobile, 'col-4': !isMobile, 'padding-top-20': !isMobile}">
 
           <div class="swiper product-detail-swiper" style="border-radius: 30px;">
@@ -28,7 +28,7 @@
                     <i class="feather icon-star-on" style="color: gold; margin-right: 5px;" *ngFor="let star of getStarsArray(global.clinicSelected.rating)"></i>
                    
 
-                    </span> <span class="r-status"> ({{global.clinicSelected.ratingQuantity}} opiniones)</span></li>
+                    </span> <br> <span class="r-status"> ({{global.clinicSelected.ratingQuantity}} opiniones)</span></li>
               </ul>
             </div>
               <div class="dz-meta-items" [hidden]="isMobile">
@@ -63,7 +63,7 @@
          
           
       </div>
-      <div class=" dz-product-detail col-12 col-lg-8 m-b35"
+      <div class=" dz-product-detail col-12 col-lg-9 m-b35"
       [ngClass]="{'col-12': isMobile, 'row col-8': !isMobile}">
       <div class="col-12 col-md-8" >
           <div class="detail-content" [hidden]="!isMobile">
@@ -176,7 +176,7 @@
                     <div class="dz-select-btn2 row">
                       <div class="row">
                         <ng-container *ngFor="let service of global.clinicSelected?.services">
-                          <div class="col-6 col-md-6 col-xs-6" [hidden]="service.name==''" style="cursor: pointer; padding: 10px;" (click)="selectService(service)">
+                          <div class="col-6 col-md-6 col-xs-6" [hidden]="service.name==''" style="cursor: pointer; padding: 5px;" (click)="selectService(service)">
                             <span class="service-card" 
                                   [ngClass]="{'service-card-hover': getQuantityInCart(service.id) > 0 && isSameClinic(service)}">
                               
@@ -184,7 +184,9 @@
                               <span class="service-price">CLP {{service?.price}}</span>
                         
                               <!-- Mostrar dz-stepper si el servicio está seleccionado o su cantidad en el carrito es mayor a 0 y pertenece a la misma clínica -->
-                              <div class="dz-stepper secondary" *ngIf="shouldShowStepper(service) && isSameClinic(service)">
+                              <div class="dz-stepper secondary" 
+                              [ngStyle]="!isMobile ? {'width': '50%'} : {'width': '100%'}"  
+                              *ngIf="shouldShowStepper(service) && isSameClinic(service)">
                                 <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
                                   <span class="input-group-btn input-group-prepend">
                                     <button class="btn btn-primary btn-xs bootstrap-touchspin-down" 
