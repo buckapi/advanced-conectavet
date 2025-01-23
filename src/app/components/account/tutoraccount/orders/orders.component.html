@@ -21,7 +21,7 @@
           <tr>
             <th> # Orden </th>
             <th>Fecha</th>
-            <th>Estado de la reserva</th>
+            <th >Estado de la reserva</th>
             <th>Monto CLP</th>
             <th>Estado de Pago</th>
             <!-- <th>Método de Pago</th> -->
@@ -31,10 +31,20 @@
           <tr *ngFor="let order of orders" (click)="openOrderDialog(order)" style="cursor: pointer;">
             <td>{{order.id.slice(0, 6)}}</td>
             <td>{{order.created | date:'medium'}}</td>
-            <td>{{order.status === 'PENDING' ? 'AGENDADA' : order.status}}</td>
+            <td> 
+            <span   [ngClass]="{
+              'text-primary': order.transaction?.status === 'PENDING',
+              'text-success': order.transaction?.status === 'AUTHORIZED',
+              'text-danger': order.transaction?.status === 'REJECTED',
+              'text-warning': order.transaction?.status === 'CANCELED'
+            }">     
+            
+            {{order.transaction?.status === 'AUTHORIZED' ? 'AGENDADA' : ( order.transaction?.status === 'REJECTED' ? 'DECLINADA' : '-' )}}
+            </span>
+            </td>
             <td> {{order.total | number:'1.2-2'}}</td>
             <td>
-              <span class="badge" [ngClass]="{
+              <span  class="badge" [ngClass]="{
                 'badge-success': order.transaction?.status === 'AUTHORIZED',
                 'badge-danger': order.transaction?.status === 'REJECTED',
                 'badge-warning': !order.transaction?.status || order.transaction?.status === 'PENDING'
@@ -72,7 +82,7 @@
 }
 
 .badge-success {
-  background-color: #28a745;
+  background-color: #3ba5a8;
   color: white;
 }
 
@@ -100,5 +110,17 @@
   text-align: center;
   padding: 20px;
   color: #666;
+}
+.text-primary {
+ color: #3ba5a8 !important;   
+}
+.text-success {
+  color: #3ba5a8 !important;   
+}
+.text-danger {
+  color: #dc3545 !important;   
+}
+.text-warning {
+  color: #ffc107 !important;   
 }
 </style>
