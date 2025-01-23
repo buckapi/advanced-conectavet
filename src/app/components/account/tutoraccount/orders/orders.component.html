@@ -19,21 +19,21 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>Orden #</th>
+            <th> # Orden </th>
             <th>Fecha</th>
-            <th>Estado</th>
-            <th>Total</th>
+            <th>Estado de la reserva</th>
+            <th>Monto CLP</th>
             <th>Servicios</th>
             <th>Estado de Pago</th>
-            <th>Método de Pago</th>
+            <!-- <th>Método de Pago</th> -->
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let order of orders" (click)="openOrderDialog(order)" style="cursor: pointer;">
             <td>{{order.id.slice(0, 6)}}</td>
             <td>{{order.created | date:'medium'}}</td>
-            <td>{{order.status}}</td>
-            <td>${{order.total}}</td>
+            <td>{{order.status === 'PENDING' ? 'AGENDADA' : order.status}}</td>
+            <td> {{order.total | number:'1.2-2'}}</td>
             <td>
               <div *ngFor="let item of order.cart">
                 {{item.name}}
@@ -48,7 +48,7 @@
                 {{order.transaction?.status || 'PENDIENTE'}}
               </span>
             </td>
-            <td>{{order.transaction?.paymentType || 'N/A'}}</td>
+            <!-- <td>{{order.transaction?.paymentType || 'N/A'}}</td> -->
           </tr>
         </tbody>
       </table>
