@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, OnDestroy, ChangeDetectorRef, Inject } from '@angular/core';
 import { GlobalService } from '@app/services/global.service';
 import { DeviceService } from '@app/services/device.service';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
@@ -16,6 +16,7 @@ import localeEs from '@angular/common/locales/es';
 import { Injectable } from '@angular/core';
 import { NativeDateAdapter, DateAdapter } from '@angular/material/core';
 import { Clinic } from '@app/interfaces/clinic.interface';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
@@ -75,7 +76,8 @@ export class ClinicdetailComponent implements OnInit {
     public auth: AuthPocketbaseService,
     private router: Router,
     public realtimeProfessionals: RealtimeProfessionalsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document
   ){}
   
   getStarsArray(rating: number): number[] {
@@ -278,10 +280,12 @@ export class ClinicdetailComponent implements OnInit {
   
   
   goToCalendar(): void {
-    // Add your navigation logic here
-    // For example, using Router:
-
     this.global.activeRoute = 'shopping';
+    
+    // Usar setTimeout para asegurar que el scroll ocurra después de cualquier cambio de vista
+    setTimeout(() => {
+      this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   }
 
   getCartFromLocalStorage(): boolean {

@@ -86,7 +86,7 @@ export class RealtimeVisitsService implements OnDestroy {
 
   getUniqueVisitors() {
     const visits = this.visitsSubject.value;
-    const uniqueDeviceIds = new Set(visits.map(visit => visit.deviceId));
+    const uniqueDeviceIds = new Set(visits.map(visit => visit.device));
     return uniqueDeviceIds.size;
   }
 

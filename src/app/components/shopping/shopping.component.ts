@@ -216,6 +216,12 @@ updateCart() {
             'El producto ha sido eliminado del carrito.',
             'success'
           );
+          if (this.global.cart.length === 0) {
+            this.global.cartQuantity = 0;
+            localStorage.removeItem('cart');
+            this.global.setRoute('home');
+            this.global.hasItemsInCart = false;
+          }
         }
       }
     });
