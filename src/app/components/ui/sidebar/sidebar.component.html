@@ -24,14 +24,14 @@
             </a>
         </li>
 
-        <li *ngIf="!auth.isAdmin()" [hidden]=" auth.isMember()">
+        <!-- <li *ngIf="!auth.isAdmin()" [hidden]=" auth.isMember()">
             <a class="nav-link" style="cursor: pointer;" (click)="goRoute('favorites')">
                 <span class="dz-icon">
                     <i class="fi fi-rr-heart"></i>
                 </span>
                 <span>Lista de favoritos</span>
             </a>
-        </li>
+        </li> -->
 
         <li  *ngIf="auth.isLogin() && !auth.isAdmin() && auth.profileStatus() ">
             <a class="nav-link" style="cursor: pointer;" (click)="goRoute('messages')">

@@ -2,12 +2,11 @@
   <div class="container p-0 row">
     <div class="dz-product-preview col-12 col-lg-4"
       [ngClass]="{'col-12': isMobile, 'col-4': !isMobile, 'padding-top-20': !isMobile}">
-
-      <main class="page-content s ">
+        <main class="page-content s ">
         <h2>Detalle de Orden</h2> 
         <div class="container pt-0">
             <div class="dz-total-area" *ngIf="global.cartQuantity > 0">
-                <div class="dz-text"><i class="feather icon-check"></i> {{global.cartQuantity}} servicios seleccionados</div>
+                <div class="dz-text"><i class="feather icon-check"></i> {{global.cartQuantity}} {{global.cartQuantity === 1 ? 'servicio seleccionado' : 'servicios seleccionados'}}</div>
             </div>
             <div class="dz-cart-list" *ngFor="let item of global.cart">
               
@@ -33,7 +32,7 @@
             </div>
        
         </div>
-    </main>
+        </main>
     </div>
       <div class="col-12 col-md-4">
         <main class="page-content  p-b80">
@@ -99,6 +98,12 @@
             
         </div>
         <div class="col-12 col-md-4" *ngIf="auth.isLogin()">
+           
+            <div class="d-flex align-items-center mb-3">
+                <img src="{{ auth.getCurrentUser().images[0] ? auth.getCurrentUser().images[0] : 'https://static.vecteezy.com/system/resources/previews/026/966/960/non_2x/default-avatar-profile-icon-of-social-media-user-vector.jpg' }}"
+                    class="rounded-circle me-3" style="width: 100px; height: 100px; object-fit: cover; border: 5px solid rgb(59, 165, 168)" *ngIf="!auth.getCurrentUser().avatar">
+                <h2 class="mb-0">{{auth.getCurrentUser().full_name}}</h2>
+            </div>
           <button class="btn btn-primary" (click)="processOrder()">Procesar Orden</button>
         </div>
       </div>
