@@ -28,6 +28,7 @@ const pb = new PocketBase('https://db.conectavet.cl:8080');
 export class ShoppingComponent {
   isMobile: boolean = false;
   shippingAddress: string = '';
+  appComission: number = 0.07; // Default value in case fetch fails
 constructor
 (
   public auth: AuthPocketbaseService ,
@@ -110,13 +111,20 @@ processOrder() {
     });
 }
 ngOnInit(): void {
-  // Detectar si es dispositivo móvil
   this.checkMobileDevice();
-  // Escuchar cambios en el tamaño de la ventana
   window.addEventListener('resize', () => {
     this.checkMobileDevice();
   });
-
+  // Fetch commission configuration
+    this.auth.pb.collection('config').getFirstListItem('')
+      .then(config => {
+        if (config['appComission']) {
+          this.appComission = config['appComission'];
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching commission config:', err);
+      });
   // Verificar si hay un token_ws en la URL
   const urlParams = new URLSearchParams(window.location.search);
   const token_ws = urlParams.get('token_ws');
@@ -157,7 +165,7 @@ calculateTotal(): number {
       subtotal += item.price * item.quantity;
   });
   
-  const comision = subtotal * 0.07;
+  const comision = subtotal * this.appComission;
   
   return subtotal + comision;
 }

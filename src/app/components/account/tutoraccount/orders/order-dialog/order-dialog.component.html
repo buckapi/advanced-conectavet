@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Detalles de la Orden #{{data.order.id.slice(0, 6)}}</h2>
+<h2 mat-dialog-title>Detalles de la Orden  ********<span class="terminal-text">{{data.order.id.slice(0, 6)}}</span></h2>
+
 <mat-dialog-content>
   <div class="order-details">
     <div class="detail-row">
@@ -67,7 +68,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Cerrar</button>
+  <button mat-button (click)="close()" class="btn btn-light text-dark" >Cerrar</button>
 </mat-dialog-actions>
 
 <style>
@@ -75,6 +76,15 @@
   margin-top: 10px;
   /* padding-left: 20px; */
 }
+.terminal-text {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #fff;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
 
 .service-item {
   margin-bottom: 8px;

@@ -91,8 +91,42 @@
 </ng-template>
 
 <style>
+ ::ng-deep .mat-tab-group {
+  .mat-tab-label {
+    color: #000000 !important;
+    opacity: 0.7;
+  }
+
+  .mat-tab-label-active {
+    color: #000000 !important;
+    opacity: 1;
+  }
+
+  .mat-tab-label:focus,
+  .mat-tab-label:hover {
+    color: #000000 !important;
+  }
+
+  .mat-tab-header .mat-tab-label-container .mat-tab-list .mat-tab-labels .mat-tab-label .mat-tab-label-content {
+    color: #000000 !important;
+  }
+
+  .mat-ink-bar {
+    background-color: #000000 !important;
+  }
+}
+
+/* Desactivar el tema primario de Angular Material */
+::ng-deep .mat-tab-group.mat-primary .mat-tab-label.mat-tab-label-active {
+  color: #000000 !important;
+}
 .orders-container {
   padding: 20px;
+}
+
+/* Estilos para la línea indicadora de los tabs */
+::ng-deep .mat-tab-group .mat-ink-bar {
+  background-color: #000000 !important;
 }
 
 .table-responsive {

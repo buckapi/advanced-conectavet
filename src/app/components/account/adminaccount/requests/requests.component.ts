@@ -1,11 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { RealtimeRequestsWebsService } from '@app/services/realtime-requests.service';
+import { NgbTooltipModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { FriendlyDatePipe } from '@pipes/friendly-date.pipe';
+import { RealtimeRequestsWebsService } from '@services/realtime-requests.service';
+import { RequestDialogComponent } from './request-dialog/request-dialog.component';
 import Swal from 'sweetalert2';
-import { FriendlyDatePipe } from '@app/pipes/friendly-date.pipe';
+
+interface RequestWeb {
+  id: string;
+  name: string;
+  email: string;
+  typeRegister: string;
+  howDid: string;
+  created: Date;
+  selected?: boolean;
+}
 
 @Component({
   selector: 'app-requests',
@@ -15,25 +26,36 @@ import { FriendlyDatePipe } from '@app/pipes/friendly-date.pipe';
     FormsModule,
     CommonModule, 
     NgbTooltipModule,
-    FriendlyDatePipe
+    FriendlyDatePipe,
+    RequestDialogComponent
   ],
   templateUrl: './requests.component.html',
   styleUrls: ['./requests.component.css']
 })
 export class RequestsComponent implements OnInit, OnDestroy {
-  requestsWebs: any[] = [];
+  requestsWebs: RequestWeb[] = [];
   private subscription: Subscription = new Subscription();
 
-  constructor(public realtimeRequestsService: RealtimeRequestsWebsService) {
-    this.realtimeRequestsService.requestsWebs$.subscribe(requests => {
-      this.requestsWebs = requests.map(request => ({
+  constructor(
+    public realtimeRequestsService: RealtimeRequestsWebsService,
+    private modalService: NgbModal
+  ) {
+    this.subscription = this.realtimeRequestsService.requestsWebs$.subscribe((requests: RequestWeb[]) => {
+      this.requestsWebs = requests.map((request: RequestWeb) => ({
         ...request,
         selected: false
       }));
     });
   }
 
-  onSelectionChange(item: any) {
+  ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    this.realtimeRequestsService.unsubscribeFromRealtimeChanges();
+  }
+
+  onSelectionChange(item: RequestWeb): void {
     // Add selected class to the row
     const row = document.querySelector(`tr[data-id="${item.id}"]`);
     if (row) {
@@ -41,14 +63,30 @@ export class RequestsComponent implements OnInit, OnDestroy {
     }
   }
 
-  processRequest(item: any) {
+  showRequestDetails(item: RequestWeb): void {
+    const modalRef = this.modalService.open(RequestDialogComponent, {
+      size: 'lg',
+      centered: true
+    });
+    modalRef.componentInstance.request = item;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        this.processRequest(result);
+      }
+    }, () => {
+      // Modal dismissed
+    });
+  }
+
+  processRequest(item: RequestWeb): void {
     Swal.fire({
       title: '¿Procesar registro?',
       text: `¿Desea procesar el registro de ${item.name}?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Sí, procesar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'No, cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
         // Aquí iría la lógica para procesar el registro
@@ -60,26 +98,5 @@ export class RequestsComponent implements OnInit, OnDestroy {
         );
       }
     });
-  }
-
-  ngOnInit(): void {
-    // this.subscription = this.realtimeRequestsService.requestsWebs$.subscribe(requests => {
-    //   this.requestsWebs = requests;
-      
-    //   Swal.fire({
-    //     title: 'Solicitudes Recibidas',
-    //     text: `Total de solicitudes: ${this.requestsWebs.length}`,
-    //     icon: 'info',
-    //     confirmButtonText: 'OK'
-    //   });
-    // });
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-
-    this.realtimeRequestsService.unsubscribeFromRealtimeChanges();
   }
 }

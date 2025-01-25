@@ -1,0 +1,70 @@
+<div class="modal-header">
+    <h5 class="modal-title">Detalles de la Solicitud</h5>
+    <button type="button" class="btn-close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <div class="d-flex align-items-center">
+                    <p class="form-control-static flex-grow-1 mb-0">{{request.name}}</p>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" (click)="copyToClipboard(request.name)">
+                        <i class="fi fi-rr-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <div class="d-flex align-items-center">
+                    <p class="form-control-static flex-grow-1 mb-0">{{request.email}}</p>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" (click)="copyToClipboard(request.email)">
+                        <i class="fi fi-rr-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tipo de Registro</label>
+                <div class="d-flex align-items-center">
+                    <p class="form-control-static flex-grow-1 mb-0">{{request.typeRegister}}</p>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" (click)="copyToClipboard(request.typeRegister)">
+                        <i class="fi fi-rr-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">¿Cómo nos encontró?</label>
+                <div class="d-flex align-items-center">
+                    <p class="form-control-static flex-grow-1 mb-0">{{request.howDid}}</p>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" (click)="copyToClipboard(request.howDid)">
+                        <i class="fi fi-rr-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Fecha de Solicitud</label>
+                <div class="d-flex align-items-center">
+                    <p class="form-control-static flex-grow-1 mb-0">{{request.created | friendlyDate}}</p>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" (click)="copyToClipboard(getFormattedDate(request.created))">
+                        <i class="fi fi-rr-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="processRequest()">
+        <i class="fi fi-rr-check me-2"></i>
+        Procesar Registro
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Cerrar</button>
+</div>
+
+<ngb-toast
+    *ngIf="showToast"
+    [autohide]="true"
+    [delay]="2000"
+    class="position-fixed top-0 end-0 m-3">
+    {{toastMessage}}
+</ngb-toast>

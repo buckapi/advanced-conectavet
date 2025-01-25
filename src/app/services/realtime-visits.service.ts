@@ -18,7 +18,7 @@ export class RealtimeVisitsService implements OnDestroy {
   private async initializeRealtimeVisits() {
     try {
       // Obtener lista inicial de visitas
-      const records = await this.pb.collection('visits').getList(1, 50, {
+      const records = await this.pb.collection('visits').getList(1, 500, {
         sort: '-created',
         expand: 'location'
       });

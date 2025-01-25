@@ -3,12 +3,14 @@
         <div class="">
             <div class="card-body">
                 <div class="pt-4">
-                    <h6>Web Requests </h6>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="mb-0">Web Requests <span class="badge bg-primary ms-2">{{requestsWebs.length}}</span></h6>
+                    </div>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="text-right"></th>
+                                    <!-- <th class="text-right"></th> -->
                                     <th>Usuario</th>
                                     <th>Fecha</th>
                                     <th></th>
@@ -19,13 +21,14 @@
                                     class="hoverable" 
                                     [class.selected]="item.selected"
                                     [attr.data-id]="item.id"
+                                    (click)="showRequestDetails(item)"
                                     style="cursor: pointer;">
-                                    <td class="text-right">
+                                    <!-- <td class="text-right">
                                         <input type="checkbox" 
                                                [(ngModel)]="item.selected" 
                                                (change)="onSelectionChange(item)"
                                                (click)="$event.stopPropagation()">
-                                    </td>
+                                    </td> -->
                                     <td>
                                         <div class="d-flex align-items-center" [ngbTooltip]="item.howDid" placement="top">
                                             <div>
@@ -46,13 +49,7 @@
                                         </div>
                                     </td>
                                     <td>{{item.created | friendlyDate}}</td>
-                                    <td class="action-cell">
-                                        <button class="btn btn-primary btn-sm process-btn" 
-                                                (click)="processRequest(item); $event.stopPropagation()">
-                                            <i class="fi fi-rr-check me-2"></i>
-                                            Procesar Registro
-                                        </button>
-                                    </td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
