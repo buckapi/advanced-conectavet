@@ -82,3 +82,64 @@ h4 {
     color: #444;
     margin: 0 0 12px 0;
 }
+
+.orders-container {
+    padding: 20px;
+}
+
+.orders-table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 4px;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.orders-table th {
+    background-color: #f5f5f5;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.orders-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.authorized {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.pending {
+    background-color: #FFC107;
+    color: black;
+}
+
+.rejected {
+    background-color: #F44336;
+    color: white;
+}
+
+.canceled {
+    background-color: #9E9E9E;
+    color: white;
+}

@@ -1,0 +1,49 @@
+.order-details {
+  padding: 16px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.authorized {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pending {
+  background-color: #FFC107;
+  color: black;
+}
+
+.rejected {
+  background-color: #F44336;
+  color: white;
+}
+
+.canceled {
+  background-color: #9E9E9E;
+  color: white;
+}
+
+.order-items {
+  margin-top: 16px;
+}
+
+.order-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-name {
+  font-weight: 500;
+}
