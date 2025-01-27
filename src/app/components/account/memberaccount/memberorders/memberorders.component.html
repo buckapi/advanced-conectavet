@@ -10,25 +10,19 @@
                 <tr>
                     <th>Orden #</th>
                     <th>Fecha</th>
-                    <th>Total</th>
                     <th>Estado</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let order of orders; trackBy: trackOrderById">
+                <tr *ngFor="let order of orders; trackBy: trackOrderById" 
+                    (click)="openOrderDetails(order)"
+                    class="order-row">
                     <td>{{ order.buyOrder }}</td>
                     <td>{{ order.created | date:'medium' }}</td>
-                    <td>${{ order.total }}</td>
                     <td>
-                        <span class="status-badge" [class]="order.status.toLowerCase()">
+                        <span class="status-badge" [ngClass]="order.status.toLowerCase()">
                             {{ order.status }}
                         </span>
-                    </td>
-                    <td>
-                        <button mat-button color="primary" (click)="openOrderDetails(order)">
-                            Ver Detalles
-                        </button>
                     </td>
                 </tr>
             </tbody>
