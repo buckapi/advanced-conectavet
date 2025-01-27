@@ -1,0 +1,40 @@
+<div class="orders-container">
+    <h2>Mis Órdenes</h2>
+    
+    @if (memberOrders$ | async; as orders) {
+        @if (orders.length === 0) {
+            <p>No se encontraron órdenes.</p>
+        } @else {
+            <div class="orders-list">
+                @for (order of orders; track order.id) {
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">Orden #{{ order.buyOrder }}</span>
+                            <span class="order-status" [class]="order.status.toLowerCase()">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                        <div class="order-details">
+                            <p><strong>Fecha:</strong> {{ order.created | date:'medium' }}</p>
+                            <p><strong>Total:</strong> ${{ order.total }}</p>
+                            @if (order.selectedAppointmentDate) {
+                                <p><strong>Fecha de Cita:</strong> {{ order.selectedAppointmentDate | date:'medium' }}</p>
+                            }
+                        </div>
+                        <div class="order-items">
+                            <h4>Productos:</h4>
+                            @for (item of order.cart; track item.id) {
+                                <div class="order-item">
+                                    <span>{{ item.name }}</span>
+                                    <span>${{ item.price }} x {{ item.quantity }}</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    } @else {
+        <p>Cargando órdenes...</p>
+    }
+</div>

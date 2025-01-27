@@ -26,7 +26,6 @@ import { OrderDialogComponent } from './order-dialog/order-dialog.component';
 export class OrdersComponent implements OnInit, OnDestroy {
   userOrders$: Observable<any[]>;
   ordersWithTransactions$: Observable<any[]>;
-
   constructor(
     private realtimeOrdersService: RealtimeOrdersService, 
     public global: GlobalService,

@@ -49,7 +49,7 @@
                         </a>
                     </li>
                     <li>
-                        <a (click)="global.setMemberOption('agenda')" style="cursor: pointer;"  class="item-content item-link">
+                        <a (click)="global.setMemberOption('memberorders')" style="cursor: pointer;"  class="item-content item-link">
                             <div class="list-icon">
                                 <i class="fi  fi-rr-calendar"></i>
                             </div>
@@ -121,6 +121,7 @@
         </div>
     </div>
     <div class="col-md-8">
+        <app-memberorders [hidden]="global.memberOption!='memberorders'"></app-memberorders>
         <app-activeservices [hidden]="global.memberOption!='activeservices'"></app-activeservices>
         <app-professionals [hidden]="global.memberOption!='professionals'"></app-professionals>
         <app-profile [hidden]="global.memberOption!='profile'"></app-profile>

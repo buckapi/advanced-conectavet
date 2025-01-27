@@ -11,10 +11,12 @@ import { AddprofessionalComponent } from "./forms/addprofessional/addprofessiona
 import { FormsModule } from '@angular/forms';
 import { CheckService } from '@app/services/check-service.service';
 import { ProfileComponent } from './profile/profile.component';
+import { MemberordersComponent } from './memberorders/memberorders.component';
 @Component({
   selector: 'app-memberaccount',
   standalone: true,
   imports: [CommonModule, ActiveservicesComponent, 
+    MemberordersComponent,
    ProfileComponent, ProfessionalsComponent, AddprofessionalComponent,FormsModule],
   templateUrl: './memberaccount.component.html',
   styleUrl: './memberaccount.component.css'

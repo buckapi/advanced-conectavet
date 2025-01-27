@@ -27,6 +27,8 @@ import { VisitTrackerService } from './services/visit-tracker.service';
 import { UnderComponent } from './components/under/under.component';
 import { ActivatedRoute } from '@angular/router'; // Importar ActivatedRoute
 import Swal from 'sweetalert2'; // Importar Swal
+import { RealtimeOrdersService } from './services/realtime-orders.service';
+import { tap, map } from 'rxjs/operators';
 
 import PocketBase from 'pocketbase';
 @Component({
@@ -68,6 +70,7 @@ export class AppComponent implements OnInit {
     private realtimeSpecialists: RealtimeSpecialistsService,
     private realtimeCategoriesService: RealtimeCategoriesService,
     public realtimeServices:RealtimeServicesService,
+    private realtimeOrders: RealtimeOrdersService,
     public auth:AuthPocketbaseService,
     public global: GlobalService,
     public scriptLoader: ScriptLoaderService,
@@ -91,6 +94,26 @@ export class AppComponent implements OnInit {
         this.memberId = specialist.id;
         localStorage.setItem('memberId',this.memberId ); 
         this.global.myServices = specialist.services;
+
+        // Subscribe to orders stream and filter by clinicId
+        this.realtimeOrders.orders$.pipe(
+          tap(orders => console.log('All Orders:', orders)),
+          map((orders: any[]) => orders.filter(order => {
+            // Verificar si hay items en el carrito
+            if (!order.cart || !order.cart.length) return false;
+            
+            // Verificar si algún item del carrito tiene el clinicId que coincide con memberId
+            return order.cart.some((item: any) => item.clinicId === this.memberId);
+          })),
+          tap(filteredOrders => console.log('Filtered Member Orders:', filteredOrders))
+        ).subscribe(filteredOrders => {
+          // Update the orders in the service
+          this.realtimeOrders.ordersSubject.next(filteredOrders);
+        });
+
+        // Initial load of orders
+        this.realtimeOrders.loadOrders();
+
         this.realtimeServices.services$.subscribe((allServices) => {
           const missingServices = allServices.filter(
             (service) => !this.global.myServices.some(

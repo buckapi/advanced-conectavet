@@ -181,20 +181,15 @@ export class AuthPocketbaseService {
   }
 
   logoutUser(): Observable<any> {
-    // Limpiar la autenticación almacenada
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('isLoggedin');
-    localStorage.removeItem('dist');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('type');
-    localStorage.removeItem('clientCard');
-    localStorage.removeItem('clientFicha');
-    localStorage.removeItem('memberId');
-    localStorage.removeItem('status');
+    // Limpiar completamente el localStorage
+    localStorage.clear();
+    
+    // Limpiar la autenticación de PocketBase
     this.pb.authStore.clear();
+    
+    // Redireccionar a home
     this.global.setRoute('home');
-    // this.virtualRouter.routerActive = "home";
+
     return new Observable<any>((observer) => {
       observer.next(); // Indicar que la operación de cierre de sesión ha completado
       observer.complete();

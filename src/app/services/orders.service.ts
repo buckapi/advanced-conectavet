@@ -1,0 +1,30 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import PocketBase from 'pocketbase';
+import { environment } from '../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OrdersService {
+  private pb = new PocketBase(environment.apiUrl);
+  private ordersSubject = new BehaviorSubject<any[]>([]);
+  public orders$ = this.ordersSubject.asObservable();
+
+  constructor() {}
+
+  async loadMemberOrders(memberId: string) {
+    try {
+      const records = await this.pb.collection('orders').getList(1, 50, {
+        filter: `memberId = "${memberId}"`,
+        sort: '-created',
+        expand: 'cart'
+      });
+      
+      this.ordersSubject.next(records.items);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+      this.ordersSubject.next([]);
+    }
+  }
+}

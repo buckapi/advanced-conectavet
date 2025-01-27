@@ -47,11 +47,12 @@ export class GlobalService {
   showHistory = false;
   professionalsCount: number = 0;
   idS: string = "";
-webShowMap: boolean = true;
+  webShowMap: boolean = true;
 
   categoryFiltersAplcated = false;
   adminOptionn: string = '';
   memberOption: string = 'profile';
+  memberOption$ = new BehaviorSubject<string>('profile');
   tutorOption: string = 'profile';
   showMemberMenu: boolean = false;
   showTutorMenu: boolean = false;
@@ -70,10 +71,10 @@ webShowMap: boolean = true;
   };
   petSelected: Pet = {
     id: '',
-  petColor: '',
-  petBreed: '',
-  petWeight: 0,
-  petType: '',
+    petColor: '',
+    petBreed: '',
+    petWeight: 0,
+    petType: '',
     petAge: 0,
     name: '',
     species: '',otherPetType: '',
@@ -262,9 +263,9 @@ webShowMap: boolean = true;
     this.id()
   }
   setMemberOption(option: string) {
-    this.showMemberMenu = false;
     this.memberOption = option;
-    // this.getMemberRecord();
+    this.memberOption$.next(option);
+    this.showMemberMenu = false;
   }
   setTutorOption(option: string) {
     this.showTutorMenu = false;

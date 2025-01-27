@@ -7,7 +7,7 @@ import PocketBase from 'pocketbase';
 })
 export class RealtimeOrdersService {
   private pb: PocketBase;
-  private ordersSubject = new BehaviorSubject<any[]>([]);
+  public ordersSubject = new BehaviorSubject<any[]>([]);
   public orders$ = this.ordersSubject.asObservable();
 
   constructor() {
@@ -22,23 +22,35 @@ export class RealtimeOrdersService {
   }
 
   private setupRealtimeSubscription(): void {
-    this.pb.collection('orders').subscribe('*', (e) => {
+    this.pb.collection('orders').subscribe('*', async (e) => {
       console.log(e.action, e.record);
       
       const currentOrders = this.ordersSubject.value;
       let updatedOrders;
 
+      // Get the full record with expanded cart for create/update actions
+      let record = e.record;
+      if (e.action === 'create' || e.action === 'update') {
+        try {
+          record = await this.pb.collection('orders').getOne(e.record.id, {
+            expand: 'cart'
+          });
+        } catch (error) {
+          console.error('Error expanding cart for order:', error);
+        }
+      }
+
       switch (e.action) {
         case 'create':
-          updatedOrders = [...currentOrders, e.record];
+          updatedOrders = [...currentOrders, record];
           break;
         case 'update':
           updatedOrders = currentOrders.map(order => 
-            order.id === e.record.id ? e.record : order
+            order.id === record.id ? record : order
           );
           break;
         case 'delete':
-          updatedOrders = currentOrders.filter(order => order.id !== e.record.id);
+          updatedOrders = currentOrders.filter(order => order.id !== record.id);
           break;
         default:
           updatedOrders = currentOrders;
@@ -51,7 +63,8 @@ export class RealtimeOrdersService {
   public async loadOrders(): Promise<void> {
     try {
       const records = await this.pb.collection('orders').getList(1, 50, {
-        sort: '-created'
+        sort: '-created',
+        expand: 'cart'
       });
       this.ordersSubject.next(records.items);
     } catch (error) {
