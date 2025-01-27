@@ -18,10 +18,10 @@
                     (click)="openOrderDetails(order)"
                     class="order-row">
                     <td>{{ order.buyOrder }}</td>
-                    <td>{{ order.created | date:'medium' }}</td>
+                    <td>{{ order.selectedAppointmentDate | date:'medium' }}</td>
                     <td>
                         <span class="status-badge" [ngClass]="order.status.toLowerCase()">
-                            {{ order.status }}
+                            {{ order.status === 'PENDING' ? 'NUEVA' : order.status }}
                         </span>
                     </td>
                 </tr>
