@@ -1,15 +1,15 @@
-<h2 mat-dialog-title>Detalles de Orden #{{data.buyOrder}}</h2>
+<h2 mat-dialog-title>Código {{data.buyOrder.slice(0, 6)}}</h2>
 <mat-dialog-content>
   <div class="order-details">
-    <p><strong>Fecha:</strong> {{data.created | date:'medium'}}</p>
+    <!-- <p><strong>Fecha:</strong> {{data.created | date:'medium'}}</p> -->
     <p><strong>Estado:</strong> <span class="status-badge" [ngClass]="data.status.toLowerCase()">{{data.status}}</span></p>
     <!-- <p><strong>Total:</strong> ${{data.total}}</p> -->
     
     <div *ngIf="data.selectedAppointmentDate">
-      <p><strong>Fecha de Cita:</strong> {{data.selectedAppointmentDate | date:'medium'}}</p>
+      <p><strong>Fecha de Cita:</strong> {{formatDate(data.selectedAppointmentDate) }}</p>
     </div>
 
-    <h3>Productos</h3>
+    <h3>Servicios</h3>
     <div class="order-items">
       <div *ngFor="let item of data.cart" class="order-item">
         <div class="item-details">
@@ -21,5 +21,5 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Cerrar</button>
+  <button mat-button (click)="close()" class="btn btn-light text-dark" >Cerrar</button>
 </mat-dialog-actions>

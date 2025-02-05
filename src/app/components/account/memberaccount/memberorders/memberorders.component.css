@@ -132,10 +132,14 @@ h4 {
 }
 
 .authorized {
-    background-color: #4CAF50;
+    background-color: #3ba5a8;
     color: white;
 }
 
+.badge-success {
+    background-color: #3ba5a8;
+    color: white;
+  }
 .status-badge.pending {
     background-color: #d4edda;
     color: #155724;

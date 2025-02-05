@@ -1,14 +1,14 @@
 <div class="orders-container">
-    <h2>Mis Órdenes</h2>
+    <h2>Reservas</h2>
     
-    <div class="orders-table-container" *ngIf="(memberOrders$ | async) as orders">
+    <div class="table-responsive" *ngIf="(memberOrders$ | async) as orders">
         <div *ngIf="orders.length === 0">
-            <p>No se encontraron órdenes.</p>
+            <p>No se encontraron reservas.</p>
         </div>
-        <table *ngIf="orders.length > 0" class="orders-table mat-elevation-z2">
+        <table *ngIf="orders.length > 0" class=" table table-hover">
             <thead>
                 <tr>
-                    <th>Orden #</th>
+                    <th>Código</th>
                     <th>Fecha</th>
                     <th>Estado</th>
                 </tr>
@@ -17,10 +17,10 @@
                 <tr *ngFor="let order of orders; trackBy: trackOrderById" 
                     (click)="openOrderDetails(order)"
                     class="order-row">
-                    <td>{{ order.buyOrder }}</td>
-                    <td>{{ order.selectedAppointmentDate | date:'medium' }}</td>
+                    <td>{{ order.buyOrder.slice(0, 6) }}</td>
+                    <td>{{ formatDate(order.selectedAppointmentDate || order.created) }}</td>
                     <td>
-                        <span class="status-badge" [ngClass]="order.status.toLowerCase()">
+                        <span class="badge badge-success" [ngClass]="order.status.toLowerCase()">
                             {{ order.status === 'PENDING' ? 'NUEVA' : order.status }}
                         </span>
                     </td>
@@ -29,6 +29,6 @@
         </table>
     </div>
     <div *ngIf="!(memberOrders$ | async)">
-        <p>Cargando órdenes...</p>
+        <p>Cargando reservas...</p>
     </div>
 </div>

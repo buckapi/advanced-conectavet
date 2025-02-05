@@ -25,7 +25,8 @@
   <!-- <h2>Mis Órdenes</h2> -->
   
   <div class="orders-list" *ngIf="(ordersWithTransactions$ | async) as orders">
-    <mat-tab-group>
+    <ng-container *ngTemplateOutlet="orderTable; context: { orders: getFilteredOrders(orders, 'AUTHORIZED') }"></ng-container>
+    <!-- <mat-tab-group>
       <mat-tab label="Autorizadas">
         <ng-container *ngTemplateOutlet="orderTable; context: { orders: getFilteredOrders(orders, 'AUTHORIZED') }"></ng-container>
       </mat-tab>
@@ -33,7 +34,7 @@
         <ng-container *ngTemplateOutlet="orderTable; context: { orders: getFilteredOrders(orders, 'REJECTED') }"></ng-container>
       </mat-tab>
     </mat-tab-group>
-  </div>
+  </div> -->
 </div>
 
 <ng-template #orderTable let-orders="orders">
@@ -42,17 +43,17 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th *ngIf="!isMobile()"> # Orden </th>
+            <th *ngIf="!isMobile()"> Código</th>
             <th>Fecha de reserva</th>
-            <th >Estado de la reserva</th>
-            <th *ngIf="!isMobile()">Monto CLP</th>
-            <th>Estado de Pago</th>
+            <th >Estado</th>
+            <!-- <th *ngIf="!isMobile()">Monto CLP</th> -->
+            <th>Pago</th>
             <!-- <th>Método de Pago</th> -->
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let order of orders" (click)="openOrderDialog(order)" style="cursor: pointer;">
-            <td *ngIf="!isMobile()">{{order.id.slice(0, 6)}}</td>
+            <td *ngIf="!isMobile()">{{order.buyOrder.slice(0, 6)}}</td>
             <td>{{formatDate(order.selectedAppointmentDate)}}</td>
             <td> 
             <span   [ngClass]="{
@@ -65,7 +66,7 @@
             {{order.transaction?.status === 'AUTHORIZED' ? 'AGENDADA' : ( order.transaction?.status === 'REJECTED' ? 'DECLINADA' : '-' )}}
             </span>
             </td>
-            <td *ngIf="!isMobile()"> {{order.total | number:'1.2-2'}}</td>
+            <!-- <td *ngIf="!isMobile()"> {{order.total | number:'1.2-2'}}</td> -->
             <td>
               <span  class="badge" [ngClass]="{
                 'badge-success': order.transaction?.status === 'AUTHORIZED',
@@ -89,6 +90,9 @@
     <p>No hay órdenes para mostrar</p>
   </div>
 </ng-template>
+
+
+
 
 <style>
  ::ng-deep .mat-tab-group {
