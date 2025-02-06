@@ -35,7 +35,7 @@
 
 .order-item {
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #fff;
 }
 
 .item-details {
@@ -127,12 +127,30 @@
 .note-textarea {
   border: 1px solid #ccc; /* Color del borde */
   border-radius: 8px; /* Bordes redondeados */
-  padding: 10px; /* Espaciado interno */
+  padding-top: 10px; /* Espaciado interno */
+  padding-left: 10px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de fuente */
   transition: border-color 0.3s; /* Suaviza la transición del color del borde */
+  max-height: 60px; /* Limita la altura máxima para que no exceda dos filas */
+  overflow-y: auto; /* Permite el desplazamiento vertical si el contenido excede */
 }
 
 .note-textarea:focus {
   border-color: #3ba5a8; /* Color del borde al enfocar */
   outline: none; /* Elimina el contorno por defecto */
+}
+@media (min-width: 768px) { /* Ajusta el tamaño mínimo según sea necesario */
+  .note-textarea {
+    max-height: 60px; /* Limita la altura máxima para que no exceda dos filas */
+    overflow-y: auto; /* Permite el desplazamiento vertical si el contenido excede */
+  }
+}
+.text-light {
+  color: #000;
+  background-color: #fff !important;
+  border-color: #fff;
+}
+
+.text-light:hover {
+  color: #3ba5a8 !important; /* Cambia a verde al pasar el mouse */
 }

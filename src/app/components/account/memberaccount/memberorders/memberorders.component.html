@@ -1,33 +1,57 @@
+
 <div class="orders-container">
-    <h2>Reservas</h2>
+    <h2>Citas</h2>
     
-    <div class="table-responsive" *ngIf="(memberOrders$ | async) as orders">
-        <div *ngIf="orders.length === 0">
-            <p>No se encontraron reservas.</p>
-        </div>
-        <table *ngIf="orders.length > 0" class=" table table-hover">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let order of orders; trackBy: trackOrderById" 
-                    (click)="openOrderDetails(order)"
-                    class="order-row">
-                    <td>{{ order.buyOrder.slice(0, 6) }}</td>
-                    <td>{{ formatDate(order.selectedAppointmentDate || order.created) }}</td>
-                    <td>
-                        <span class="text-info" [ngClass]="order.status.toLowerCase()">
-                            {{ order.status === 'PENDING' ? 'NUEVA' : order.status }}
-                        </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <mat-tab-group>
+        <mat-tab label="Nuevas">
+            <div class="table-responsive" *ngIf="filteredPendingOrders.length > 0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of filteredPendingOrders; trackBy: trackOrderById" 
+                            (click)="openOrderDetails(order)"
+                            class="order-row">
+                            <td>{{ order.buyOrder.slice(0, 6) }}</td>
+                            <td>{{ formatDate(order.selectedAppointmentDate || order.created) }}</td>
+                            <td>
+                                <span class="text-success">NUEVA</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </mat-tab>
+        <mat-tab label="Atendidas">
+            <div class="table-responsive" *ngIf="filteredAttendedOrders.length > 0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of filteredAttendedOrders; trackBy: trackOrderById" 
+                            (click)="openOrderDetails(order)"
+                            class="order-row">
+                            <td>{{ order.buyOrder.slice(0, 6) }}</td>
+                            <td>{{ formatDate(order.selectedAppointmentDate || order.created) }}</td>
+                            <td>
+                                <span class="text-black">ATENDIDO</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
     <div *ngIf="!(memberOrders$ | async)">
         <p>Cargando reservas...</p>
     </div>

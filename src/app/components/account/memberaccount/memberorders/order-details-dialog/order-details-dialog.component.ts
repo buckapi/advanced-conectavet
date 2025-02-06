@@ -5,6 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { GlobalService } from '@app/services/global.service';
 import { RealtimePetsService } from '@app/services/realtime-pet.service';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
+import { OrdersService } from '@app/services/orders.service';
+import Swal from 'sweetalert2'; // Asegúrate de importar SweetAlert
 
 interface CartItem {
   id: string;
@@ -27,7 +29,7 @@ interface OrderData {
   cart: CartItem[];
   created: string;
   selectedAppointmentDate?: string;
-  status: 'PENDING' | 'AUTHORIZED' | 'REJECTED' | 'CANCELED';
+  status: 'PENDING' | 'AUTHORIZED' | 'REJECTED' | 'CANCELED' | 'ATENDIDO';
   total: number;
   userId?: string;
 }
@@ -52,6 +54,7 @@ export class OrderDetailsDialogComponent {
     public auth: AuthPocketbaseService,
     public global: GlobalService,
     public realtimePets: RealtimePetsService,
+    public orderService: OrdersService,
     public dialogRef: MatDialogRef<OrderDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: OrderData
   ) {}
@@ -83,6 +86,34 @@ export class OrderDetailsDialogComponent {
     this.showPetsDialog=true;
     this.serviceIndex = index;
   }
+  proccess(orderId: string) {
+    this.orderService.updateOrderStatus(orderId, 'ATENDIDO'       ,   this.data.cart   ).then(
+        response => {
+            console.log('Estado de la orden actualizado', response);
+            // Mostrar SweetAlert
+            Swal.fire({
+                title: 'Éxito!',
+                text: 'La reserva fue procesada con exito.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                // Cerrar el diálogo
+                this.dialogRef.close();
+                // Aquí puedes llamar a un método para actualizar el carrito si es necesario
+                this.updateCart();
+            });
+        }
+    ).catch(error => {
+        console.error('Error al procesar la reserva', error);
+        // Manejo de errores
+        Swal.fire({
+            title: 'Error!',
+            text: 'No se pudo procesar la reserva.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+}
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -93,6 +124,10 @@ export class OrderDetailsDialogComponent {
     const anio = date.getFullYear();
     return `${diaSemana} ${dia} de ${mes} de ${anio}`;
   }
+  updateCart() {
+    // Lógica para actualizar el carrito en el backend
+    // Puedes llamar a un servicio que maneje esto
+}
   volverAtras() {
     // Lógica para volver atrás, por ejemplo, cerrar el diálogo o navegar a la página anterior
     this.dialogRef.close(); // Si estás usando un MatDialog

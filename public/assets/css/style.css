@@ -17757,3 +17757,15 @@ label input {
     height: 100%; }
 
 /*# sourceMappingURL=style.css.map */
+.cdk-overlay-dark-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.9) !important;
+  /* backdrop-filter: blur(15px); */
+}.cdk-overlay-backdrop-showing {
+  visibility: visible !important;
+}

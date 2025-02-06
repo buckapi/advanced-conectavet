@@ -11,8 +11,14 @@ export class OrdersService {
   private ordersSubject = new BehaviorSubject<any[]>([]);
   public orders$ = this.ordersSubject.asObservable();
 
-  constructor() {}
+  constructor() {
+    this.pb = new PocketBase('https://db.conectavet.cl:8080'); // Cambia esto a tu URL real
 
+
+  }
+  updateOrderStatus(orderId: string, status: string, cart: any): Promise<any> {
+    return this.pb.collection('orders').update(orderId, { status, cart });
+  }
   async loadMemberOrders(memberId: string) {
     try {
       const records = await this.pb.collection('orders').getList(1, 50, {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { RealtimeOrdersService } from '@app/services/realtime-orders.service';
 import { GlobalService } from '@app/services/global.service';
 import { Observable } from 'rxjs';
 import { OrderDetailsDialogComponent } from './order-details-dialog/order-details-dialog.component';
+import { OrdersService } from '@app/services/orders.service';
 
 interface CartItem {
   id: string;
@@ -22,7 +23,7 @@ interface Order {
   cart: CartItem[];
   created: string;
   selectedAppointmentDate?: string;
-  status: 'PENDING' | 'AUTHORIZED' | 'REJECTED' | 'CANCELED';
+  status: 'PENDING' | 'AUTHORIZED' | 'REJECTED' | 'CANCELED' | 'ATENDIDO';
   total: number;
 }
 
@@ -30,6 +31,7 @@ interface Order {
   selector: 'app-memberorders',
   standalone: true,
   imports: [
+    MatTabsModule,
     CommonModule,
     MatTabsModule,
     MatDialogModule,
@@ -40,6 +42,8 @@ interface Order {
   styleUrls: ['./memberorders.component.css']
 })
 export class MemberordersComponent implements OnInit, OnDestroy {
+  filteredPendingOrders: Order[] = [];
+filteredAttendedOrders: Order[] = [];
   memberOrders$: Observable<Order[]>;
   memberId: string;
 
@@ -47,18 +51,24 @@ export class MemberordersComponent implements OnInit, OnDestroy {
     private realtimeOrdersService: RealtimeOrdersService,
     public global: GlobalService,
     private dialog: MatDialog,
-    private datePipe: DatePipe
+    private renderer: Renderer2, 
+    private datePipe: DatePipe,
+    private orderService: OrdersService
   ) {
     this.memberId = localStorage.getItem('memberId') || '';
     // Las órdenes ya vienen filtradas desde el AppComponent
     this.memberOrders$ = this.realtimeOrdersService.orders$;
   }
-
-  ngOnInit(): void {
+ngOnInit(): void {
     if (!this.memberId) {
-      console.error('No member ID found in localStorage');
+        console.error('No member ID found in localStorage');
     }
-  }
+
+    this.memberOrders$.subscribe(orders => {
+        this.filteredPendingOrders = orders.filter(order => order.status === 'PENDING');
+        this.filteredAttendedOrders = orders.filter(order => order.status === 'ATENDIDO');
+    });
+}
 
   ngOnDestroy(): void {
   }
@@ -84,10 +94,27 @@ export class MemberordersComponent implements OnInit, OnDestroy {
   }
 
   openOrderDetails(order: Order): void {
-    this.dialog.open(OrderDetailsDialogComponent, {
-      width: '600px',
-      data: order
+    const dialogRef = this.dialog.open(OrderDetailsDialogComponent, {
+        width: '600px',
+        data: order
     });
+
+    // Agregar clases al fondo del modal
+    const overlayContainer = this.renderer.selectRootElement('.cdk-overlay-container', true);
+    // this.renderer.addClass(overlayContainer, 'cdk-overlay-dark-backdrop');
+
+    dialogRef.afterClosed().subscribe(() => {
+        // Aquí puedes quitar las clases cuando se cierra el modal
+        this.renderer.removeClass(overlayContainer, 'cdk-overlay-dark-backdrop');
+    });
+}
+
+  
+  applyClasses(): void {
+    const overlay = this.renderer.selectRootElement('#overlay', true);
+    this.renderer.removeClass(overlay, 'active');
+    this.renderer.addClass(overlay, 'dark-overlay');
+
   }
 
   trackOrderById(index: number, order: Order): string {

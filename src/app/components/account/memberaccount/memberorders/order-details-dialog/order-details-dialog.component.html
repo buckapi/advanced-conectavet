@@ -1,8 +1,16 @@
 
 <h2 mat-dialog-title class="align-right" [hidden]="showPetsDialog">
-  <button mat-button (click)="close()" class="btn btn-light text-dark" style="font-size: 24px; line-height: 1;">
-    &times; <!-- Esto representa el símbolo de multiplicación (X) -->
-  </button>
+  <span mat-button (click)="close()" class="text-light" style="
+    cursor: pointer;
+    font-size: 24px; line-height: 1;
+    font-weight: normal;
+    font-size: 24px;
+    color:   #000;">
+    <strong>
+      &times;  <!-- Esto representa el símbolo de multiplicación (X) -->
+
+    </strong>
+  </span>
   </h2>
 <mat-dialog-content>
   <div class="order-details">
@@ -18,16 +26,16 @@
     <table [hidden]="showPetsDialog" class="table responsive">
       <thead>
         <tr>
-          <th>Nombre del Servicio</th>
+          <th> Servicio</th>
           <th>Mascota</th>
-          <th>Acciones</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of data.cart; let i = index">
           <td>{{item.name}}</td>
           <td>
-            <button class="btn btn-success btn-xs rounded" (click)="showPets(i)" *ngIf="!item.idPet" [hidden]="item.idPet !== undefined">Asignar</button>
+            <button class="btn btn-success btn-xs rounded" (click)="showPets(i)" *ngIf="!item.idPet" [hidden]="item.idPet !== undefined || data.status !== 'PENDING'" >Asignar</button>
 
             <ng-container *ngIf="item.idPet">
               <ng-container *ngFor="let pet of (realtimePets.pets$ | async)">
@@ -38,10 +46,8 @@
             </ng-container>
           </td>
           <td>
-            <button class="btn btn-danger btn-xs rounded" (click)="removePet(i)" [hidden]="item.idPet === undefined">Desasignar</button>
-
+            <button class="btn btn-danger btn-xs rounded" (click)="removePet(i)" [hidden]="item.idPet === undefined || data.status !== 'PENDING'">Desasignar</button>
           </td>
-          
         </tr>
       </tbody>
     </table>
@@ -69,8 +75,7 @@
           </div>
         </span>
       </div>
-      <textarea class="note-textarea" rows="2" placeholder="Notas..." style="width: 100%; margin-top: 5px;"></textarea>
-
+      <textarea class="note-textarea" rows="2" placeholder="Notas..." style="width: 100%; margin-top: 5px; height: auto;"></textarea>
     
       <div>
         <div style="display: flex; justify-content: center; margin-top: 5px;">
@@ -81,6 +86,10 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end" [hidden]="showPetsDialog">
-
+  <button (click)="proccess(data.id)" class="btn btn-xs btn-success w-100" [hidden]="data.status !== 'PENDING'">
+    <i class="feather icon-check-circle"> </i>  
+     Aceptar y procesar
+</button>
 
 </mat-dialog-actions>
+
