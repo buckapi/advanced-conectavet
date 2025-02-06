@@ -47,3 +47,33 @@
 .item-name {
   font-weight: 500;
 }
+.align-right {
+  text-align: right;
+}
+.badge {
+  font-size: 0.875rem;
+  padding: 0.5em 0.75em;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+.badge-info{
+  background-color: #3b5ea8;
+  color: white;
+}
+.pet-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.checkmark-overlay {
+  position: absolute;
+  top: 10px; /* Adjust as needed */
+  left: 10px; /* Adjust as needed */
+  color: green;
+  font-size: 24px; /* Adjust size as needed */
+}
+
+.btn {
+  margin-top: 20px;
+}

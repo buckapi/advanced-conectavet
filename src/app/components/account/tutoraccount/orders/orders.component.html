@@ -58,7 +58,7 @@
             <td> 
             <span   [ngClass]="{
               'text-primary': order.transaction?.status === 'PENDING',
-              'text-success': order.transaction?.status === 'AUTHORIZED',
+              'text-info': order.transaction?.status === 'AUTHORIZED',
               'text-danger': order.transaction?.status === 'REJECTED',
               'text-warning': order.transaction?.status === 'CANCELED'
             }">     
@@ -175,6 +175,9 @@
 }
 .text-primary {
  color: #3ba5a8 !important;   
+}
+.text-info {
+  color: #3b5ea8 !important;   
 }
 .text-success {
   color: #3ba5a8 !important;   

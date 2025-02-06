@@ -1,25 +1,68 @@
-<h2 mat-dialog-title>Código {{data.buyOrder.slice(0, 6)}}</h2>
+<h2 mat-dialog-title class="align-right">Código {{data.buyOrder.slice(0, 6)}}</h2>
 <mat-dialog-content>
   <div class="order-details">
-    <!-- <p><strong>Fecha:</strong> {{data.created | date:'medium'}}</p> -->
-    <p><strong>Estado:</strong> <span class="status-badge" [ngClass]="data.status.toLowerCase()">{{data.status}}</span></p>
-    <!-- <p><strong>Total:</strong> ${{data.total}}</p> -->
-    
-    <div *ngIf="data.selectedAppointmentDate">
-      <p><strong>Fecha de Cita:</strong> {{formatDate(data.selectedAppointmentDate) }}</p>
-    </div>
+<div [hidden]="showPetsDialog">
+  <div *ngIf="data.selectedAppointmentDate">
+    <p><strong>Fecha de Cita:</strong> {{formatDate(data.selectedAppointmentDate) }}</p>
+  </div>
+  <p><strong>Tutor: </strong> {{tutorFullName}} </p>
 
-    <h3>Servicios</h3>
-    <div class="order-items">
-      <div *ngFor="let item of data.cart" class="order-item">
-        <div class="item-details">
-          <span class="item-name">{{item.name}}</span>
-          <!-- <span class="item-price">${{item.price}} x {{item.quantity}}</span> -->
+  <h5>Servicios</h5>
+</div>
+    <table [hidden]="showPetsDialog" class="table table-hover">
+      <thead>
+        <tr>
+          <th>Nombre del Servicio</th>
+          <th>Mascota</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data.cart; let i = index">
+          <td>{{item.name}}</td>
+          <td>
+            <button class="btn btn-success btn-xs rounded" (click)="showPets(i)" *ngIf="!item.idPet" [hidden]="item.idPet !== undefined">Asignar</button>
+
+            <ng-container *ngIf="item.idPet">
+              <ng-container *ngFor="let pet of (realtimePets.pets$ | async)">
+                <img *ngIf="pet.id === item.idPet && pet.images && pet.images.length > 0" 
+                     [src]="pet.images[0]" 
+                     alt="Imagen de mascota" 
+                     style="width: 50px; height: 50px;">
+              </ng-container>
+            </ng-container>
+          </td>
+          <td>
+            <button class="btn btn-danger btn-xs rounded" (click)="removePet(i)" [hidden]="item.idPet === undefined">Desasignar</button>
+
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
+<div [hidden]="!showPetsDialog">
+  
+  Indique la mascota a la que desea asignar el servicio: {{data.cart[serviceIndex].name}}
+   
+  <div *ngFor="let pet of (realtimePets.pets$ | async)"> 
+    <span [class.col-6]="data.idUser === pet.idTutor" [class.hidden]="data.idUser === pet.idTutor" [class.col-lg-3]="data.idUser === pet.idTutor" style="cursor: pointer;">
+      <div class="pet" *ngIf="data.idUser === pet.idTutor">
+        <div class="image-container" style="position: relative; text-align: center;">
+          <img *ngIf="pet.images && pet.images.length > 0" [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;" (click)="selectPet(pet)"> 
+          <!-- <img *ngIf="pet.images && pet.images.length > 0" [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;"> -->
         </div>
       </div>
+    </span>
+  </div>
+
+  <div >
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+      <button (click)="cancelAssignment()" class="btn btn-xs btn-danger">Cancelar Asignación</button>
+  </div>
+</div>
     </div>
   </div>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="close()" class="btn btn-light text-dark" >Cerrar</button>
+<mat-dialog-actions align="end" [hidden]="showPetsDialog">
+  <button mat-button (click)="close()" class="btn btn-light text-dark">Cerrar</button>
 </mat-dialog-actions>
