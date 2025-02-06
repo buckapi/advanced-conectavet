@@ -89,26 +89,33 @@ export class OrderDetailsDialogComponent {
   proccess(orderId: string) {
     this.orderService.updateOrderStatus(orderId, 'ATENDIDO'       ,   this.data.cart   ).then(
         response => {
-            console.log('Estado de la orden actualizado', response);
+            console.log('Estado de la cita actualizado', response);
             // Mostrar SweetAlert
             Swal.fire({
-                title: 'Éxito!',
-                text: 'La reserva fue procesada con exito.',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            }).then(() => {
-                // Cerrar el diálogo
-                this.dialogRef.close();
-                // Aquí puedes llamar a un método para actualizar el carrito si es necesario
-                this.updateCart();
-            });
+              // title: 'Éxito!',
+              text: 'La cita fue procesada con éxito.',
+              icon: 'success',
+              timer: 2000, // Tiempo en milisegundos para que se cierre automáticamente
+              timerProgressBar: true, // Muestra una barra de progreso
+              showConfirmButton: false // Oculta el botón de "Aceptar"
+          }).then((result) => {
+              // Si el temporizador se agota
+              if (result.dismiss === Swal.DismissReason.timer) {
+                  console.log('La alerta se cerró automáticamente después de 2 segundos');
+              }
+          
+              // Cerrar el diálogo
+              this.dialogRef.close();
+              // Aquí puedes llamar a un método para actualizar el carrito si es necesario
+              this.updateCart();
+          });
         }
     ).catch(error => {
-        console.error('Error al procesar la reserva', error);
+        console.error('Error al procesar la cita', error);
         // Manejo de errores
         Swal.fire({
             title: 'Error!',
-            text: 'No se pudo procesar la reserva.',
+            text: 'No se pudo procesar la cita.',
             icon: 'error',
             confirmButtonText: 'Aceptar'
         });

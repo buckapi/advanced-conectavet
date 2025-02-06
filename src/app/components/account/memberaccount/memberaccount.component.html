@@ -1,7 +1,7 @@
 <div class="profile-area row" style="padding-top: 1%;">
-    <div class="col-md-4">
+    <div class="col-md-4"  >
         <div class="main-profile">
-            <div class="media" style="justify-content: center !important;">
+            <div class="media" style="justify-content: center !important;"  [hidden]="global.memberOption!='' && isMobile()">
                 <div class=""  data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                     <img src="{{ auth.getCurrentUser().images[0]  ? auth.getCurrentUser().images[0]  : 'assets/images/default.jpeg' }}"
                     alt="profile-image"
@@ -54,7 +54,7 @@
                                 <i class="fi  fi-rr-calendar"></i>
                             </div>
                             <div class="dz-inner">
-                                <span class="title">Citas</span>
+                                <span class="title">Agenda</span>
                             </div>
                         </a>
                     </li>

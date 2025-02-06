@@ -86,7 +86,7 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end" [hidden]="showPetsDialog">
-  <button (click)="proccess(data.id)" class="btn btn-xs btn-success w-100" [hidden]="data.status !== 'PENDING'">
+  <button (click)="proccess(data.id)" class="btn btn-xs btn-success rounded w-100" [hidden]="data.status !== 'PENDING'">
     <i class="feather icon-check-circle"> </i>  
      Aceptar y procesar
 </button>
