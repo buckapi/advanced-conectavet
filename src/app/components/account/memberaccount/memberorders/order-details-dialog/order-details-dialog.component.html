@@ -1,15 +1,21 @@
-<h2 mat-dialog-title class="align-right">Código {{data.buyOrder.slice(0, 6)}}</h2>
+
+<h2 mat-dialog-title class="align-right" [hidden]="showPetsDialog">
+  <button mat-button (click)="close()" class="btn btn-light text-dark" style="font-size: 24px; line-height: 1;">
+    &times; <!-- Esto representa el símbolo de multiplicación (X) -->
+  </button>
+  </h2>
 <mat-dialog-content>
   <div class="order-details">
 <div [hidden]="showPetsDialog">
   <div *ngIf="data.selectedAppointmentDate">
-    <p><strong>Fecha de Cita:</strong> {{formatDate(data.selectedAppointmentDate) }}</p>
+    <p><span class="font-w600">Codigo de Reserva:</span> {{data.buyOrder.slice(0, 6)}} </p>
+    <p><span class="font-w600">Fecha de Cita:</span> {{formatDate(data.selectedAppointmentDate) }}</p>
   </div>
-  <p><strong>Tutor: </strong> {{tutorFullName}} </p>
+  <p><span class="font-w600">Tutor: </span> {{tutorFullName}} </p>
 
-  <h5>Servicios</h5>
+  <!-- <h5>Servicios</h5> -->
 </div>
-    <table [hidden]="showPetsDialog" class="table table-hover">
+    <table [hidden]="showPetsDialog" class="table responsive">
       <thead>
         <tr>
           <th>Nombre del Servicio</th>
@@ -25,10 +31,9 @@
 
             <ng-container *ngIf="item.idPet">
               <ng-container *ngFor="let pet of (realtimePets.pets$ | async)">
-                <img *ngIf="pet.id === item.idPet && pet.images && pet.images.length > 0" 
-                     [src]="pet.images[0]" 
-                     alt="Imagen de mascota" 
-                     style="width: 50px; height: 50px;">
+                <div class="pet-image-circle" *ngIf="pet.id === item.idPet && pet.images && pet.images.length > 0">
+                  <img [src]="pet.images[0]" alt="Imagen de mascota" class="pet-image">
+                </div>
               </ng-container>
             </ng-container>
           </td>
@@ -40,29 +45,42 @@
         </tr>
       </tbody>
     </table>
-<div [hidden]="!showPetsDialog">
-  
-  Indique la mascota a la que desea asignar el servicio: {{data.cart[serviceIndex].name}}
-   
-  <div *ngFor="let pet of (realtimePets.pets$ | async)"> 
-    <span [class.col-6]="data.idUser === pet.idTutor" [class.hidden]="data.idUser === pet.idTutor" [class.col-lg-3]="data.idUser === pet.idTutor" style="cursor: pointer;">
-      <div class="pet" *ngIf="data.idUser === pet.idTutor">
-        <div class="image-container" style="position: relative; text-align: center;">
-          <img *ngIf="pet.images && pet.images.length > 0" [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;" (click)="selectPet(pet)"> 
-          <!-- <img *ngIf="pet.images && pet.images.length > 0" [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;"> -->
+    <div [hidden]="!showPetsDialog">
+      <div style="text-align: center; margin: 20px 0;">
+        <h4 style="color: #000; font-weight: bold;">
+          Indique la mascota a la que desea asignar el servicio:
+          <span style="font-size: 16px; color: #555;">
+            {{data.cart[serviceIndex].name}}
+          </span>
+        </h4>
+       
+      </div>
+      
+    
+      <div *ngFor="let pet of (realtimePets.pets$ | async)"> 
+        <span [class.col-6]="data.idUser === pet.idTutor" [class.hidden]="data.idUser === pet.idTutor" [class.col-lg-3]="data.idUser === pet.idTutor" style="cursor: pointer;">
+          <div class="pet" *ngIf="data.idUser === pet.idTutor">
+            <div class="image-container" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+              <div class="pet-image-circle-dialog" *ngIf="pet.images && pet.images.length > 0">
+                <img [src]="pet.images[0]" class="avt" alt="Imagen de perfil" style="width: 150px; height: 150px;" (click)="selectPet(pet)">
+              </div>
+              <p style="margin-top: 10px; font-weight: bold; color: #000;">{{ pet.name }}</p> <!-- Nombre de la mascota -->
+            </div>
+          </div>
+        </span>
+      </div>
+      <textarea class="note-textarea" rows="2" placeholder="Notas..." style="width: 100%; margin-top: 5px;"></textarea>
+
+    
+      <div>
+        <div style="display: flex; justify-content: center; margin-top: 5px;">
+          <button (click)="cancelAssignment()" class="btn btn-xs btn-light">Cancelar Asignación</button>
         </div>
       </div>
-    </span>
-  </div>
-
-  <div >
-    <div style="display: flex; justify-content: center; margin-top: 20px;">
-      <button (click)="cancelAssignment()" class="btn btn-xs btn-danger">Cancelar Asignación</button>
-  </div>
-</div>
     </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end" [hidden]="showPetsDialog">
-  <button mat-button (click)="close()" class="btn btn-light text-dark">Cerrar</button>
+
+
 </mat-dialog-actions>

@@ -20,7 +20,7 @@
                     <td>{{ order.buyOrder.slice(0, 6) }}</td>
                     <td>{{ formatDate(order.selectedAppointmentDate || order.created) }}</td>
                     <td>
-                        <span class="badge badge-info" [ngClass]="order.status.toLowerCase()">
+                        <span class="text-info" [ngClass]="order.status.toLowerCase()">
                             {{ order.status === 'PENDING' ? 'NUEVA' : order.status }}
                         </span>
                     </td>
