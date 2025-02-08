@@ -56,7 +56,7 @@ public async checkOrdersForRating(): Promise<void> {
         // Mostrar popup para valorar la atención, incluyendo el buyOrder
         const { value: formValues } = await Swal.fire({
           title: `
-         <span style="display: flex; align-items: center;">
+         <span style="align-items: center;">
             <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
             Acción requerida
         </span>
@@ -204,7 +204,7 @@ private setupRealtimeSubscriptionByStatus(): void {
         const { value: formValues } = await Swal.fire({
             // title: `Valora la Atención - Orden: ${buyOrder}`,
             title: `
-          <span style="display: flex; align-items: center;">
+          <span style="align-items: center;">
             <i class="fa fa-exclamation-triangle" style="margin-right: 5px;"></i>
             Acción requerida
         </span>
