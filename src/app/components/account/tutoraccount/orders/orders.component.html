@@ -57,13 +57,15 @@
             <td>{{formatDate(order.selectedAppointmentDate)}}</td>
             <td> 
             <span   [ngClass]="{
-              'text-primary': order.transaction?.status === 'PENDING',
-              'text-info': order.transaction?.status === 'AUTHORIZED',
-              'text-danger': order.transaction?.status === 'REJECTED',
-              'text-warning': order.transaction?.status === 'CANCELED'
-            }">     
+              'text-primary': order.status === 'PENDING',
+              'text-info': order.status === 'ATENDIDO',
+              'text-danger': order.status === 'REJECTED',
+              'text-warning': order.status === 'CANCELED'
+            }"  >     
             
-            {{order.transaction?.status === 'AUTHORIZED' ? 'AGENDADA' : ( order.transaction?.status === 'REJECTED' ? 'DECLINADA' : '-' )}}
+            <!-- {{order.transaction?.status === 'AUTHORIZED' ? 'AGENDADA' : ( order.transaction?.status === 'REJECTED' ? 'DECLINADA' : '-' )}} -->
+            
+           {{order.status === 'PENDING' ? 'AGENDADA' : (order.status === 'ATENDIDO' ? 'COMPLETADA' : 'COMPLETADA')}}
             </span>
             </td>
             <!-- <td *ngIf="!isMobile()"> {{order.total | number:'1.2-2'}}</td> -->
