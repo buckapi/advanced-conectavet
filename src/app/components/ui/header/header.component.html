@@ -22,12 +22,15 @@
         </div>
         <div class="mid-content"></div>
         <div class="right-content d-flex align-items-center gap-3"  >
-            <!-- <a class="notification-badge font-20" 
-            [hidden]="!auth.isLogin() || global.activeRoute=='account'"
+            <a class="notification-badge font-20" 
+            [hidden]="!auth.isLogin() " 
+            (click)="global.setRoute('notifications')" style="cursor:pointer;"
             >
                 <i class="icon feather icon-bell"></i>
-                <span class="badge badge-danger">14</span>
-            </a> -->
+                <span class="badge badge-danger" style="font-size: 10px; padding: 5px; left: 10px; font-weight: 500;">
+                     {{ notificationCount }}
+                </span>
+            </a>
             <a (click)="toggleScroll()" class="icon font-20" 
             
             [hidden]="global.activeRoute=='account' || (global.activeRoute=='account' && auth.isAdmin())"

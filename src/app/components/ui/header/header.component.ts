@@ -24,6 +24,7 @@ import { CartButtonComponent } from '../cart-button/cart-button.component';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit{
+  notificationCount: number = 80;
   isMobile: boolean = false;
   hasItemsInCart: boolean = false;
 

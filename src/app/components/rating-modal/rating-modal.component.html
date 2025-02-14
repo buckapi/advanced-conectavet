@@ -1,0 +1,23 @@
+<div class="modal-overlay" *ngIf="isVisible">
+    <div class="modal">
+      <h2>¡Valora la atención recibida!</h2>
+      <div class="star-rating">
+        <input type="radio" name="rating" value="1" id="star1" (change)="onRatingChange(1)">
+        <label for="star1">★</label>
+        <input type="radio" name="rating" value="2" id="star2" (change)="onRatingChange(2)">
+        <label for="star2">★</label>
+        <input type="radio" name="rating" value="3" id="star3" (change)="onRatingChange(3)">
+        <label for="star3">★</label>
+        <input type="radio" name="rating" value="4" id="star4" (change)="onRatingChange(4)">
+        <label for="star4">★</label>
+        <input type="radio" name="rating" value="5" id="star5" (change)="onRatingChange(5)">
+        <label for="star5">★</label>
+      </div>
+      <textarea [(ngModel)]="comments" placeholder="Comentarios" rows="4"></textarea>
+      <div class="modal-actions">
+        <button (click)="submitRating()">Enviar Valoración</button>
+        <button (click)="closeModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+  

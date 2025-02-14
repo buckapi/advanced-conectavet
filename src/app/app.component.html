@@ -24,11 +24,12 @@
   </app-backheader>
   
 	<!-- Header -->
-
+<app-rating-modal></app-rating-modal>
 	<!-- Sidebar -->
 	<div class="dark-overlay" id="overlay"></div>
 	<app-sidebar ></app-sidebar>
 	<!-- Sidebar End -->
+	<app-notifications [hidden]="global.activeRoute!='notifications'"></app-notifications>
 	 
   <app-under [hidden]="global.activeRoute!='under'"></app-under>
 	<app-home [hidden]="global.activeRoute!='home'"></app-home>

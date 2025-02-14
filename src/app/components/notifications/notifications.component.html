@@ -1,0 +1,23 @@
+<div class="container pb-0 overflow-hidden" style="padding-top: 50px;">
+    <div *ngIf="!showDetail" class="dz-list notification-list" style="padding-top: 50px !important; cursor: pointer;">
+        <ul>
+            <li class="list-items pull_delete" *ngFor="let notification of realtimeNotifications.notifications$| async" [hidden]=" notification.status!=='new' || auth.getUserId() !== notification.userId" (click)="viewNotification(notification)">
+                <div class="media">
+                    <div class="media-60 m-r10">
+                        <img src="assets/images/avatar/small/1.png" alt="">
+                    </div>
+                    <div class="list-content">
+                        <h5 class="title">{{ notification.title }}</h5>
+                        <span class="dz-text">{{ notification.description }}</span>
+                        <span class="date">{{ notification.createdAt | date:'short' }}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div *ngIf="showDetail" style="padding-top: 50px !important;">
+        {{ notificationDetail.title }}
+        {{ notificationDetail.description }}
+        {{ notificationDetail.createdAt | date:'short' }}
+    </div>
+</div>

@@ -31,11 +31,13 @@ import { RealtimeOrdersService } from './services/realtime-orders.service';
 import { tap, map } from 'rxjs/operators';
 
 import PocketBase from 'pocketbase';
+import { NotificationsComponent } from './components/notifications/notifications.component';
+import { RatingModalComponent } from "./components/rating-modal/rating-modal.component";
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    
+    NotificationsComponent,
     UnderComponent,
     ShoppingComponent,
     AccountComponent,
@@ -49,8 +51,9 @@ import PocketBase from 'pocketbase';
     LoginComponent,
     BackheaderComponent,
     MessagesComponent,
-    ChatComponent
-  ],
+    ChatComponent,
+    RatingModalComponent
+],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
