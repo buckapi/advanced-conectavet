@@ -32,7 +32,6 @@ import { tap, map } from 'rxjs/operators';
 
 import PocketBase from 'pocketbase';
 import { NotificationsComponent } from './components/notifications/notifications.component';
-import { RatingModalComponent } from "./components/rating-modal/rating-modal.component";
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -51,8 +50,7 @@ import { RatingModalComponent } from "./components/rating-modal/rating-modal.com
     LoginComponent,
     BackheaderComponent,
     MessagesComponent,
-    ChatComponent,
-    RatingModalComponent
+    ChatComponent
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

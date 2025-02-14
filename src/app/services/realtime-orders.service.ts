@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import PocketBase from 'pocketbase';
 import Swal from 'sweetalert2';// Asegúrate de importar el componente modal
-import { RatingModalComponent } from '@app/components/rating-modal/rating-modal.component';
 @Injectable({
   providedIn: 'root'
 })
