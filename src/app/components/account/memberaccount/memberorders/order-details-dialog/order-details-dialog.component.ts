@@ -7,6 +7,7 @@ import { RealtimePetsService } from '@app/services/realtime-pet.service';
 import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { OrdersService } from '@app/services/orders.service';
 import Swal from 'sweetalert2'; // Asegúrate de importar SweetAlert
+import PocketBase from 'pocketbase'; // Asegúrate de importar PocketBase
 
 interface CartItem {
   id: string;
@@ -48,7 +49,8 @@ export class OrderDetailsDialogComponent {
   name: string = '';
   serviceIndex: number = 0;
   isPetSelected: boolean = false; // Estado para controlar la selección de la mascota
-
+  
+  private pb: PocketBase;
 
   constructor(
     public auth: AuthPocketbaseService,
@@ -57,7 +59,11 @@ export class OrderDetailsDialogComponent {
     public orderService: OrdersService,
     public dialogRef: MatDialogRef<OrderDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: OrderData
-  ) {}
+  ) {
+
+    this.pb = new PocketBase('https://db.conectavet.cl:8080');
+
+  }
   selectPet(pet: any) {
     this.data.cart[this.serviceIndex].idPet = pet.id;
     this.showPetsDialog = false;
@@ -86,41 +92,87 @@ export class OrderDetailsDialogComponent {
     this.showPetsDialog=true;
     this.serviceIndex = index;
   }
-  proccess(orderId: string) {
-    this.orderService.updateOrderStatus(orderId, 'ATENDIDO'       ,   this.data.cart   ).then(
-        response => {
-            console.log('Estado de la cita actualizado', response);
-            // Mostrar SweetAlert
-            Swal.fire({
-              // title: 'Éxito!',
-              text: 'La cita fue procesada con éxito.',
-              icon: 'success',
-              timer: 2000, // Tiempo en milisegundos para que se cierre automáticamente
-              timerProgressBar: true, // Muestra una barra de progreso
-              showConfirmButton: false // Oculta el botón de "Aceptar"
-          }).then((result) => {
-              // Si el temporizador se agota
-              if (result.dismiss === Swal.DismissReason.timer) {
-                  console.log('La alerta se cerró automáticamente después de 2 segundos');
-              }
-          
-              // Cerrar el diálogo
-              this.dialogRef.close();
-              // Aquí puedes llamar a un método para actualizar el carrito si es necesario
-              this.updateCart();
-          });
+  async proccess(orderId: string) {
+    try {
+        await this.orderService.updateOrderStatus(orderId, 'ATENDIDO', this.data.cart);
+        console.log('Estado de la cita actualizado');
+
+        // Crear registros de tarjeta médica para las mascotas asignadas
+        for (const cartItem of this.data.cart) {
+            if (cartItem.idPet) {
+                const data = {
+                    petId: cartItem.idPet,
+                    userId: this.data.idUser,
+                    description: "Registro médico para la mascota asignada", // Personalizar según sea necesario
+                    clinicId: cartItem.clinicId,
+                    service: JSON.stringify(cartItem), // Personalizar según sea necesario
+                    notes: "Notas sobre la condición de la mascota" // Personalizar según sea necesario
+                };
+
+                const record = await this.pb.collection('medicalCards').create(data);
+                console.log('Tarjeta médica creada:', record);
+            }
         }
-    ).catch(error => {
+
+        // Mostrar alerta de éxito
+        Swal.fire({
+            text: 'La cita fue procesada con éxito.',
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log('La alerta se cerró automáticamente después de 2 segundos');
+            }
+            this.dialogRef.close();
+            this.updateCart();
+        });
+    } catch (error) {
         console.error('Error al procesar la cita', error);
-        // Manejo de errores
         Swal.fire({
             title: 'Error!',
             text: 'No se pudo procesar la cita.',
             icon: 'error',
             confirmButtonText: 'Aceptar'
         });
-    });
+    }
 }
+//   proccess(orderId: string) {
+//     this.orderService.updateOrderStatus(orderId, 'ATENDIDO'       ,   this.data.cart   ).then(
+//         response => {
+//             console.log('Estado de la cita actualizado', response);
+//             // Mostrar SweetAlert
+//             Swal.fire({
+//               // title: 'Éxito!',
+//               text: 'La cita fue procesada con éxito.',
+//               icon: 'success',
+//               timer: 2000, // Tiempo en milisegundos para que se cierre automáticamente
+//               timerProgressBar: true, // Muestra una barra de progreso
+//               showConfirmButton: false // Oculta el botón de "Aceptar"
+//           }).then((result) => {
+//               // Si el temporizador se agota
+//               if (result.dismiss === Swal.DismissReason.timer) {
+//                   console.log('La alerta se cerró automáticamente después de 2 segundos');
+//               }
+          
+//               // Cerrar el diálogo
+//               this.dialogRef.close();
+//               // Aquí puedes llamar a un método para actualizar el carrito si es necesario
+//               this.updateCart();
+//           });
+//         }
+//     ).catch(error => {
+//         console.error('Error al procesar la cita', error);
+//         // Manejo de errores
+//         Swal.fire({
+//             title: 'Error!',
+//             text: 'No se pudo procesar la cita.',
+//             icon: 'error',
+//             confirmButtonText: 'Aceptar'
+//         });
+//     });
+// }
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
