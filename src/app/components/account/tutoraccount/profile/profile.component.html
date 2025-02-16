@@ -3,8 +3,12 @@
     style="margin-right: 10px;">
     <i class="icon feather icon-chevron-left"></i>
   </button>
-  <h3 class="name mb-0" style="padding-left: 20px;" *ngIf="auth.getCurrentUser().full_name"><span
-      class="greetings">Hola,</span> {{fields.full_name | titlecase}}.</h3>
+  <!-- <h3 class="name mb-0" style="padding-left: 20px;" *ngIf="auth.getCurrentUser().full_name">
+    <span class="greetings">Hola,</span> {{fields.full_name | titlecase}}.
+  </h3> -->
+  <h3 class="name mb-0" style="padding-left: 20px;" *ngIf="auth.getCurrentUser().full_name">
+    <span class="greetings">  </span>&#64;{{auth.getCurrentUser().username | titlecase}}.
+  </h3>
 </div>
 <div class="content-box">
   <div class="card">

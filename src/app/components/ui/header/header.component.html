@@ -1,6 +1,6 @@
 <header class="header header-fixed style-2 " [hidden]="global.isScrollingDown || global.activeRoute=='shopping'">
     <div class="header-content" [hidden]="global.isScrollingDown">
-        <div class="left-content" [hidden]="global.activeRoute!='account' || !auth.isLogin()">
+        <!-- <div class="left-content" [hidden]="global.activeRoute!='account' || !auth.isLogin()">
             <a href="javascript:void(0);" class="menu-toggler bg-white pe-2 rounded-xl">
                 <div class="media">
                     <div class="media-35 m-r10">
@@ -9,8 +9,8 @@
                     <h6 class="mb-0 font-13" *ngIf="auth.getCurrentUser()?.full_name">  &#64;{{auth.getCurrentUser().username}}</h6>
                 </div>
             </a>
-        </div>
-        <div class="left-content" [hidden]="auth.isLogin() && global.activeRoute==='account' ">
+        </div> -->
+        <div class="left-content ">
             <a href="javascript:void(0);" class="menu-toggler  pe-2 ">
                 <div class="">
                     <div class="">

@@ -19,6 +19,18 @@
             </div>
             <div class="dz-list style-1 m-b20">
                 <ul>
+                    <li>
+                        <a (click)="global.setMemberOption('profile')" style="cursor: pointer;"  class="item-content item-link">
+                            <div class="list-icon">
+                                <i class="fi fi-rr-user"></i>
+                            </div>
+                            <div class="dz-inner">
+                                <span class="title"
+                                [ngClass]="{'menuOption':  global.memberOption === 'profile'}"
+                                >{{ auth.getCurrentUser().type === 'clinica' ? 'Cuenta' : 'Mi perfil' }}</span>
+                            </div>
+                        </a>
+                    </li>
                         <li>
                             <a  class="item-content item-link" (click)="global.setMemberOption('professionals')" style="cursor: pointer;" >
                                 <div class="list-icon">
@@ -58,7 +70,7 @@
                             </div>
                         </a>
                     </li>
-                    <li class="text-light">
+                    <!-- <li class="text-light">
                         <a (click)="global.setMemberOption('mensajestext-light')"  class="item-content item-link">
                             <div class="list-icon text-light">
                                 <i class="fi fi-rr-comment"></i>
@@ -67,10 +79,10 @@
                                 <span class="title text-light">Mensajes</span>
                             </div>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
-            <div class="title-bar">
+            <!-- <div class="title-bar">
                 <h4 class="title mb-0 font-w500">Ajustes de cuenta</h4>
             </div>
             <div class="dz-list style-1">
@@ -98,7 +110,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> -->
             <div class="title-bar">
                 <h4 class="title mb-0 font-w500"></h4>
             </div>

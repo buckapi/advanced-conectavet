@@ -35,7 +35,7 @@
         <tr *ngFor="let item of data.cart; let i = index">
           <td>{{item.name}}</td>
           <td>
-            <button class="btn btn-success btn-xs rounded" (click)="showPets(i)" *ngIf="!item.idPet" [hidden]="item.idPet !== undefined || data.status !== 'PENDING'" >Asignar</button>
+            <span class="text-light" style="cursor: pointer;" (click)="showPets(i)" *ngIf="!item.idPet" [hidden]="item.idPet !== undefined || data.status !== 'PENDING'" >Asignar</span>
 
             <ng-container *ngIf="item.idPet">
               <ng-container *ngFor="let pet of (realtimePets.pets$ | async)">
@@ -46,7 +46,7 @@
             </ng-container>
           </td>
           <td>
-            <button class="btn btn-danger btn-xs rounded" (click)="removePet(i)" [hidden]="item.idPet === undefined || data.status !== 'PENDING'">Desasignar</button>
+            <span class="text-danger" style="cursor: pointer;" (click)="removePet(i)" [hidden]="item.idPet === undefined || data.status !== 'PENDING'">Desasignar</span>
           </td>
         </tr>
       </tbody>

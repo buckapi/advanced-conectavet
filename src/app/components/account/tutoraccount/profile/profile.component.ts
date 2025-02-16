@@ -42,11 +42,13 @@ export class ProfileComponent implements OnInit {
     full_name: string;
     rut: string;
     address: string;
+    email: string;
     phone: string;
   } = {
     full_name: '',
     rut: '',
     address: '',
+    email: '',
     phone: '',
   };
 
@@ -254,6 +256,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.fetchTutorData();
     this.fields = {
+      email: '',
       full_name: '',
       rut: '',
       phone: '',
@@ -492,6 +495,7 @@ export class ProfileComponent implements OnInit {
 
       if (tutorRecord) {
         this.fields = {
+          email: tutorRecord.email || '',
           full_name: tutorRecord.full_name || '',
           rut: tutorRecord.rut || '',
           phone: tutorRecord.phone || '',

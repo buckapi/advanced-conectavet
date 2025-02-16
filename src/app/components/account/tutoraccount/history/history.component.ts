@@ -107,15 +107,15 @@ onTabChange(event: any) {
     return `${diaSemana} ${dia} de ${mes} de ${anio}`;
   }
 
-loadMedicalCards() {
+loadMedicalRecords() {
   this.medicalRecordsService.getMedicalRecordsByPetId(this.global.petSelected.id).subscribe(cards => {
-    this.medicalRecords = cards; // Asegúrate de que esto esté llenando medicalCards
-    console.log('Medical Records loaded:', this.medicalRecords); // Verifica que se estén cargando las tarjetas médicas
+    this.medicalRecords = cards; // Asegúrate de que esto esté llenando medicaRecords
+    console.log('Medical Records loaded:', this.medicalRecords); // Verifica que se estén cargando lmedicalCardsas tarjetas médicas
   });
 }
 
 // loadSpecialists() {
-//   const clinicIds = this.medicalCards.map(card => card.clinicId);
+//   const clinicIds = this.medicaRecords.map(card => card.clinicId);
 //   // Obtener información de los especialistas
 //   this.specialistsService.getSpecialistsByIds(clinicIds).subscribe(specialists => {
 //     specialists.forEach(specialist => {
@@ -136,7 +136,7 @@ loadSpecialists() {
 
 
 // loadSpecialists() {
-//   const clinicIds = this.medicalCards.map(card => card.clinicId);
+//   const clinicIds = this.medicaRecords.map(card => card.clinicId);
 //   this.specialistsService.getSpecialistsByIds(clinicIds).subscribe(specialists => {
 //     console.log('Specialists loaded:', specialists); // Verifica los especialistas cargados
 //     specialists.forEach(specialist => {

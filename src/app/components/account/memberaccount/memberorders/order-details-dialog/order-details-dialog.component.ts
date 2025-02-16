@@ -109,7 +109,7 @@ export class OrderDetailsDialogComponent {
                     notes: "Notas sobre la condición de la mascota" // Personalizar según sea necesario
                 };
 
-                const record = await this.pb.collection('medicalCards').create(data);
+                const record = await this.pb.collection('medicalRecords').create(data);
                 console.log('Tarjeta médica creada:', record);
             }
         }
