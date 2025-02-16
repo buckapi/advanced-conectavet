@@ -3,8 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
-import localeEs from '@angular/common/locales/es';
 import { ReactiveFormsModule } from '@angular/forms';
+import localeEs from '@angular/common/locales/es';
+import { LOCALE_ID } from '@angular/core';
 
 registerLocaleData(localeEs, 'es-ES');
 
@@ -15,8 +16,8 @@ registerLocaleData(localeEs, 'es-ES');
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule
-  ],
-  providers: [],
+  ], providers: [{ provide: LOCALE_ID, useValue: 'es' }],
+
   bootstrap: []
 })
 export class AppModule { }

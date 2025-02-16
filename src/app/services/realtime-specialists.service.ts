@@ -1,6 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import PocketBase from 'pocketbase';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, from,of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+export interface Specialist {
+  id: string;
+  full_name: string;
+  // Agrega aquí otras propiedades necesarias para el especialista
+}
 
 @Injectable({
   providedIn: 'root',
@@ -51,7 +57,15 @@ export class RealtimeSpecialistsService implements OnDestroy {
       });
     this.specialistsSubject.next(records);
   }
-
+  getFullNameByClinicId(clinicId: string): Observable<string> {
+    return from(this.pb.collection('members').getOne(clinicId)).pipe(
+      map(member => {
+        console.log('Miembro encontrado:', member); // Verificar el miembro encontrado
+        return member ? member['full_name'] : 'Veterinaria no encontrada';
+      }),
+      catchError(() => of('Veterinaria no encontrada')) // Manejo de errores
+    );
+  }
   ngOnDestroy() {
     // Desuscribirse cuando el servicio se destruye
     this.pb.collection('members').unsubscribe('*');

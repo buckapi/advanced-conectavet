@@ -1,8 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 import { ConfigService } from '@app/services/config.service';
 import { GlobalService } from '@app/services/global.service';
+import { RealtimeMedicalRecordsService } from '@app/services/realtime-medical-records.service';
 import { RealtimeServicesService } from '@app/services/realtime-services.service';
+import { RealtimeSpecialistsService } from '@app/services/realtime-specialists.service';
+export interface Specialist {
+  id: string;
+  full_name: string;
+  // Otras propiedades que necesites
+}
 interface Entry {
   fecha: string;
   color:string;
@@ -28,7 +36,11 @@ interface Category {
   templateUrl: './history.component.html',
   styleUrl: './history.component.css'
 })
-export class HistoryComponent {
+export class HistoryComponent  implements OnInit{
+  medicalRecords: any[] = [];
+  // specialistsMap: { [key: string]: Specialist } = {}; // Declarar specialistsMap
+  specialistsMap: { [key: string]: string } = {}; // Cambia a string para almacenar solo nombres
+
   services: any[] = [];
   selectedService: string = '';  // Almacena el nombre del servicio seleccionado
   showHistory=false;
@@ -39,155 +51,6 @@ export class HistoryComponent {
     //       motivo: "Vacunación (triple vírica)",
     //       observaciones: "Saludable, no presentó reacciones.",
     //       serviceId: "1",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Vacunación',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "15/03/2023",
-    //       motivo: "Desparasitante interno",
-    //       observaciones: "Se administró tratamiento oral, sin efectos secundarios.",
-    //       serviceId: "2",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Desparasitación',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "28/04/2023",
-    //       motivo: "Consulta por vómitos",
-    //       diagnostico: "Gastroenteritis leve",
-    //       tratamiento: "Medicación y dieta blanda.",
-    //       serviceId: "3",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Medicina Preventiva',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "10/06/2023",
-    //       motivo: "Vacunación (rabia)",
-    //       observaciones: "Saludable, ninguna reacción adversa.",
-    //       serviceId: "4",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Vacunación',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "20/07/2023",
-    //       motivo: "Desparasitante externo (pulgas y garrapatas)",
-    //       observaciones: "Aplicación de pipeta, se recomienda repetir en 3 meses.",
-    //       serviceId: "5",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Desparasitación',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "05/08/2023",
-    //       motivo: "Consulta por cojera en la pata trasera",
-    //       diagnostico: "Esguince leve",
-    //       tratamiento: "Reposo y antiinflamatorios.",
-    //       serviceId: "6",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Medicina Preventiva',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "15/09/2023",
-    //       motivo: "Revisión dental",
-    //       observaciones: "Se realizó limpieza, se recomienda cepillado diario.",
-    //       serviceId: "7",
-    //       color: "#FAD6C8",  // Rosa pastel (especialidades_veterinaria)
-    //       category: {
-    //           name: 'Odontología',
-    //           categoryKey: 'especialidades_veterinaria'
-    //       }
-    //   },
-    //   {
-    //       fecha: "30/09/2023",
-    //       motivo: "Consulta por picazón intensa",
-    //       diagnostico: "Alergia alimentaria",
-    //       tratamiento: "Cambio de dieta y antihistamínicos.",
-    //       serviceId: "8",
-    //       color: "#FAD6C8",  // Rosa pastel (especialidades_veterinaria)
-    //       category: {
-    //           name: 'Endocrinología',
-    //           categoryKey: 'especialidades_veterinaria'
-    //       }
-    //   },
-    //   {
-    //       fecha: "10/10/2023",
-    //       motivo: "Vacunación (influencia canina)",
-    //       observaciones: "Saludable, bien tolerada.",
-    //       serviceId: "9",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Vacunación',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "25/10/2023",
-    //       motivo: "Consulta por diarrea",
-    //       diagnostico: "Infección bacteriana",
-    //       tratamiento: "Antibióticos y dieta estricta.",
-    //       serviceId: "10",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Medicina Preventiva',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "15/11/2023",
-    //       motivo: "Revisión postoperatoria (esterilización)",
-    //       observaciones: "Recuperación sin complicaciones.",
-    //       serviceId: "11",
-    //       color: "#D9EAD3",  // Verde claro (cirugías)
-    //       category: {
-    //           name: 'Cirugía Veterinaria',
-    //           categoryKey: 'cirugias'
-    //       }
-    //   },
-    //   {
-    //       fecha: "01/12/2023",
-    //       motivo: "Consulta por pérdida de peso",
-    //       diagnostico: "Problemas de tiroides",
-    //       tratamiento: "Exámenes adicionales y medicación.",
-    //       serviceId: "12",
-    //       color: "#FAD6C8",  // Rosa pastel (especialidades_veterinaria)
-    //       category: {
-    //           name: 'Endocrinología',
-    //           categoryKey: 'especialidades_veterinaria'
-    //       }
-    //   },
-    //   {
-    //       fecha: "10/01/2024",
-    //       motivo: "Consulta por tos persistente",
-    //       diagnostico: "Bronquitis leve",
-    //       tratamiento: "Broncodilatadores y reposo.",
-    //       serviceId: "13",
-    //       color: "#B9E3C6",  // Verde pastel (salud_general)
-    //       category: {
-    //           name: 'Medicina Preventiva',
-    //           categoryKey: 'salud_general'
-    //       }
-    //   },
-    //   {
-    //       fecha: "20/02/2024",
-    //       motivo: "Vacunación (parvovirus)",
-    //       observaciones: "Saludable, ninguna reacción adversa.",
-    //       serviceId: "14",
     //       color: "#B9E3C6",  // Verde pastel (salud_general)
     //       category: {
     //           name: 'Vacunación',
@@ -209,7 +72,12 @@ export class HistoryComponent {
   
   };
   
-constructor(  public config: ConfigService,public global:GlobalService,
+constructor(  
+  private medicalRecordsService: RealtimeMedicalRecordsService,
+  private specialistsService: RealtimeSpecialistsService,
+
+  public realtimeMedicalRecords: RealtimeMedicalRecordsService,
+  public config: ConfigService,public global:GlobalService,
 
   public realtimeServices:RealtimeServicesService
 
@@ -218,6 +86,64 @@ constructor(  public config: ConfigService,public global:GlobalService,
     this.services = data; });
 
 }
+
+onTabChange(event: any) {
+  const targetId = event.target.id; // Ahora esto debería devolver 'profile1'
+  console.log('Tab changed to:', targetId); // Verifica qué pestaña se está activando
+  if (targetId === 'profile1') {
+    this.loadSpecialists(); // Llama al método para cargar los especialistas
+  }
+}
+ formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    
+    const diaSemana = diasSemana[date.getDay()];
+    const dia = date.getDate();
+    const mes = meses[date.getMonth()];
+    const anio = date.getFullYear();
+
+    return `${diaSemana} ${dia} de ${mes} de ${anio}`;
+  }
+
+loadMedicalCards() {
+  this.medicalRecordsService.getMedicalRecordsByPetId(this.global.petSelected.id).subscribe(cards => {
+    this.medicalRecords = cards; // Asegúrate de que esto esté llenando medicalCards
+    console.log('Medical Records loaded:', this.medicalRecords); // Verifica que se estén cargando las tarjetas médicas
+  });
+}
+
+// loadSpecialists() {
+//   const clinicIds = this.medicalCards.map(card => card.clinicId);
+//   // Obtener información de los especialistas
+//   this.specialistsService.getSpecialistsByIds(clinicIds).subscribe(specialists => {
+//     specialists.forEach(specialist => {
+//       this.specialistsMap[specialist.id] = specialist; // Almacenar en un mapa
+//     });
+//   });
+// }
+loadSpecialists() {
+  console.log('Loading specialists...');
+  const clinicIds = this.medicalRecords.map(card => card.clinicId);
+  clinicIds.forEach(clinicId => {
+    this.specialistsService.getFullNameByClinicId(clinicId).subscribe(full_name => {
+      this.specialistsMap[clinicId] = full_name;
+      console.log(`Clinic ID: ${clinicId}, Full Name: ${full_name}`);
+    });
+  });
+}
+
+
+// loadSpecialists() {
+//   const clinicIds = this.medicalCards.map(card => card.clinicId);
+//   this.specialistsService.getSpecialistsByIds(clinicIds).subscribe(specialists => {
+//     console.log('Specialists loaded:', specialists); // Verifica los especialistas cargados
+//     specialists.forEach(specialist => {
+//       this.specialistsMap[specialist.id] = specialist;
+//     });
+//   });
+// }
 isMobile(){
   if (window.innerWidth < 768) {
     return true;
@@ -254,12 +180,16 @@ get age(): string {
             return `${monthDiff} mes${monthDiff !== 1 ? 'es' : ''}`;
         }
     }
-
-    // Si tiene un año o más, mostrar en años
+        // Si tiene un año o más, mostrar en años
     return `${ageYears} año${ageYears !== 1 ? 's' : ''}`;
 }
-
-
+ngOnInit(): void {
+  const petId = this.global.petSelected.id; // Asegúrate de que este es el petId correcto
+  this.realtimeMedicalRecords.getMedicalRecordsByPetId(petId).subscribe(data => {
+      this.medicalRecords = data;
+      console.log("MEDICAL RECORDS",JSON.stringify(this.medicalRecords))
+  });
+}
 showServiceAlert(serviceName: string) {
   this.selectedService = serviceName;  // Actualiza el servicio seleccionado
   alert(`Servicio seleccionado: ${serviceName}`);
