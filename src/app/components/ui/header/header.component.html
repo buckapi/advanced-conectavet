@@ -49,7 +49,9 @@
             <a href="javascript:void(0);" class="menu-toggler bg-white pe-2 rounded-xl">
                 <div class="media">
                     <div class="media-35 m-r10" [hidden]="!auth.isLogin()">
-                        <img class="rounded-xl" src="assets/images/avatar/1.png" alt="">
+
+                        <img *ngIf="auth.getCurrentUser()" class="rounded-xl"src="{{ auth.getCurrentUser().images[0] ? auth.getCurrentUser().images[0] : 'assets/images/default.png' }}" alt="">
+                        <!-- <img class="rounded-xl" src="assets/images/avatar/1.png" alt=""> -->
                     </div>
                     <div class="" [hidden]="auth.isLogin() || isMobile">
                         <img class="" src="assets/images/app-logo/logo.png" alt="">

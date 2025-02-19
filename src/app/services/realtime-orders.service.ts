@@ -73,7 +73,7 @@ export class RealtimeOrdersService {
                           (Orden: ${attendedOrder['buyOrder'].slice(0, 6)})
                       </span>
                       fue procesada con éxito! Te invitamos a valorar la atención recibida.</span>
-                      <span>rtf</span>
+                    
                       <div class="star-rating">
                           <input type="radio" name="ratingCheck" value="5" id="star5"><label for="star5">★</label>
                           <input type="radio" name="ratingCheck" value="4" id="star4"><label for="star4">★</label>
@@ -234,7 +234,7 @@ public setupRealtimeSubscriptionByStatus(): void {
                       (Orden: ${record['buyOrder'].slice(0, 6)})
                   </span>
                   fue procesada con éxito! Te invitamos a valorar la atención recibida.</span>
-                  <span>rt {{rating}}</span>
+               
                   <div class="star-rating">  
                       <input type="radio" name="rating" value="5" id="star5"><label for="star5">★</label>
                       <input type="radio" name="rating" value="4" id="star4"><label for="star4">★</label>

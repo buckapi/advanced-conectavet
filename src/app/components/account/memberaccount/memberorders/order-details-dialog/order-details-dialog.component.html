@@ -75,12 +75,15 @@
           </div>
         </span>
       </div>
-      <textarea class="note-textarea" rows="2" placeholder="Notas..." style="width: 100%; margin-top: 5px; height: auto;"></textarea>
-    
+      <textarea [(ngModel)]="medicalNotes[serviceIndex]" class="note-textarea" rows="2" placeholder="Notas..." style="width: 100%; margin-top: 5px; height: auto;"></textarea>
+
+      <!-- <textarea [(ngModel)]="medicalNotes[serviceIndex]" placeholder="Escribe la nota médica aquí..."></textarea> -->
+      <!-- <textarea [(ngModel)]="medicalNote" placeholder="Escribe la nota médica aquí..."></textarea> -->
       <div>
         <div style="display: flex; justify-content: center; margin-top: 5px;">
           <button (click)="cancelAssignment()" class="btn btn-xs btn-light">Cancelar Asignación</button>
-        </div>
+          <button (click)="okAsignacion(serviceIndex)" class="btn btn-xs btn-primary">Aceptar Asignación</button>
+      </div>
       </div>
     </div>
   </div>

@@ -5,7 +5,7 @@ import { GlobalService } from './global.service';
 import { Observable, from, tap, map } from 'rxjs';
 import { UserInterface } from '@app/interfaces/user-interface';
 import { RecordModel } from 'pocketbase';
-
+import { RealtimeOrdersService } from './realtime-orders.service';  
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +13,9 @@ export class AuthPocketbaseService {
   public pb: PocketBase;
   complete: boolean = false;
 
-  constructor(public global: GlobalService) {
+  constructor(
+    public realtimeOrders: RealtimeOrdersService,
+    public global: GlobalService) {
     this.pb = new PocketBase('https://db.conectavet.cl:8080');
   }
   async updateUserField(userId: string, updateData: any): Promise<void> {
@@ -210,6 +212,8 @@ export class AuthPocketbaseService {
       switch (updatedUser["type"]) { // Cambiado a acceso con corchetes
         case 'clinica':
           if (!updatedUser["biography"] || !updatedUser["days"]) { // Acceso a 'biography' usando corchetes
+           
+            this.realtimeOrders.checkOrdersForRating();
             this.global.setRoute('account'); // Redirigir al usuario a la ruta 'complete-profile'
           } else {
             this.global.setRoute('home');

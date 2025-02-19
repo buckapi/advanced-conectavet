@@ -8,6 +8,7 @@ import { AuthPocketbaseService } from '@app/services/auth-pocketbase.service';
 import { OrdersService } from '@app/services/orders.service';
 import Swal from 'sweetalert2'; // Asegúrate de importar SweetAlert
 import PocketBase from 'pocketbase'; // Asegúrate de importar PocketBase
+import { FormsModule } from '@angular/forms';
 
 interface CartItem {
   id: string;
@@ -38,11 +39,13 @@ interface OrderData {
 @Component({
   selector: 'app-order-details-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule,FormsModule],
   templateUrl: './order-details-dialog.component.html',
   styleUrls: ['./order-details-dialog.component.css']
 })
 export class OrderDetailsDialogComponent {
+  medicalNote: string = ''; // Agregar esta línea para definir la propiedad
+  medicalNotes: string[] = []; // Agregar esta línea para definir el array
   tutorFullName: string = '';
   showPetsDialog: boolean = false;
   asignar?: boolean; // Agregar esta línea
@@ -66,10 +69,19 @@ export class OrderDetailsDialogComponent {
   }
   selectPet(pet: any) {
     this.data.cart[this.serviceIndex].idPet = pet.id;
-    this.showPetsDialog = false;
+    
 
     this.isPetSelected = true; // Cambia el estado a seleccionado
     // Puedes almacenar la mascota seleccionada si es necesario
+}
+okAsignacion(serviceIndex:  number) {
+  // Asegúrate de que el índice del servicio esté dentro del rango del array
+  if (serviceIndex >= 0 && serviceIndex < this.medicalNotes.length) {
+      // Aquí puedes agregar lógica para almacenar la nota ingresada
+      this.medicalNotes[serviceIndex] = this.medicalNotes[serviceIndex] || ''; // Inicializa si es necesario
+  }
+  this.showPetsDialog = false;
+  this.isPetSelected = false; // Cambia el estado a seleccionado
 }
 
   cancelAssignment() {
@@ -101,13 +113,13 @@ export class OrderDetailsDialogComponent {
         for (const cartItem of this.data.cart) {
             if (cartItem.idPet) {
                 const data = {
-                    petId: cartItem.idPet,
-                    userId: this.data.idUser,
-                    description: "Registro médico para la mascota asignada", // Personalizar según sea necesario
-                    clinicId: cartItem.clinicId,
-                    service: JSON.stringify(cartItem), // Personalizar según sea necesario
-                    notes: "Notas sobre la condición de la mascota" // Personalizar según sea necesario
-                };
+                  petId: cartItem.idPet,
+                  userId: this.data.idUser,
+                  description: "Registro médico para la mascota asignada", // Personalizar según sea necesario
+                  clinicId: cartItem.clinicId,
+                  service: JSON.stringify(cartItem), // Personalizar según sea necesario
+                  notes: this.medicalNotes[this.data.cart.indexOf(cartItem)] // Usar el array para obtener la nota correspondiente
+                  };
 
                 const record = await this.pb.collection('medicalRecords').create(data);
                 console.log('Tarjeta médica creada:', record);
@@ -137,7 +149,7 @@ export class OrderDetailsDialogComponent {
             confirmButtonText: 'Aceptar'
         });
     }
-}
+  }
 //   proccess(orderId: string) {
 //     this.orderService.updateOrderStatus(orderId, 'ATENDIDO'       ,   this.data.cart   ).then(
 //         response => {
